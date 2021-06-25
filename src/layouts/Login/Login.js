@@ -1,4 +1,4 @@
-import React , { useState } from 'react';
+import React, { useState } from 'react';
 import logo from "../../assets/ues_logo3.svg";
 import './login.css';
 import api from '../../config/axios';
@@ -8,43 +8,45 @@ const Login = (props) => {
         username: '',
         password: ''
     })
-    
-    
+
+
     const { username, password } = user;
 
 
     const login = async datos => {
         try {
-            api.get('/csrf-cookie').then(response => {
-                
-                const credenciales = {
-                    username: datos.username[0],
-                    password: datos.password[0]
-                }                
-                api.post('/login', credenciales)
-                    .then(response => {
-                        localStorage.setItem('token',response.data.jwt)                              
-                    })
-                    .catch(error => {
-                        console.log(error)                   
-                    });
-            });            
+
+            const credenciales = {
+                username: datos.username[0],
+                password: datos.password[0]
+            }
+            api.post('/login', credenciales)
+                .then(response => {
+                    localStorage.setItem('token', response.data.jwt)
+                    api.get('/user').then(response=>{
+                        console.log(response)
+                    })                    
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+
         } catch (error) {
             console.log(error)
         }
-    }    
-    
-    const handleChange = e => {        
+    }
+
+    const handleChange = e => {
         setUser({
             ...user,
             [e.target.name]: [e.target.value]
         })
-    }    
+    }
 
     //inicio de sesion
     const onSubmit = e => {
         e.preventDefault();
-        
+
         //validar que no hayan campos vacios 
 
         //pasarlo al action 
@@ -85,7 +87,7 @@ const Login = (props) => {
                             <div className="mb-4 mt-4 mr-4 ml-4 row">
                                 <button type="submit" className="bg-red-700 hover:bg-red-500 text-white font-bold py-2 mr-4 px-4 rounded">
                                     Iniciar sesion
-                                </button>                               
+                                </button>
                             </div>
                         </form>
                     </div>

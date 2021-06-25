@@ -126,7 +126,7 @@ export default function PersistentDrawerLeft(props) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
-                        Universidad de El Salvador
+                        Universidad de El Salvador - TRUES
                     </Typography>
                     <IconButton
                         aria-label="account of current user"
