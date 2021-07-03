@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import FormRole from './FormRole';
 import Paper from '@material-ui/core/Paper';
@@ -17,12 +17,12 @@ import Box from '@material-ui/core/Box';
 import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
 import Backdrop from '@material-ui/core/Backdrop'
-
+import api from '../../config/axios';
 const columns = [
-    { id: 'name', label: 'Nombre', minWidth: 170 },
+    { id: 'id', label: 'id', minWidth: 170 },
     {
         id: 'users',
-        label: 'N° de usuarios',
+        label: 'Nombre',
         minWidth: 170,
         align: 'right',
         format: (value) => value.toLocaleString('en-US'),
@@ -35,8 +35,8 @@ const columns = [
     }
 ];
 
-function createData(name, users, actions) {
-    return { name, users, actions };
+function createData(id, users, actions) {
+    return { id, users, actions };
 }
 
 
@@ -54,10 +54,10 @@ const useStyles = makeStyles((theme) => ({
     },
     paper: {
         backgroundColor: theme.palette.background.paper,
-        borderRadius:'4px',
+        borderRadius: '4px',
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 4, 3),
-        width:'25%'
+
     },
 }));
 
@@ -68,8 +68,8 @@ export default function StickyHeadTable() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [open, setOpen] = React.useState(false);
-    const [formType, setFormType]=React.useState('');
-
+    const [formType, setFormType] = React.useState('');
+    const [roles, setRoles] = useState();
     const handleOpen = () => {
         setOpen(true);
     };
@@ -86,44 +86,69 @@ export default function StickyHeadTable() {
         setPage(0);
     };
 
-    const rows = [
-        createData(
-            'Administrador',
-            4,
-            <Box pr={1} pl={1}>
-                <Button variant="outlined" color="primary" onClick={()=>{
-                    handleOpen();
-                    setFormType('edit');
-                }}>
-                    <EditIcon />
-                </Button> <Button variant="outlined" color="secondary" onClick={()=>{
-                    handleOpen();
-                    setFormType('delete');
-                }}>
-                    <DeleteForeverIcon />
-                </Button>
-            </Box>
-        ),
-        createData('Estudiante', 142362, <Box pr={1} pl={1}>
-            <Button variant="outlined" color="primary">
+    const rows = [createData(
+       "$rf",
+        32,
+        <Box pr={1} pl={1}>
+            <Button variant="outlined" color="primary" onClick={() => {
+                handleOpen();
+                setFormType('edit');
+            }}>
                 <EditIcon />
-            </Button> <Button variant="outlined" color="secondary">
+            </Button> <Button variant="outlined" color="secondary" onClick={() => {
+                handleOpen();
+                setFormType('delete');
+            }}>
                 <DeleteForeverIcon />
             </Button>
-        </Box>),
-        createData('Invitado', 132289092, <Box pr={1} pl={1}>
-            <Button variant="outlined" color="primary">
-                <EditIcon />
-            </Button> <Button variant="outlined" color="secondary">
-                <DeleteForeverIcon />
-            </Button>
-        </Box>),
-    ];
+        </Box>
+    )];
 
+    function pushRoles(data) {
+        if (data !== undefined) {
+            data.forEach((element) => {
+                rows.push(createData(
+                    element.id,
+                    element.name,
+                    <Box pr={1} pl={1}>
+                        <Button variant="outlined" color="primary" onClick={() => {
+                            handleOpen();
+                            setFormType('edit');
+                        }}>
+                            <EditIcon />
+                        </Button> <Button variant="outlined" color="secondary" onClick={() => {
+                            handleOpen();
+                            setFormType('delete');
+                        }}>
+                            <DeleteForeverIcon />
+                        </Button>
+                    </Box>
+                ))
+            });
+        }
+    }
+
+
+    const getRoles = async () => {
+        try {
+            const resp = await api.get('/roles');
+            setRoles(resp.data)
+            console.log(resp.data)
+        } catch (err) {
+            // Handle Error Here
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        getRoles()
+        console.log(roles)
+        pushRoles(roles)
+    }, [])
     return (
         <div>
             <Box pt={1} pb={1}>
-                <Button variant="outlined" color="primary" onClick={()=>{
+                <Button variant="outlined" color="primary" onClick={() => {
                     handleOpen();
                     setFormType('new');
                 }} style={{ display: 'block', marginLeft: 'auto' }}>
@@ -151,13 +176,13 @@ export default function StickyHeadTable() {
                                 return (
                                     <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
                                         {columns.map((column) => {
-                                            const value = row[column.id];                                            
+                                            const value = row[column.id];
                                             return (
                                                 <TableCell key={column.id} align={column.align}>
                                                     {column.format && typeof value === 'number' ? column.format(value) : value}
                                                 </TableCell>
                                             );
-                                        })}
+                                        })}                                     
                                     </TableRow>
                                 );
                             })}
@@ -188,9 +213,9 @@ export default function StickyHeadTable() {
                 >
                     <Fade in={open}>
                         <div className={classes.paper}>
-                            <h1 id="transition-modal-title">{formType==='new'?'Crear rol':formType==='edit'?'Editar rol':'Eliminar rol'}</h1>  
+                            <h1 id="transition-modal-title">{formType === 'new' ? 'Crear rol' : formType === 'edit' ? 'Editar rol' : 'Eliminar rol'}</h1>
                             <FormRole formType={formType} handleClose={handleClose}></FormRole>
-                        </div>                        
+                        </div>
                     </Fade>
                 </Modal>
             </Paper>
