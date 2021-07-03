@@ -4,6 +4,7 @@ import Login from '../layouts/Login/Login';
 import createRole from '../layouts/Roles/Roles'
 //import Home from '../layouts/Home/Home';
 import Drawer from '../components/Drawer/Drawer';
+import Users from '../layouts/Users/Users';
 
 class Routes extends Component {
     render() {
@@ -16,6 +17,7 @@ class Routes extends Component {
                         }} />
                         <Route path='/roles' exact component={createRole} />
                         <Route path='/login' exact component={Login} />
+                        <Route path='/users' exact component={Users} />
                     </Switch>
                 </Router>
             </Drawer>
