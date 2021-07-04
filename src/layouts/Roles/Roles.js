@@ -70,6 +70,7 @@ export default function StickyHeadTable() {
     const [open, setOpen] = React.useState(false);
     const [formType, setFormType] = React.useState('');
     const [roles, setRoles] = useState();
+    const [rol, setRol] = useState({ id: 0, name: '', permisos: [] });
     const handleOpen = () => {
         setOpen(true);
     };
@@ -86,54 +87,12 @@ export default function StickyHeadTable() {
         setPage(0);
     };
 
-    const rows = [createData(
-       "$rf",
-        32,
-        <Box pr={1} pl={1}>
-            <Button variant="outlined" color="primary" onClick={() => {
-                handleOpen();
-                setFormType('edit');
-            }}>
-                <EditIcon />
-            </Button> <Button variant="outlined" color="secondary" onClick={() => {
-                handleOpen();
-                setFormType('delete');
-            }}>
-                <DeleteForeverIcon />
-            </Button>
-        </Box>
-    )];
-
-    function pushRoles(data) {
-        if (data !== undefined) {
-            data.forEach((element) => {
-                rows.push(createData(
-                    element.id,
-                    element.name,
-                    <Box pr={1} pl={1}>
-                        <Button variant="outlined" color="primary" onClick={() => {
-                            handleOpen();
-                            setFormType('edit');
-                        }}>
-                            <EditIcon />
-                        </Button> <Button variant="outlined" color="secondary" onClick={() => {
-                            handleOpen();
-                            setFormType('delete');
-                        }}>
-                            <DeleteForeverIcon />
-                        </Button>
-                    </Box>
-                ))
-            });
-        }
-    }
-
+    const rows = [];
 
     const getRoles = async () => {
         try {
             const resp = await api.get('/roles');
             setRoles(resp.data)
-            console.log(resp.data)
         } catch (err) {
             // Handle Error Here
             console.error(err);
@@ -142,15 +101,39 @@ export default function StickyHeadTable() {
 
     useEffect(() => {
         getRoles()
-        console.log(roles)
-        pushRoles(roles)
     }, [])
+
+    if (roles) {
+        rows.push(...roles.map((element) => {
+            return createData(
+                element.id,
+                element.name,
+                <Box pr={1} pl={1}>
+                    <Button variant="outlined" color="primary" onClick={() => {
+                        handleOpen();
+                        setFormType('edit');
+                        setRol(element);
+                        console.log(element)
+                    }}>
+                        <EditIcon />
+                    </Button> <Button variant="outlined" color="secondary" onClick={() => {
+                        handleOpen();
+                        setFormType('delete');
+                        setRol(element);
+                    }}>
+                        <DeleteForeverIcon />
+                    </Button>
+                </Box>
+            )
+        }));
+    }
     return (
         <div>
             <Box pt={1} pb={1}>
                 <Button variant="outlined" color="primary" onClick={() => {
                     handleOpen();
                     setFormType('new');
+                    setRol({ id: 0, name: '', permisos: [] })
                 }} style={{ display: 'block', marginLeft: 'auto' }}>
                     <AddIcon /> Crear nuevo rol
                 </Button>
@@ -182,7 +165,7 @@ export default function StickyHeadTable() {
                                                     {column.format && typeof value === 'number' ? column.format(value) : value}
                                                 </TableCell>
                                             );
-                                        })}                                     
+                                        })}
                                     </TableRow>
                                 );
                             })}
@@ -214,7 +197,7 @@ export default function StickyHeadTable() {
                     <Fade in={open}>
                         <div className={classes.paper}>
                             <h1 id="transition-modal-title">{formType === 'new' ? 'Crear rol' : formType === 'edit' ? 'Editar rol' : 'Eliminar rol'}</h1>
-                            <FormRole formType={formType} handleClose={handleClose}></FormRole>
+                            <FormRole rolId={rol.id} formType={formType} handleClose={handleClose} ></FormRole>
                         </div>
                     </Fade>
                 </Modal>
