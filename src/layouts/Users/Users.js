@@ -43,7 +43,7 @@ function Users() {
 
   const [modalInsertar, setModalInsertar] = useState(false);
   const [modalEditar, setModalEditar] = useState(false);
-  //const [modalEliminar, setModalEliminar]=useState(false);
+  const [modalEliminar, setModalEliminar]=useState(false);
 
   const [userSelected, setUserSelected] = useState({
     name: "",
@@ -74,7 +74,9 @@ function Users() {
     setModalEditar(!modalEditar);
   };
 
-  
+  const abrirCerrarModalEliminar=()=>{
+    setModalEliminar(!modalEliminar);
+  }
 
   const getUsers = async () => {
     try {
@@ -102,14 +104,46 @@ function Users() {
 
   const updateUser = async () => {
     try {
-      const resp = await api.post("/users", userSelected).then((response) => {
-        setUsers(users.concat(response.data));
-        abrirCerrarModalInsertar();
-      });
+      const resp = await api.post("/users/"+userSelected.id,userSelected)
+      .then(response => {
+        var newUsers = users;
+        newUsers.map(user=>{
+          if(userSelected.id===user.id){
+            user.name=userSelected.name;
+            user.uid=userSelected.uid;
+            user.email=userSelected.email;
+          }
+        })
+        setUsers(newUsers);
+        abrirCerrarModalEditar();
+      })
     } catch (error) {
+      abrirCerrarModalEditar();
       console.error(error);
     }
-  };
+  }
+
+  const deleteUser = async () => {
+    try {
+      const resp = await api.delete("/users/"+userSelected.id)
+      .then(response=>{
+        //setData(data.filter(consola=>consola.id!==consolaSeleccionada.id));
+        setUsers(users.filter(user=>user.id!==userSelected.id));
+        abrirCerrarModalEliminar();
+      })
+    } catch (error) {
+      console.log('Somethig went wrong');
+    }
+  }
+
+  const seleccionarUser = (user, caso)=>{
+    setUserSelected(user);
+    (caso==='Editar')?abrirCerrarModalEditar():abrirCerrarModalEliminar()
+  }
+
+  
+
+  
 
   useEffect(() => {
     getUsers();
@@ -204,6 +238,18 @@ function Users() {
     </div>
   );
 
+  const bodyEliminar=(
+    <div className={styles.modal}>
+      <p>Estás seguro que deseas eliminar el usuario? </p>
+      <div align="right">
+        <Button color="secondary" onClick={()=>deleteUser()} >Sí</Button>
+        <Button onClick={()=>abrirCerrarModalEliminar()}>No</Button>
+
+      </div>
+
+    </div>
+  )
+
   return (
     <div className="users__crud">
       <br />
@@ -229,8 +275,8 @@ function Users() {
                 <TableCell>{user.username}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
-                  <Edit />
-                  <Delete />
+                  <Edit onClick={()=>seleccionarUser(user, 'Editar')}/>
+                  <Delete onClick={()=>seleccionarUser(user, 'Eliminar')}/>
                 </TableCell>
               </TableRow>
             ))}
@@ -244,6 +290,11 @@ function Users() {
       <Modal open={modalEditar} onClose={abrirCerrarModalEditar}>
         {bodyEditar}
       </Modal>
+      <Modal
+     open={modalEliminar}
+     onClose={abrirCerrarModalEliminar}>
+        {bodyEliminar}
+     </Modal>
     </div>
   );
 }
