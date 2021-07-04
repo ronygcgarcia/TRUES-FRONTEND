@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, forwardRef } from "react";
 import api from "../../config/axios";
 import { makeStyles } from "@material-ui/core/styles";
 import {
@@ -12,8 +12,49 @@ import {
   Modal,
   TextField,
 } from "@material-ui/core";
-import { Edit, Delete } from "@material-ui/icons";
+import { Delete } from "@material-ui/icons";
 import "./User.css";
+import MaterialTable from "material-table";
+
+import AddBox from "@material-ui/icons/AddBox";
+import ArrowDownward from "@material-ui/icons/ArrowDownward";
+import Check from "@material-ui/icons/Check";
+import ChevronLeft from "@material-ui/icons/ChevronLeft";
+import ChevronRight from "@material-ui/icons/ChevronRight";
+import Clear from "@material-ui/icons/Clear";
+import DeleteOutline from "@material-ui/icons/DeleteOutline";
+import Edit from "@material-ui/icons/Edit";
+import FilterList from "@material-ui/icons/FilterList";
+import FirstPage from "@material-ui/icons/FirstPage";
+import LastPage from "@material-ui/icons/LastPage";
+import Remove from "@material-ui/icons/Remove";
+import SaveAlt from "@material-ui/icons/SaveAlt";
+import Search from "@material-ui/icons/Search";
+import ViewColumn from "@material-ui/icons/ViewColumn";
+
+const tableIcons = {
+  Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
+  Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
+  Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+  DetailPanel: forwardRef((props, ref) => (
+    <ChevronRight {...props} ref={ref} />
+  )),
+  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+  Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
+  Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
+  FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
+  LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
+  NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
+  PreviousPage: forwardRef((props, ref) => (
+    <ChevronLeft {...props} ref={ref} />
+  )),
+  ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+  Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
+  SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
+  ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
+  ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
+};
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -37,13 +78,28 @@ const useStyles = makeStyles((theme) => ({
 
 //PRINCIPAL
 function Users() {
+  //MAterial Table
+  const columnas = [
+    {
+      title: "Nombre",
+      field: "name",
+    },
+    {
+      title: "Username",
+      field: "uid",
+    },
+    {
+      title: "Correo Electronico",
+      field: "email",
+    },
+  ];
+
   const [users, setUsers] = useState([]);
   const styles = useStyles();
 
-
   const [modalInsertar, setModalInsertar] = useState(false);
   const [modalEditar, setModalEditar] = useState(false);
-  const [modalEliminar, setModalEliminar]=useState(false);
+  const [modalEliminar, setModalEliminar] = useState(false);
 
   const [userSelected, setUserSelected] = useState({
     name: "",
@@ -74,9 +130,9 @@ function Users() {
     setModalEditar(!modalEditar);
   };
 
-  const abrirCerrarModalEliminar=()=>{
+  const abrirCerrarModalEliminar = () => {
     setModalEliminar(!modalEliminar);
-  }
+  };
 
   const getUsers = async () => {
     try {
@@ -90,7 +146,7 @@ function Users() {
 
   const createUser = async () => {
     try {
-      const resp = await api.post("/users",userSelected).then((response) => {
+      const resp = await api.post("/users", userSelected).then((response) => {
         setUsers(users.concat(response.data));
         console.log(users);
         console.log(response.data);
@@ -104,46 +160,44 @@ function Users() {
 
   const updateUser = async () => {
     try {
-      const resp = await api.put("/users/"+userSelected.id,userSelected)
-      .then(response => {
-        var newUsers = users;
-        newUsers.map(user=>{
-          if(userSelected.id===user.id){
-            user.name=userSelected.name;
-            user.uid=userSelected.uid;
-            user.email=userSelected.email;
-          }
-        })
-        setUsers(newUsers);
-        abrirCerrarModalEditar();
-      })
+      const resp = await api
+        .put("/users/" + userSelected.id, userSelected)
+        .then((response) => {
+          var newUsers = users;
+          newUsers.map((user) => {
+            if (userSelected.id === user.id) {
+              user.name = userSelected.name;
+              user.uid = userSelected.uid;
+              user.email = userSelected.email;
+            }
+          });
+          setUsers(newUsers);
+          abrirCerrarModalEditar();
+        });
     } catch (error) {
       abrirCerrarModalEditar();
       console.error(error);
     }
-  }
+  };
 
   const deleteUser = async () => {
     try {
-      const resp = await api.delete("/users/"+userSelected.id)
-      .then(response=>{
-        //setData(data.filter(consola=>consola.id!==consolaSeleccionada.id));
-        setUsers(users.filter(user=>user.id!==userSelected.id));
-        abrirCerrarModalEliminar();
-      })
+      const resp = await api
+        .delete("/users/" + userSelected.id)
+        .then((response) => {
+          //setData(data.filter(consola=>consola.id!==consolaSeleccionada.id));
+          setUsers(users.filter((user) => user.id !== userSelected.id));
+          abrirCerrarModalEliminar();
+        });
     } catch (error) {
-      console.log('Somethig went wrong');
+      console.log("Somethig went wrong");
     }
-  }
+  };
 
-  const seleccionarUser = (user, caso)=>{
+  const seleccionarUser = (user, caso) => {
     setUserSelected(user);
-    (caso==='Editar')?abrirCerrarModalEditar():abrirCerrarModalEliminar()
-  }
-
-  
-
-  
+    caso === "Editar" ? abrirCerrarModalEditar() : abrirCerrarModalEliminar();
+  };
 
   useEffect(() => {
     getUsers();
@@ -203,10 +257,20 @@ function Users() {
       <br />
       <br />
       <div align="right">
-        <Button variant="contained" color="primary" onClick={() => createUser()}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => createUser()}
+        >
           Insertar
         </Button>
-        <Button variant="contained" color="secondary" onClick={() => abrirCerrarModalInsertar()}>Cancelar</Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => abrirCerrarModalInsertar()}
+        >
+          Cancelar
+        </Button>
       </div>
     </div>
   );
@@ -248,62 +312,87 @@ function Users() {
       <br />
       <br />
       <div align="right">
-        <Button variant="contained" color="primary" onClick={() => updateUser()}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => updateUser()}
+        >
           Editar
         </Button>
-        <Button variant="contained" color="secondary" onClick={() => abrirCerrarModalEditar()}>Cancelar</Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => abrirCerrarModalEditar()}
+        >
+          Cancelar
+        </Button>
       </div>
     </div>
   );
 
-  const bodyEliminar=(
+  const bodyEliminar = (
     <div className={styles.modal}>
       <p>Estás seguro que deseas eliminar el usuario? </p>
-      <br/><br/>
+      <br />
+      <br />
       <div align="right">
-        <Button variant="contained" color="secondary" onClick={()=>deleteUser()} >Sí</Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => deleteUser()}
+        >
+          Sí
+        </Button>
         &nbsp;&nbsp;
-        <Button variant="contained" color="primary" onClick={()=>abrirCerrarModalEliminar()}>No</Button>
-
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => abrirCerrarModalEliminar()}
+        >
+          No
+        </Button>
       </div>
-
     </div>
-  )
+  );
 
   return (
     <div className="users__crud">
       <br />
-      <Button variant="contained" color="primary" onClick={() => abrirCerrarModalInsertar()}>Insertar</Button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => abrirCerrarModalInsertar()}
+      >
+        Insertar
+      </Button>
       <br />
       <br />
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Nombre</TableCell>
-              <TableCell>Username</TableCell>
-              <TableCell>Correo</TableCell>
+      <MaterialTable
+        icons={tableIcons}
+        title="Usuarios del sistema"
+        columns={columnas}
+        data={users}
+        actions={[
+          {
+            icon: Edit,
+            tooltip: "Modificar Información del Usuario",
+            onClick: (event, rowData) => seleccionarUser(rowData, "Editar"),
+          },
+          {
+            icon: Delete,
+            tooltip: "Elimnar Usuario",
+            onClick: (event, rowData) => seleccionarUser(rowData, "Eliminar"),
+          },
+        ]}
+        options={{ actionsColumnIndex: -1 }}
+        localization={{
+          header: {
+            actions: "Opciones",
+          },
+        }}
+      />
 
-              <TableCell>Acciones</TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.uid}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
-                  <Edit onClick={()=>seleccionarUser(user, 'Editar')}/>
-                  &nbsp;&nbsp;
-                  <Delete onClick={()=>seleccionarUser(user, 'Eliminar')}/>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      
 
       <Modal open={modalInsertar} onClose={abrirCerrarModalInsertar}>
         {bodyInsertar}
@@ -311,11 +400,9 @@ function Users() {
       <Modal open={modalEditar} onClose={abrirCerrarModalEditar}>
         {bodyEditar}
       </Modal>
-      <Modal
-     open={modalEliminar}
-     onClose={abrirCerrarModalEliminar}>
+      <Modal open={modalEliminar} onClose={abrirCerrarModalEliminar}>
         {bodyEliminar}
-     </Modal>
+      </Modal>
     </div>
   );
 }
