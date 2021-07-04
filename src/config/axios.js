@@ -6,8 +6,9 @@ export const getAccessToken = () =>
 const api = axios.create({
     headers: {
         common: {
-          Authorization: `Bearer ${getAccessToken()}`,
+          Authorization: `Bearer ${getAccessToken()}`,          
         },
+        "X-Requested-With":"XMLHttpRequest"
       },
     baseURL: process.env.REACT_APP_BACKEND_URL,
     withCredentials: true,

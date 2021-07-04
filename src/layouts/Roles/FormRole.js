@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import TextField from '@material-ui/core/TextField';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -10,6 +10,7 @@ import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormGroup } from '@material-ui/core';
+import api from '../../config/axios';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -36,21 +37,78 @@ const MenuProps = {
     },
 };
 
-const permissions = [
-    'Crear rol',
-    'Editar rol',
-    'Ver rol',
-    'Eliminar rol'
-];
+const permissions = [];
+
+api.get('/permisos').then((response)=>{    
+    response.data.forEach(function(element){
+        permissions.push(element)
+    })
+})
+
 
 const FormRole = (props) => {
-    const [permission, setPermission] = React.useState([]);
+    const [rol, setRol] = React.useState({ id: 0, name: '', permissions: [] });
 
     const classes = useStyles();
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        //console.log("ESTADO ANTES DE PERMISOS",rol);
+        const permisos = rol.permissions.map((el) => {
+            return permissions.find(p => p.name === el).id;
+        });
+        if (props.formType === 'new') {
+            //console.log(rol)
+            api.post("/roles", { ...rol, permissions: permisos }).then((response) => {
+                props.setRows(props.rows.concat(response.data));
+            }, (error) => {
+                console.log(error)
+            })
+        } else if (props.formType === 'edit') {
+            //console.log(rol)
+            api.put("/roles/" + props.rolId, { ...rol, permissions: permisos }).then((response) => {
+                var newRows = props.rows
+                newRows.forEach(function(row){
+                    if (row.id === response.data.id) {
+                        row.name = rol.name
+                    }
+                })
+                props.setRows([])
+                props.setRows(newRows)
+                //console.log(props.rows)
+            })
+        } else {
+            api.delete("/roles/" + props.rolId).then((response) => {
+                //console.log(response)
+                api.get('/roles').then((response) => {
+                    props.setRows([])
+                    props.setRows(response.data)
+                })
+            })
+        }
+        //console.log("ESTADO ANTES DE ENVIAR",{...rol,permissions:permisos});
+        props.handleClose();
+    }
+
     const handleChange = (event) => {
-        setPermission(event.target.value);
+        //setPermission(event.target.value);
+        //console.log(event.target.value);
+        setRol({ ...rol, permissions: event.target.value })
     };
+
+    useEffect(() => {
+        if (props.rolId && props.rolId !== 0) {
+            api.get('/roles/' + props.rolId).then((response) => {
+                // los objetos permiso, se cambian a strings para que el select funcione
+                //console.log(response)
+                setRol({
+                    id: props.rolId, name: response.data.name, permissions: response.data.permissions.map((ele) => {
+                        return ele.name
+                    })
+                });
+            })
+        }
+    }, [props.rolId]);
 
     function createOrEdit() {
         return (<FormGroup style={{ justifyContent: 'center' }}>
@@ -58,8 +116,9 @@ const FormRole = (props) => {
                 required
                 id="outlined-required"
                 label="Nombre rol"
-                defaultValue=""
+                value={rol.name}
                 variant="outlined"
+                onChange={(e) => setRol({ ...rol, name: e.target.value })}
             />
             <FormControl className={classes.formControl} >
 
@@ -68,16 +127,16 @@ const FormRole = (props) => {
                     labelId="demo-mutiple-checkbox-label"
                     id="demo-mutiple-checkbox"
                     multiple
-                    value={permission}
+                    value={rol.permissions}
                     onChange={handleChange}
                     input={<Input />}
                     renderValue={(selected) => selected.join(', ')}
                     MenuProps={MenuProps}
                 >
                     {permissions.map((element) => (
-                        <MenuItem key={element} value={element}>
-                            <Checkbox checked={permission.indexOf(element) > -1} />
-                            <ListItemText primary={element} />
+                        <MenuItem key={element.id} value={element.name}>
+                            <Checkbox checked={rol.permissions.indexOf(element.name) > -1} />
+                            <ListItemText primary={element.name} />
                         </MenuItem>
                     ))}
                 </Select>
@@ -85,10 +144,12 @@ const FormRole = (props) => {
             </FormControl>
         </FormGroup>);
     }
+
+
     return (
         <div>
-            <form onSubmit={props.onSubmit} className={classes.root}>
-                {props.formType==='delete'?<p>¿Esta seguro de que desea eliminar este rol?</p>:createOrEdit()}
+            <form onSubmit={handleSubmit} className={classes.root}>
+                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este rol?</p> : createOrEdit()}
                 <FormControl style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '1rem' }}>
                     <Button variant="contained" color="secondary" onClick={props.handleClose}>
                         Cerrar
