@@ -1,21 +1,14 @@
 import React, { useEffect, useState, forwardRef } from "react";
 import api from "../../config/axios";
-import { makeStyles } from "@material-ui/core/styles";
-import {
-  Table,
-  TableContainer,
-  TableHead,
-  TableCell,
-  TableBody,
-  TableRow,
-  Button,
-  Modal,
-  TextField,
-} from "@material-ui/core";
-import { Delete } from "@material-ui/icons";
 import "./User.css";
-import MaterialTable from "material-table";
 
+//---------------------------------------------------------------Material UI
+import { makeStyles } from "@material-ui/core/styles";
+import { Button, Modal, TextField } from "@material-ui/core";
+import { Delete } from "@material-ui/icons";
+
+//------------------------------------------------------------Material Table
+import MaterialTable from "material-table";
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Check from "@material-ui/icons/Check";
@@ -32,6 +25,7 @@ import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 
+//------------------------------------------------Iconos que usa material-table
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -56,6 +50,7 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
+//----------------------------------------------------Estilos para los Modales
 const useStyles = makeStyles((theme) => ({
   modal: {
     position: "absolute",
@@ -76,9 +71,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-//PRINCIPAL
+//-----------------------------------FUNCION PRINCIPAL---------------------------//
 function Users() {
-  //MAterial Table
+  //-----------------------------------Definicion de columnas para material-table
   const columnas = [
     {
       title: "Nombre",
@@ -97,10 +92,12 @@ function Users() {
   const [users, setUsers] = useState([]);
   const styles = useStyles();
 
+  //Estados para los modales para las acciones de los usuarios
   const [modalInsertar, setModalInsertar] = useState(false);
   const [modalEditar, setModalEditar] = useState(false);
   const [modalEliminar, setModalEliminar] = useState(false);
 
+  //Estado para el usuario al cual hacer acciones
   const [userSelected, setUserSelected] = useState({
     name: "",
     uid: "",
@@ -109,6 +106,7 @@ function Users() {
     password_confirmation: "",
   });
 
+  //Obtener los que el usuarion escribe en los textfield
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserSelected((prevState) => ({
@@ -118,10 +116,7 @@ function Users() {
     console.log(userSelected);
   };
 
-  /*const handleChangeCreate=e=>{
-
-  }*/
-
+  //Acciones para mostrar los Modales
   const abrirCerrarModalInsertar = () => {
     setModalInsertar(!modalInsertar);
   };
@@ -134,12 +129,12 @@ function Users() {
     setModalEliminar(!modalEliminar);
   };
 
+  //Peticiones para obtener los usuarios
   const getUsers = async () => {
     try {
       const resp = await api.get("/users");
       setUsers(resp.data);
     } catch (err) {
-      // Handle Error Here
       console.error(err);
     }
   };
@@ -153,7 +148,6 @@ function Users() {
         abrirCerrarModalInsertar();
       });
     } catch (error) {
-      abrirCerrarModalInsertar();
       console.error(error);
     }
   };
@@ -175,7 +169,6 @@ function Users() {
           abrirCerrarModalEditar();
         });
     } catch (error) {
-      abrirCerrarModalEditar();
       console.error(error);
     }
   };
@@ -185,7 +178,6 @@ function Users() {
       const resp = await api
         .delete("/users/" + userSelected.id)
         .then((response) => {
-          //setData(data.filter(consola=>consola.id!==consolaSeleccionada.id));
           setUsers(users.filter((user) => user.id !== userSelected.id));
           abrirCerrarModalEliminar();
         });
@@ -194,6 +186,7 @@ function Users() {
     }
   };
 
+  //Seleccionar el usuario de la tabla al cual realizar acciones
   const seleccionarUser = (user, caso) => {
     setUserSelected(user);
     caso === "Editar" ? abrirCerrarModalEditar() : abrirCerrarModalEliminar();
@@ -211,7 +204,7 @@ function Users() {
       <TextField
         name="name"
         className={styles.inputMaterial}
-        label="Nombre"
+        label="Nombre del Usuario"
         onChange={handleChange}
         variant="outlined"
       />
@@ -219,6 +212,7 @@ function Users() {
       <br />
       <TextField
         name="uid"
+        required="true"
         className={styles.inputMaterial}
         label="Nombre de Usuario"
         onChange={handleChange}
@@ -249,7 +243,7 @@ function Users() {
         type="password"
         name="password_confirmation"
         className={styles.inputMaterial}
-        label="Verificar Contraseña"
+        label="Repetir Contraseña"
         onChange={handleChange}
         variant="outlined"
       />
@@ -363,7 +357,7 @@ function Users() {
         color="primary"
         onClick={() => abrirCerrarModalInsertar()}
       >
-        Insertar
+        Crear Nuevo Usuario
       </Button>
       <br />
       <br />
@@ -391,8 +385,6 @@ function Users() {
           },
         }}
       />
-
-      
 
       <Modal open={modalInsertar} onClose={abrirCerrarModalInsertar}>
         {bodyInsertar}
