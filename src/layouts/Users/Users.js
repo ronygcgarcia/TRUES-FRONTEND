@@ -104,7 +104,7 @@ function Users() {
 
   const updateUser = async () => {
     try {
-      const resp = await api.post("/users/"+userSelected.id,userSelected)
+      const resp = await api.put("/users/"+userSelected.id,userSelected)
       .then(response => {
         var newUsers = users;
         newUsers.map(user=>{
@@ -152,26 +152,34 @@ function Users() {
   const bodyInsertar = (
     <div className={styles.modal}>
       <h3>Agregar Nuevo Usuario</h3>
+      <br />
+      <br />
       <TextField
         name="name"
         className={styles.inputMaterial}
         label="Nombre"
         onChange={handleChange}
+        variant="outlined"
       />
+      <br />
       <br />
       <TextField
         name="uid"
         className={styles.inputMaterial}
         label="Nombre de Usuario"
         onChange={handleChange}
+        variant="outlined"
       />
+      <br />
       <br />
       <TextField
         name="email"
         className={styles.inputMaterial}
         label="Correo Electronico"
         onChange={handleChange}
+        variant="outlined"
       />
+      <br />
       <br />
       <TextField
         type="password"
@@ -179,7 +187,9 @@ function Users() {
         className={styles.inputMaterial}
         label="Contraseña"
         onChange={handleChange}
+        variant="outlined"
       />
+      <br />
       <br />
       <TextField
         type="password"
@@ -187,15 +197,16 @@ function Users() {
         className={styles.inputMaterial}
         label="Verificar Contraseña"
         onChange={handleChange}
+        variant="outlined"
       />
       <br />
       <br />
       <br />
       <div align="right">
-        <Button color="primary" onClick={() => createUser()}>
+        <Button variant="contained" color="primary" onClick={() => createUser()}>
           Insertar
         </Button>
-        <Button onClick={() => abrirCerrarModalInsertar()}>Cancelar</Button>
+        <Button variant="contained" color="secondary" onClick={() => abrirCerrarModalInsertar()}>Cancelar</Button>
       </div>
     </div>
   );
@@ -203,21 +214,27 @@ function Users() {
   const bodyEditar = (
     <div className={styles.modal}>
       <h3>Editar Usuario</h3>
+      <br />
+      <br />
       <TextField
         name="name"
         className={styles.inputMaterial}
         label="Nombre"
         onChange={handleChange}
         value={userSelected && userSelected.name}
+        variant="outlined"
       />
       <br />
+      <br />
       <TextField
-        name="username"
+        name="uid"
         className={styles.inputMaterial}
         label="Nombre de Usuario"
         onChange={handleChange}
-        value={userSelected && userSelected.username}
+        value={userSelected && userSelected.uid}
+        variant="outlined"
       />
+      <br />
       <br />
       <TextField
         name="email"
@@ -225,15 +242,16 @@ function Users() {
         label="Correo Electronico"
         onChange={handleChange}
         value={userSelected && userSelected.email}
+        variant="outlined"
       />
       <br />
       <br />
       <br />
       <div align="right">
-        <Button color="primary" onClick={() => updateUser()}>
+        <Button variant="contained" color="primary" onClick={() => updateUser()}>
           Editar
         </Button>
-        <Button onClick={() => abrirCerrarModalEditar()}>Cancelar</Button>
+        <Button variant="contained" color="secondary" onClick={() => abrirCerrarModalEditar()}>Cancelar</Button>
       </div>
     </div>
   );
@@ -241,9 +259,11 @@ function Users() {
   const bodyEliminar=(
     <div className={styles.modal}>
       <p>Estás seguro que deseas eliminar el usuario? </p>
+      <br/><br/>
       <div align="right">
-        <Button color="secondary" onClick={()=>deleteUser()} >Sí</Button>
-        <Button onClick={()=>abrirCerrarModalEliminar()}>No</Button>
+        <Button variant="contained" color="secondary" onClick={()=>deleteUser()} >Sí</Button>
+        &nbsp;&nbsp;
+        <Button variant="contained" color="primary" onClick={()=>abrirCerrarModalEliminar()}>No</Button>
 
       </div>
 
@@ -253,7 +273,7 @@ function Users() {
   return (
     <div className="users__crud">
       <br />
-      <Button onClick={() => abrirCerrarModalInsertar()}>Insertar</Button>
+      <Button variant="contained" color="primary" onClick={() => abrirCerrarModalInsertar()}>Insertar</Button>
       <br />
       <br />
       <TableContainer>
@@ -272,10 +292,11 @@ function Users() {
             {users.map((user) => (
               <TableRow key={user.id}>
                 <TableCell>{user.name}</TableCell>
-                <TableCell>{user.username}</TableCell>
+                <TableCell>{user.uid}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
                   <Edit onClick={()=>seleccionarUser(user, 'Editar')}/>
+                  &nbsp;&nbsp;
                   <Delete onClick={()=>seleccionarUser(user, 'Eliminar')}/>
                 </TableCell>
               </TableRow>
