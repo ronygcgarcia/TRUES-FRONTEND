@@ -37,39 +37,53 @@ const MenuProps = {
     },
 };
 
-const permissions = [
-    {id:1,name:'crear articles'},
-    {id:2,name:'ver articles'},
-    {id:3,name:'editar articles'},
-    {id:4,name:'eliminar articles'}
-];
+const permissions = [];
+
+api.get('/permisos').then((response)=>{    
+    response.data.forEach(function(element){
+        permissions.push(element)
+    })
+})
+
 
 const FormRole = (props) => {
-    const [rol, setRol] = React.useState({id:0,name:'',permissions:[]});
+    const [rol, setRol] = React.useState({ id: 0, name: '', permissions: [] });
 
     const classes = useStyles();
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = (e) => {
         e.preventDefault();
         //console.log("ESTADO ANTES DE PERMISOS",rol);
-        const permisos = rol.permissions.map((el)=> {
-            return permissions.find(p =>p.name === el).id;
+        const permisos = rol.permissions.map((el) => {
+            return permissions.find(p => p.name === el).id;
         });
-        if(props.formType==='new'){
-            console.log(rol)
-            api.post("/roles",{...rol,permissions:permisos}).then((response)=>{
-                console.log(response)
-            },(error)=>{
+        if (props.formType === 'new') {
+            //console.log(rol)
+            api.post("/roles", { ...rol, permissions: permisos }).then((response) => {
+                props.setRows(props.rows.concat(response.data));
+            }, (error) => {
                 console.log(error)
             })
-        }else if(props.formType==='edit'){
-            console.log(rol)
-            api.put("/roles/"+props.rolId,{...rol,permissions:permisos}).then((response)=>{
-                console.log(response)
+        } else if (props.formType === 'edit') {
+            //console.log(rol)
+            api.put("/roles/" + props.rolId, { ...rol, permissions: permisos }).then((response) => {
+                var newRows = props.rows
+                newRows.forEach(function(row){
+                    if (row.id === response.data.id) {
+                        row.name = rol.name
+                    }
+                })
+                props.setRows([])
+                props.setRows(newRows)
+                //console.log(props.rows)
             })
-        }else{
-            api.delete("/roles/"+props.rolId).then((response)=>{
-                console.log(response)
+        } else {
+            api.delete("/roles/" + props.rolId).then((response) => {
+                //console.log(response)
+                api.get('/roles').then((response) => {
+                    props.setRows([])
+                    props.setRows(response.data)
+                })
             })
         }
         //console.log("ESTADO ANTES DE ENVIAR",{...rol,permissions:permisos});
@@ -78,21 +92,23 @@ const FormRole = (props) => {
 
     const handleChange = (event) => {
         //setPermission(event.target.value);
-        console.log(event.target.value);
-        setRol({...rol,permissions:event.target.value})
+        //console.log(event.target.value);
+        setRol({ ...rol, permissions: event.target.value })
     };
 
-    useEffect(()=>{                
-        if(props.rolId && props.rolId!==0){
-            api.get('/roles/'+props.rolId).then((response)=>{
+    useEffect(() => {
+        if (props.rolId && props.rolId !== 0) {
+            api.get('/roles/' + props.rolId).then((response) => {
                 // los objetos permiso, se cambian a strings para que el select funcione
-                console.log(response)
-                setRol({id:props.rolId,name:response.data.name,permissions:response.data.permissions.map((ele)=>{
-                    return ele.name
-                })});
+                //console.log(response)
+                setRol({
+                    id: props.rolId, name: response.data.name, permissions: response.data.permissions.map((ele) => {
+                        return ele.name
+                    })
+                });
             })
         }
-    },[props.rolId]);
+    }, [props.rolId]);
 
     function createOrEdit() {
         return (<FormGroup style={{ justifyContent: 'center' }}>

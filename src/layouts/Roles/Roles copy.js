@@ -35,9 +35,9 @@ const columns = [
     }
 ];
 
-/*function createData(id, users, actions) {
+function createData(id, users, actions) {
     return { id, users, actions };
-}*/
+}
 
 
 const useStyles = makeStyles((theme) => ({
@@ -69,9 +69,9 @@ export default function StickyHeadTable() {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [open, setOpen] = React.useState(false);
     const [formType, setFormType] = React.useState('');
-    //const [roles, setRoles] = useState();
+    const [roles, setRoles] = useState();
     const [rol, setRol] = useState({ id: 0, name: '', permisos: [] });
-    const [rows, setRows] = useState([]);
+    const rows=[];
 
     const handleOpen = () => {
         setOpen(true);
@@ -92,9 +92,9 @@ export default function StickyHeadTable() {
 
 
     const getRoles = async () => {
-        try {            
+        try {
             const resp = await api.get('/roles');
-            setRows(resp.data)
+            setRoles(resp.data)
         } catch (err) {
             // Handle Error Here
             console.error(err);
@@ -102,10 +102,34 @@ export default function StickyHeadTable() {
     };
 
     useEffect(() => {
-        getRoles()        
-    }, [])    
+        getRoles()
+    }, [])
 
-    //console.log(rows)
+    if (roles) {
+        rows.push(...roles.map((element) => {
+            return createData(
+                element.id,
+                element.name,
+                <Box pr={1} pl={1}>
+                    <Button variant="outlined" color="primary" onClick={() => {
+                        handleOpen();
+                        setFormType('edit');
+                        setRol(element);
+                        console.log(element)
+                    }}>
+                        <EditIcon />
+                    </Button> <Button variant="outlined" color="secondary" onClick={() => {
+                        handleOpen();
+                        setFormType('delete');
+                        setRol(element);
+                    }}>
+                        <DeleteForeverIcon />
+                    </Button>
+                </Box>
+            )
+        }));
+    }
+    
     return (
         <div>
             <Box pt={1} pb={1}>
@@ -134,33 +158,20 @@ export default function StickyHeadTable() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.map((element, index) => (
-                                <TableRow>
-                                    <TableCell key={index}>
-                                        {element.id}
-                                    </TableCell>
-                                    <TableCell align='right'>
-                                        {element.name}
-                                    </TableCell>
-                                    <TableCell align='center'>
-                                        <Box pr={1} pl={1}>
-                                            <Button variant="outlined" color="primary" onClick={() => {
-                                                handleOpen();
-                                                setFormType('edit');
-                                                setRol(element);                                                
-                                            }}>
-                                                <EditIcon />
-                                            </Button> <Button variant="outlined" color="secondary" onClick={() => {
-                                                handleOpen();
-                                                setFormType('delete');
-                                                setRol(element);
-                                            }}>
-                                                <DeleteForeverIcon />
-                                            </Button>
-                                        </Box>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                                return (
+                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                                        {columns.map((column) => {
+                                            const value = row[column.id];
+                                            return (
+                                                <TableCell key={column.id} align={column.align}>
+                                                    {column.format && typeof value === 'number' ? column.format(value) : value}
+                                                </TableCell>
+                                            );
+                                        })}
+                                    </TableRow>
+                                );
+                            })}
                         </TableBody>
                     </Table>
                 </TableContainer>
@@ -189,7 +200,7 @@ export default function StickyHeadTable() {
                     <Fade in={open}>
                         <div className={classes.paper}>
                             <h1 id="transition-modal-title">{formType === 'new' ? 'Crear rol' : formType === 'edit' ? 'Editar rol' : 'Eliminar rol'}</h1>
-                            <FormRole rolId={rol.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormRole>
+                            <FormRole rolId={rol.id} formType={formType} handleClose={handleClose} ></FormRole>
                         </div>
                     </Fade>
                 </Modal>
