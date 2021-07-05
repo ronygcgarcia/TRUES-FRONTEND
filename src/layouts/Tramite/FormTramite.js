@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
             width: '100ch',
         },
     },
-    formContubicacion: {
+    formContunidad: {
         margin: theme.spacing(1),
         minWidth: 120,
         maxWidth: 300,
@@ -22,31 +22,29 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FormRole = (props) => {
-    const [ubicacion, setUbicacion] = React.useState({ id: 0, name: '', permissions: [] });
+    const [tramite, setTramite] = React.useState({ id: 0, nombre: '' });
     const [requestError, setRequestError] = useState();
     const classes = useStyles();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        //console.log("ESTADO ANTES DE PERMISOS",ubicacion);        
+        //console.log("ESTADO ANTES DE PERMISOS",tramite);        
         if (props.formType === 'new') {
-            //console.log(ubicacion)
-            api.post("/ubicacion", ubicacion).then((response) => {
+            console.log(tramite)
+            api.post("/tramite", tramite).then((response) => {
                 props.setRows(props.rows.concat(response.data));
+                props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
                 setRequestError(error.response.data.message)
             })
         } else if (props.formType === 'edit') {
-            //console.log(ubicacion)
-            api.put("/ubicacion/" + props.ubicacionId, ubicacion).then((response) => {
+            //console.log(tramite)
+            api.put("/tramite/" + props.unidadId, tramite).then((response) => {
                 var newRows = props.rows
                 newRows.forEach(function (row) {
                     if (row.id === response.data.id) {
-                        row.nombre = ubicacion.nombre
-                        row.descripcion = ubicacion.descripcion
-                        row.longitud = ubicacion.longitud
-                        row.latitud = ubicacion.latitud
+                        row.nombre = tramite.nombre
                     }
                 })
                 props.setRows([])
@@ -57,67 +55,41 @@ const FormRole = (props) => {
                 setRequestError(error.response.data.message)
             })
         } else {
-            api.delete("/ubicacion/" + props.ubicacionId).then((response) => {
+            api.delete("/tramite/" + props.unidadId).then((response) => {
                 //console.log(response)
-                api.get('/ubicacion').then((response) => {
+                api.get('/tramite').then((response) => {
                     props.setRows([])
                     props.setRows(response.data)
+                    props.handleClose();
                 })
-                props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
                 setRequestError(error.response.data.message)
-                props.handleClose();
             })
         }
-        //console.log("ESTADO ANTES DE ENVIAR",{...ubicacion,permissions:permisos});        
     }
 
     useEffect(() => {
-        if (props.ubicacionId && props.ubicacionId !== 0) {
-            api.get('/ubicacion/' + props.ubicacionId).then((response) => {
+        if (props.unidadId && props.unidadId !== 0) {
+            api.get('/tramite/' + props.unidadId).then((response) => {
                 // los objetos permiso, se cambian a strings para que el select funcione
                 //console.log(response)
-                setUbicacion({
-                    id: props.ubicacionId, nombre: response.data.nombre, descripcion: response.data.descripcion, longitud: response.data.longitud, latitud: response.data.latitud
+                setTramite({
+                    id: props.unidadId, nombre: response.data.nombre
                 });
             })
         }
-    }, [props.ubicacionId]);
+    }, [props.unidadId]);
 
     function createOrEdit() {
         return (<FormGroup style={{ justifyContent: 'center' }}>
             <TextField
                 required
                 id="outlined-required"
-                placeholder="Nombre ubicacion*"
-                value={ubicacion.nombre}
+                placeholder="Nombre tramite*"
+                value={tramite.nombre}
                 variant="outlined"
-                onChange={(e) => setUbicacion({ ...ubicacion, nombre: e.target.value })}
-            />
-            <TextField
-                required
-                id="outlined-required"
-                placeholder="Descripcion*"
-                value={ubicacion.descripcion}
-                variant="outlined"
-                onChange={(e) => setUbicacion({ ...ubicacion, descripcion: e.target.value })}
-            />
-            <TextField
-                required
-                id="outlined-required"
-                placeholder="Longitud*"
-                value={ubicacion.longitud}
-                variant="outlined"
-                onChange={(e) => setUbicacion({ ...ubicacion, longitud: e.target.value })}
-            />
-            <TextField
-                required
-                id="outlined-required"
-                placeholder="Latitud*"
-                value={ubicacion.latitud}
-                variant="outlined"
-                onChange={(e) => setUbicacion({ ...ubicacion, latitud: e.target.value })}
+                onChange={(e) => setTramite({ ...tramite, nombre: e.target.value })}
             />
         </FormGroup>);
     }
@@ -126,8 +98,8 @@ const FormRole = (props) => {
     return (
         <div>
             <form onSubmit={handleSubmit} className={classes.root}>
-                {requestError != null ? <p className="alert danger-alert"><Alert severity="error">Ha ocurrido un error: {requestError}</Alert></p> : ''}
-                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este ubicacion?</p> : createOrEdit()}
+                {requestError != null ? <p className="alert danger-alert"><Alert severity="error">Ha ocurrido un error: {requestError}</Alert></p> : ''}                
+                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este tramite?</p> : createOrEdit()}
                 <FormControl style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '1rem' }}>
                     <Button variant="contained" color="secondary" onClick={props.handleClose}>
                         Cerrar

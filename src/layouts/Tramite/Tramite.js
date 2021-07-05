@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import FormUbicacion from './FormUnidad';
+import FormUbicacion from './FormTramite';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
@@ -19,14 +19,13 @@ import Fade from '@material-ui/core/Fade';
 import Backdrop from '@material-ui/core/Backdrop'
 import api from '../../config/axios';
 import Typography from '@material-ui/core/Typography';
-
 const columns = [
-    { id: 'id', label: 'nombre', align: 'center',minWidth: 170 },
+    { id: 'id', label: 'Tramite', align: 'center',minWidth: 170 },
     {
         id: 'nombre',
-        label: 'Nombre',
+        label: 'Acciones',
         minWidth: 170,
-        align: 'right',
+        align: 'center',
         format: (value) => value.toLocaleString('en-US'),
     }
 ];
@@ -65,8 +64,8 @@ export default function StickyHeadTable() {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [open, setOpen] = React.useState(false);
     const [formType, setFormType] = React.useState('');
-    //const [unidades, setUnidad] = useState();
-    const [unidad, setUnidad] = useState({ id: 0, nombre: '' });
+    //const [unidades, setTramite] = useState();
+    const [tramite, setTramite] = useState({ id: 0, nombre: '' });
     const [rows, setRows] = useState([]);
 
     const handleOpen = () => {
@@ -85,11 +84,9 @@ export default function StickyHeadTable() {
         setPage(0);
     };
 
-
-
-    const getUnidad = async () => {
+    const getTramite = async () => {
         try {            
-            const resp = await api.get('/unidad');
+            const resp = await api.get('/ubicacion');
             setRows(resp.data)
         } catch (err) {
             // Handle Error Here
@@ -98,7 +95,7 @@ export default function StickyHeadTable() {
     };
 
     useEffect(() => {
-        getUnidad()        
+        getTramite()        
     }, [])    
 
     //console.log(rows)
@@ -108,9 +105,9 @@ export default function StickyHeadTable() {
                 <Button variant="outlined" color="primary" onClick={() => {
                     handleOpen();
                     setFormType('new');
-                    setUnidad({ id: 0, name: '', permisos: [] })
+                    setTramite({ id: 0, name: '', permisos: [] })
                 }} style={{ display: 'block', marginLeft: 'auto' }}>
-                    <AddIcon /> Crear nuevo unidad
+                    <AddIcon /> Crear nuevo tramite
                 </Button>
             </Box>
             <Paper className={classes.root} >
@@ -140,13 +137,13 @@ export default function StickyHeadTable() {
                                             <Button variant="outlined" color="primary" onClick={() => {
                                                 handleOpen();
                                                 setFormType('edit');
-                                                setUnidad(element);                                                
+                                                setTramite(element);                                                
                                             }}>
                                                 <EditIcon />
                                             </Button> <Button variant="outlined" color="secondary" onClick={() => {
                                                 handleOpen();
                                                 setFormType('delete');
-                                                setUnidad(element);
+                                                setTramite(element);
                                             }}>
                                                 <DeleteForeverIcon />
                                             </Button>
@@ -181,8 +178,8 @@ export default function StickyHeadTable() {
                 >
                     <Fade in={open}>
                         <div className={classes.paper}>
-                        <h1 id="transition-modal-title">{formType === 'new' ? <Typography variant="h4">Crear unidad</Typography>: formType === 'edit' ?  <Typography variant="h4">Editar unidad</Typography> :  <Typography variant="h4">Eliminar unidad</Typography>}</h1>
-                            <FormUbicacion unidadId={unidad.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormUbicacion>
+                            <h1 id="transition-modal-title">{formType === 'new' ? <Typography variant="h4">Crear tramite</Typography>: formType === 'edit' ?  <Typography variant="h4">Editar tramite</Typography> :  <Typography variant="h4">Eliminar tramite</Typography>}</h1>
+                            <FormUbicacion unidadId={tramite.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormUbicacion>
                         </div>
                     </Fade>
                 </Modal>

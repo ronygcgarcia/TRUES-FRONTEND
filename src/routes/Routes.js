@@ -4,6 +4,7 @@ import Login from '../layouts/Login/Login';
 import Ubicacion from '../layouts/Ubicacion/Ubicacion';
 import Unidad from '../layouts/Unidad/Unidad';
 import createRole from '../layouts/Roles/Roles'
+import Tramite from '../layouts/Tramite/Tramite'
 //import Home from '../layouts/Home/Home';
 import Drawer from '../components/Drawer/Drawer';
 
@@ -20,6 +21,7 @@ class Routes extends Component {
                         <Route path='/login' exact component={Login} />
                         <Route path='/ubicacion' exact component={Ubicacion} />
                         <Route path='/unidad' exact component={Unidad} />
+                        <Route path='/tramite' exact component={Tramite} />
                     </Switch>
                 </Router>
             </Drawer>

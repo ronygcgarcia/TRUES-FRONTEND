@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormGroup } from '@material-ui/core';
 import api from '../../config/axios';
+import Alert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -21,8 +22,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FormRole = (props) => {
-    const [unidad, setUnidad] = React.useState({ id: 0, nombre: ''});
-
+    const [unidad, setUnidad] = React.useState({ id: 0, nombre: '' });
+    const [requestError, setRequestError] = useState();
     const classes = useStyles();
 
     const handleSubmit = (e) => {
@@ -32,20 +33,26 @@ const FormRole = (props) => {
             console.log(unidad)
             api.post("/unidad", unidad).then((response) => {
                 props.setRows(props.rows.concat(response.data));
+                props.handleClose();
             }, (error) => {
-                console.log(error)
+                console.log(error.response.data.message)
+                setRequestError(error.response.data.message)
             })
         } else if (props.formType === 'edit') {
             //console.log(unidad)
             api.put("/unidad/" + props.unidadId, unidad).then((response) => {
                 var newRows = props.rows
-                newRows.forEach(function(row){
+                newRows.forEach(function (row) {
                     if (row.id === response.data.id) {
-                        row.nombre = unidad.nombre                       
+                        row.nombre = unidad.nombre
                     }
                 })
                 props.setRows([])
-                props.setRows(newRows)                
+                props.setRows(newRows)
+                props.handleClose();
+            }, (error) => {
+                console.log(error.response.data.message)
+                setRequestError(error.response.data.message)
             })
         } else {
             api.delete("/unidad/" + props.unidadId).then((response) => {
@@ -54,9 +61,12 @@ const FormRole = (props) => {
                     props.setRows([])
                     props.setRows(response.data)
                 })
+                props.handleClose();
+            }, (error) => {
+                console.log(error.response.data.message)
+                setRequestError(error.response.data.message)
             })
         }        
-        props.handleClose();
     }
 
     useEffect(() => {
@@ -80,7 +90,7 @@ const FormRole = (props) => {
                 value={unidad.nombre}
                 variant="outlined"
                 onChange={(e) => setUnidad({ ...unidad, nombre: e.target.value })}
-            />              
+            />
         </FormGroup>);
     }
 
@@ -88,6 +98,7 @@ const FormRole = (props) => {
     return (
         <div>
             <form onSubmit={handleSubmit} className={classes.root}>
+                {requestError != null ? <p className="alert danger-alert"><Alert severity="error">Ha ocurrido un error: {requestError}</Alert></p> : ''}
                 {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este unidad?</p> : createOrEdit()}
                 <FormControl style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '1rem' }}>
                     <Button variant="contained" color="secondary" onClick={props.handleClose}>

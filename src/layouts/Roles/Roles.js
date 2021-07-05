@@ -18,6 +18,8 @@ import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
 import Backdrop from '@material-ui/core/Backdrop'
 import api from '../../config/axios';
+import Typography from '@material-ui/core/Typography';
+
 const columns = [
     { id: 'id', label: 'id', minWidth: 170 },
     {
@@ -188,7 +190,7 @@ export default function StickyHeadTable() {
                 >
                     <Fade in={open}>
                         <div className={classes.paper}>
-                            <h1 id="transition-modal-title">{formType === 'new' ? 'Crear rol' : formType === 'edit' ? 'Editar rol' : 'Eliminar rol'}</h1>
+                        <h1 id="transition-modal-title">{formType === 'new' ? <Typography variant="h4">Crear rol</Typography>: formType === 'edit' ?  <Typography variant="h4">Editar rol</Typography> :  <Typography variant="h4">Eliminar rol</Typography>}</h1>
                             <FormRole rolId={rol.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormRole>
                         </div>
                     </Fade>

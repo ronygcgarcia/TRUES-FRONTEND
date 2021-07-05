@@ -18,6 +18,8 @@ import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
 import Backdrop from '@material-ui/core/Backdrop'
 import api from '../../config/axios';
+import Typography from '@material-ui/core/Typography';
+
 const columns = [
     { id: 'nombre', label: 'nombre', align: 'center',minWidth: 170 },
     {
@@ -205,7 +207,7 @@ export default function StickyHeadTable() {
                 >
                     <Fade in={open}>
                         <div className={classes.paper}>
-                            <h1 id="transition-modal-title">{formType === 'new' ? 'Crear ubicacion' : formType === 'edit' ? 'Editar ubicacion' : 'Eliminar ubicacion'}</h1>
+                        <h1 id="transition-modal-title">{formType === 'new' ? <Typography variant="h4">Crear ubicacion</Typography>: formType === 'edit' ?  <Typography variant="h4">Editar ubicacion</Typography> :  <Typography variant="h4">Eliminar ubicacion</Typography>}</h1>
                             <FormUbicacion ubicacionId={ubicacion.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormUbicacion>
                         </div>
                     </Fade>
