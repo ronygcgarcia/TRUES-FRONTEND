@@ -1,11 +1,327 @@
-import React from 'react'
+import React, { useEffect, useState, forwardRef } from "react";
+import api from "../../config/axios";
+
+//---------------------------------------------------------------Material UI
+import { makeStyles } from "@material-ui/core/styles";
+import { Button, Modal, TextField } from "@material-ui/core";
+import { Delete } from "@material-ui/icons";
+
+//------------------------------------------------------------Material Table
+import MaterialTable from "material-table";
+import AddBox from "@material-ui/icons/AddBox";
+import ArrowDownward from "@material-ui/icons/ArrowDownward";
+import Check from "@material-ui/icons/Check";
+import ChevronLeft from "@material-ui/icons/ChevronLeft";
+import ChevronRight from "@material-ui/icons/ChevronRight";
+import Clear from "@material-ui/icons/Clear";
+import DeleteOutline from "@material-ui/icons/DeleteOutline";
+import Edit from "@material-ui/icons/Edit";
+import FilterList from "@material-ui/icons/FilterList";
+import FirstPage from "@material-ui/icons/FirstPage";
+import LastPage from "@material-ui/icons/LastPage";
+import Remove from "@material-ui/icons/Remove";
+import SaveAlt from "@material-ui/icons/SaveAlt";
+import Search from "@material-ui/icons/Search";
+import ViewColumn from "@material-ui/icons/ViewColumn";
+
+//------------------------------------------------Iconos que usa material-table
+const tableIcons = {
+  Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
+  Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
+  Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+  DetailPanel: forwardRef((props, ref) => (
+    <ChevronRight {...props} ref={ref} />
+  )),
+  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+  Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
+  Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
+  FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
+  LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
+  NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
+  PreviousPage: forwardRef((props, ref) => (
+    <ChevronLeft {...props} ref={ref} />
+  )),
+  ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+  Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
+  SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
+  ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
+  ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
+};
+
+//----------------------------------------------------Estilos para los Modales
+const useStyles = makeStyles((theme) => ({
+  modal: {
+    position: "absolute",
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: "2px solid #000",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+  },
+  iconos: {
+    cursor: "pointer",
+  },
+  inputMaterial: {
+    width: "100%",
+  },
+}));
 
 function Personal() {
-    return (
-        <div>
-            
-        </div>
-    )
+  //-----------------------------------Definicion de columnas para material-table
+  const columnas = [
+    {
+      title: "Nombre",
+      field: "nombre",
+    },
+  ];
+
+  const [personal, setPersonal] = useState([]);
+  const styles = useStyles();
+
+  //Estados para los modales para las acciones de los usuarios
+  const [modalInsertar, setModalInsertar] = useState(false);
+  const [modalEditar, setModalEditar] = useState(false);
+  const [modalEliminar, setModalEliminar] = useState(false);
+
+  //Estado para el usuario al cual hacer acciones
+  const [personalSelected, setPersonalSelected] = useState({
+    nombre: "",
+  });
+
+  //Obtener los que el usuarion escribe en los textfield
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setPersonalSelected((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+    console.log(personalSelected);
+  };
+
+  //Acciones para mostrar los Modales
+  const abrirCerrarModalInsertar = () => {
+    setModalInsertar(!modalInsertar);
+  };
+
+  const abrirCerrarModalEditar = () => {
+    setModalEditar(!modalEditar);
+  };
+
+  const abrirCerrarModalEliminar = () => {
+    setModalEliminar(!modalEliminar);
+  };
+
+  //Peticiones para obtener los usuarios
+  const getPersonal = async () => {
+    try {
+      const resp = await api.get("/personal");
+      setPersonal(resp.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const createPersonal = async () => {
+    try {
+      const resp = await api
+        .post("/personal", personalSelected)
+        .then((response) => {
+          setPersonal(personal.concat(response.data));
+          
+          abrirCerrarModalInsertar();
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const updatePersona = async () => {
+    try {
+      const resp = await api
+        .put("/personal/" + personalSelected.id, personalSelected)
+        .then((response) => {
+          var newPersonal = personal;
+          newPersonal.map((persona) => {
+            if (personalSelected.id === persona.id) {
+              persona.nombre = personalSelected.nombre;
+            }
+          });
+          setPersonal(newPersonal);
+          abrirCerrarModalEditar();
+        });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deletePersona = async () => {
+    try {
+      const resp = await api
+        .delete("/personal/" + personalSelected.id)
+        .then((response) => {
+          setPersonal(
+            personal.filter((persona) => persona.id !== personalSelected.id)
+          );
+          abrirCerrarModalEliminar();
+        });
+    } catch (error) {
+      console.log("Somethig went wrong");
+    }
+  };
+
+  //Seleccionar el usuario de la tabla al cual realizar acciones
+  const seleccionarPersona = (persona, caso) => {
+    setPersonalSelected(persona);
+    caso === "Editar" ? abrirCerrarModalEditar() : abrirCerrarModalEliminar();
+  };
+
+  useEffect(() => {
+    getPersonal();
+  }, []);
+
+  const bodyInsertar = (
+    <div className={styles.modal}>
+      <div align="right">
+        <TextField
+          name="nombre"
+          className={styles.inputMaterial}
+          label="Nombre del Personal"
+          onChange={handleChange}
+          variant="outlined"
+        />
+        <br />
+        <br />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => createPersonal()}
+        >
+          Insertar
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => abrirCerrarModalInsertar()}
+        >
+          Cancelar
+        </Button>
+      </div>
+    </div>
+  );
+
+  
+  const bodyEditar = (
+    <div className={styles.modal}>
+      <h3>Editar Personal</h3>
+      <br />
+      <br />
+      <TextField
+        name="nombre"
+        className={styles.inputMaterial}
+        label="Nombre"
+        onChange={handleChange}
+        value={personalSelected && personalSelected.nombre}
+        variant="outlined"
+      />
+      <br />
+      <br />
+      <br />
+      <div align="right">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => updatePersona()}
+        >
+          Editar
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => abrirCerrarModalEditar()}
+        >
+          Cancelar
+        </Button>
+      </div>
+    </div>
+  );
+  const bodyEliminar = (
+    <div className={styles.modal}>
+      <p>Estás seguro que deseas eliminar esta persona? </p>
+      <br />
+      <br />
+      <div align="right">
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => deletePersona()}
+        >
+          Sí
+        </Button>
+        &nbsp;&nbsp;
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => abrirCerrarModalEliminar()}
+        >
+          No
+        </Button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="personal-crud">
+      <br />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => abrirCerrarModalInsertar()}
+      >
+        Crear Nuevo Personal
+      </Button>
+      <br />
+      <br />
+      <MaterialTable
+        icons={tableIcons}
+        title="Usuarios del sistema"
+        columns={columnas}
+        data={personal}
+        actions={[
+          {
+            icon: Edit,
+            tooltip: "Modificar Información del Personal",
+            onClick: (event, rowData) => seleccionarPersona(rowData, "Editar"),
+          },
+          {
+            icon: Delete,
+            tooltip: "Elimnar Personal",
+            onClick: (event, rowData) =>
+              seleccionarPersona(rowData, "Eliminar"),
+          },
+        ]}
+        options={{ actionsColumnIndex: -1 }}
+        localization={{
+          header: {
+            actions: "Opciones",
+          },
+        }}
+      />
+
+      <Modal open={modalInsertar} onClose={abrirCerrarModalInsertar}>
+        {bodyInsertar}
+      </Modal>
+      <Modal open={modalEditar} onClose={abrirCerrarModalEditar}>
+        {bodyEditar}
+      </Modal>
+      <Modal open={modalEliminar} onClose={abrirCerrarModalEliminar}>
+        {bodyEliminar}
+      </Modal>
+    </div>
+  );
 }
 
-export default Personal
+export default Personal;
