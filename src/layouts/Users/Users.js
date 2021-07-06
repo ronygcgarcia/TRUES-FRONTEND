@@ -1,11 +1,13 @@
 import React, { useEffect, useState, forwardRef } from "react";
 import api from "../../config/axios";
 import "./User.css";
+import Alert from "@material-ui/lab/Alert";
 
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
+import Typography from "@material-ui/core/Typography";
 
 //------------------------------------------------------------Material Table
 import MaterialTable from "material-table";
@@ -56,12 +58,12 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     width: 400,
     backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
+    borderRadius: "8px",
   },
   iconos: {
     cursor: "pointer",
@@ -91,6 +93,7 @@ function Users() {
 
   const [users, setUsers] = useState([]);
   const styles = useStyles();
+  const [requestError, setRequestError] = useState(null);
 
   //Estados para los modales para las acciones de los usuarios
   const [modalInsertar, setModalInsertar] = useState(false);
@@ -113,7 +116,7 @@ function Users() {
       ...prevState,
       [name]: value,
     }));
-    console.log(userSelected);
+    setRequestError(null);
   };
 
   //Acciones para mostrar los Modales
@@ -143,12 +146,10 @@ function Users() {
     try {
       const resp = await api.post("/users", userSelected).then((response) => {
         setUsers(users.concat(response.data));
-        console.log(users);
-        console.log(response.data);
         abrirCerrarModalInsertar();
       });
     } catch (error) {
-      console.error(error);
+      setRequestError(error.response.data.message);
     }
   };
 
@@ -169,7 +170,7 @@ function Users() {
           abrirCerrarModalEditar();
         });
     } catch (error) {
-      console.error(error);
+      setRequestError(error.response.data.message);
     }
   };
 
@@ -182,7 +183,7 @@ function Users() {
           abrirCerrarModalEliminar();
         });
     } catch (error) {
-      console.log("Somethig went wrong");
+      setRequestError(error.response.data.message);
     }
   };
 
@@ -198,138 +199,174 @@ function Users() {
 
   const bodyInsertar = (
     <div className={styles.modal}>
-      <h3>Agregar Nuevo Usuario</h3>
-      <br />
-      <br />
-      <TextField
-        name="name"
-        className={styles.inputMaterial}
-        label="Nombre del Usuario"
-        onChange={handleChange}
-        variant="outlined"
-      />
-      <br />
-      <br />
-      <TextField
-        name="uid"
-        required="true"
-        className={styles.inputMaterial}
-        label="Nombre de Usuario"
-        onChange={handleChange}
-        variant="outlined"
-      />
-      <br />
-      <br />
-      <TextField
-        name="email"
-        className={styles.inputMaterial}
-        label="Correo Electronico"
-        onChange={handleChange}
-        variant="outlined"
-      />
-      <br />
-      <br />
-      <TextField
-        type="password"
-        name="password"
-        className={styles.inputMaterial}
-        label="Contraseña"
-        onChange={handleChange}
-        variant="outlined"
-      />
-      <br />
-      <br />
-      <TextField
-        type="password"
-        name="password_confirmation"
-        className={styles.inputMaterial}
-        label="Repetir Contraseña"
-        onChange={handleChange}
-        variant="outlined"
-      />
-      <br />
-      <br />
-      <br />
-      <div align="right">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => createUser()}
-        >
-          Insertar
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => abrirCerrarModalInsertar()}
-        >
-          Cancelar
-        </Button>
-      </div>
+      <form>
+        <Typography variant="h4">Agregar Nuevo Usuario</Typography>
+        <br />
+        <br />
+        <TextField
+          required
+          name="name"
+          className={styles.inputMaterial}
+          label="Nombre del Usuario"
+          onChange={handleChange}
+          variant="outlined"
+        />
+        <br />
+        <br />
+        <TextField
+          name="uid"
+          required
+          className={styles.inputMaterial}
+          label="Nombre de Usuario"
+          onChange={handleChange}
+          variant="outlined"
+        />
+        <br />
+        <br />
+        <TextField
+          name="email"
+          required
+          className={styles.inputMaterial}
+          label="Correo Electronico"
+          onChange={handleChange}
+          variant="outlined"
+        />
+        <br />
+        <br />
+        <TextField
+          type="password"
+          name="password"
+          className={styles.inputMaterial}
+          label="Contraseña"
+          onChange={handleChange}
+          variant="outlined"
+        />
+        <br />
+        <br />
+        <TextField
+          type="password"
+          name="password_confirmation"
+          className={styles.inputMaterial}
+          label="Repetir Contraseña"
+          onChange={handleChange}
+          variant="outlined"
+        />
+        <br />
+        <br />
+        <br />
+        <div align="right">
+          {requestError != null ? (
+            <div className="alert danger-alert">
+              <Alert severity="error">
+                Ha ocurrido un error: {requestError}
+              </Alert>
+            </div>
+          ) : (
+            ""
+          )}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => createUser()}
+          >
+            Insertar
+          </Button>
+          &nbsp;&nbsp;
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => abrirCerrarModalInsertar()}
+          >
+            Cancelar
+          </Button>
+        </div>
+      </form>
     </div>
   );
 
   const bodyEditar = (
     <div className={styles.modal}>
-      <h3>Editar Usuario</h3>
-      <br />
-      <br />
-      <TextField
-        name="name"
-        className={styles.inputMaterial}
-        label="Nombre"
-        onChange={handleChange}
-        value={userSelected && userSelected.name}
-        variant="outlined"
-      />
-      <br />
-      <br />
-      <TextField
-        name="uid"
-        className={styles.inputMaterial}
-        label="Nombre de Usuario"
-        onChange={handleChange}
-        value={userSelected && userSelected.uid}
-        variant="outlined"
-      />
-      <br />
-      <br />
-      <TextField
-        name="email"
-        className={styles.inputMaterial}
-        label="Correo Electronico"
-        onChange={handleChange}
-        value={userSelected && userSelected.email}
-        variant="outlined"
-      />
-      <br />
-      <br />
-      <br />
-      <div align="right">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => updateUser()}
-        >
-          Editar
-        </Button>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => abrirCerrarModalEditar()}
-        >
-          Cancelar
-        </Button>
-      </div>
+      <form>
+        <Typography variant="h4">Editar Usuario</Typography>
+        <br />
+        <br />
+        <TextField
+          name="name"
+          required
+          className={styles.inputMaterial}
+          label="Nombre"
+          onChange={handleChange}
+          value={userSelected && userSelected.name}
+          variant="outlined"
+        />
+        <br />
+        <br />
+        <TextField
+          name="uid"
+          required
+          className={styles.inputMaterial}
+          label="Nombre de Usuario"
+          onChange={handleChange}
+          value={userSelected && userSelected.uid}
+          variant="outlined"
+        />
+        <br />
+        <br />
+        <TextField
+          name="email"
+          required
+          className={styles.inputMaterial}
+          label="Correo Electronico"
+          onChange={handleChange}
+          value={userSelected && userSelected.email}
+          variant="outlined"
+        />
+        <br />
+        <br />
+        <br />
+        {requestError != null ? (
+          <div className="alert danger-alert">
+            <Alert severity="error">Ha ocurrido un error: {requestError}</Alert>
+          </div>
+        ) : (
+          ""
+        )}
+        <div align="right">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => updateUser()}
+          >
+            Editar
+          </Button>
+          &nbsp;&nbsp;
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => abrirCerrarModalEditar()}
+          >
+            Cancelar
+          </Button>
+        </div>
+      </form>
     </div>
   );
 
   const bodyEliminar = (
     <div className={styles.modal}>
-      <p>Estás seguro que deseas eliminar el usuario? </p>
+      <Typography variant="h4">Eliminar Usuario</Typography>
+      <br />
+      <p>Estás seguro que deseas eliminar el usuario {userSelected.name}? </p>
       <br />
       <br />
       <div align="right">
+        {requestError != null ? (
+          <div className="alert danger-alert">
+            <Alert severity="error">Ha ocurrido un error: {requestError}</Alert>
+          </div>
+        ) : (
+          ""
+        )}
         <Button
           variant="contained"
           color="secondary"
@@ -355,7 +392,7 @@ function Users() {
       <Button
         variant="contained"
         color="primary"
-        onClick={() => abrirCerrarModalInsertar()}
+        onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
       >
         Crear Nuevo Usuario
       </Button>
@@ -370,12 +407,16 @@ function Users() {
           {
             icon: Edit,
             tooltip: "Modificar Información del Usuario",
-            onClick: (event, rowData) => seleccionarUser(rowData, "Editar"),
+            onClick: (event, rowData) => (
+              seleccionarUser(rowData, "Editar"), setRequestError(null)
+            ),
           },
           {
             icon: Delete,
             tooltip: "Elimnar Usuario",
-            onClick: (event, rowData) => seleccionarUser(rowData, "Eliminar"),
+            onClick: (event, rowData) => (
+              seleccionarUser(rowData, "Eliminar"), setRequestError(null)
+            ),
           },
         ]}
         options={{ actionsColumnIndex: -1 }}

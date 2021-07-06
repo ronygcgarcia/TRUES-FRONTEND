@@ -26,7 +26,7 @@ class Routes extends Component {
                         <Route path='/tramite' exact component={Tramite} />
                         <Route path='/users' exact component={Users} />
                         <Route path='/personal' exact component={Personal} />
-                        <Route path='/documentos' exact component={Documento}/>
+                        
                     </Switch>
                 </Router>
             </Drawer>

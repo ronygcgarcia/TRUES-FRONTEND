@@ -1,10 +1,12 @@
 import React, { useEffect, useState, forwardRef } from "react";
 import api from "../../config/axios";
+import Alert from "@material-ui/lab/Alert";
 
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
+import Typography from "@material-ui/core/Typography";
 
 //------------------------------------------------------------Material Table
 import MaterialTable from "material-table";
@@ -55,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     width: 400,
     backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
+    borderRadius: "8px",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     top: "50%",
@@ -81,6 +83,7 @@ function Personal() {
 
   const [personal, setPersonal] = useState([]);
   const styles = useStyles();
+  const [requestError, setRequestError] = useState(null);
 
   //Estados para los modales para las acciones de los usuarios
   const [modalInsertar, setModalInsertar] = useState(false);
@@ -99,7 +102,7 @@ function Personal() {
       ...prevState,
       [name]: value,
     }));
-    console.log(personalSelected);
+    setRequestError(null);
   };
 
   //Acciones para mostrar los Modales
@@ -131,11 +134,11 @@ function Personal() {
         .post("/personal", personalSelected)
         .then((response) => {
           setPersonal(personal.concat(response.data));
-          
+
           abrirCerrarModalInsertar();
         });
     } catch (error) {
-      console.error(error);
+      setRequestError(error.response.data.message);
     }
   };
 
@@ -154,7 +157,7 @@ function Personal() {
           abrirCerrarModalEditar();
         });
     } catch (error) {
-      console.error(error);
+      setRequestError(error.response.data.message);
     }
   };
 
@@ -169,7 +172,7 @@ function Personal() {
           abrirCerrarModalEliminar();
         });
     } catch (error) {
-      console.log("Somethig went wrong");
+      setRequestError(error.response.data.message);
     }
   };
 
@@ -185,8 +188,12 @@ function Personal() {
 
   const bodyInsertar = (
     <div className={styles.modal}>
+      <Typography variant="h4">Agregar Nuevo Personal</Typography>
+      <br />
+      <br />
       <div align="right">
         <TextField
+          required
           name="nombre"
           className={styles.inputMaterial}
           label="Nombre del Personal"
@@ -195,6 +202,13 @@ function Personal() {
         />
         <br />
         <br />
+        {requestError != null ? (
+          <div className="alert danger-alert">
+            <Alert severity="error">Ha ocurrido un error: {requestError}</Alert>
+          </div>
+        ) : (
+          ""
+        )}
         <Button
           variant="contained"
           color="primary"
@@ -202,6 +216,7 @@ function Personal() {
         >
           Insertar
         </Button>
+        &nbsp;&nbsp;
         <Button
           variant="contained"
           color="secondary"
@@ -213,13 +228,14 @@ function Personal() {
     </div>
   );
 
-  
   const bodyEditar = (
     <div className={styles.modal}>
+      <Typography variant="h4">Editar Personal</Typography>
       <h3>Editar Personal</h3>
       <br />
       <br />
       <TextField
+        required
         name="nombre"
         className={styles.inputMaterial}
         label="Nombre"
@@ -238,6 +254,7 @@ function Personal() {
         >
           Editar
         </Button>
+        &nbsp;&nbsp;
         <Button
           variant="contained"
           color="secondary"
@@ -250,10 +267,17 @@ function Personal() {
   );
   const bodyEliminar = (
     <div className={styles.modal}>
-      <p>Estás seguro que deseas eliminar esta persona? </p>
+      <p>Estás seguro que deseas eliminar a {personalSelected.nombre} ? </p>
       <br />
       <br />
       <div align="right">
+        {requestError != null ? (
+          <div className="alert danger-alert">
+            <Alert severity="error">Ha ocurrido un error: {requestError}</Alert>
+          </div>
+        ) : (
+          ""
+        )}
         <Button
           variant="contained"
           color="secondary"
@@ -279,7 +303,7 @@ function Personal() {
       <Button
         variant="contained"
         color="primary"
-        onClick={() => abrirCerrarModalInsertar()}
+        onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
       >
         Crear Nuevo Personal
       </Button>
@@ -287,20 +311,24 @@ function Personal() {
       <br />
       <MaterialTable
         icons={tableIcons}
-        title="Usuarios del sistema"
+        title="Personal del sistema"
         columns={columnas}
         data={personal}
         actions={[
           {
             icon: Edit,
             tooltip: "Modificar Información del Personal",
-            onClick: (event, rowData) => seleccionarPersona(rowData, "Editar"),
+            onClick: (event, rowData) => (
+              seleccionarPersona(rowData, "Editar"), setRequestError(null)
+            ),
           },
           {
             icon: Delete,
             tooltip: "Elimnar Personal",
             onClick: (event, rowData) =>
-              seleccionarPersona(rowData, "Eliminar"),
+            (
+              seleccionarPersona(rowData, "Eliminar"), setRequestError(null)
+            ),
           },
         ]}
         options={{ actionsColumnIndex: -1 }}
