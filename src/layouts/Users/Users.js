@@ -2,6 +2,7 @@ import React, { useEffect, useState, forwardRef } from "react";
 import api from "../../config/axios";
 import "./User.css";
 import Alert from "@material-ui/lab/Alert";
+import { useForm } from "react-hook-form";
 
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
@@ -75,6 +76,13 @@ const useStyles = makeStyles((theme) => ({
 
 //-----------------------------------FUNCION PRINCIPAL---------------------------//
 function Users() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data) => console.log(data);
   //-----------------------------------Definicion de columnas para material-table
   const columnas = [
     {
@@ -116,12 +124,18 @@ function Users() {
       ...prevState,
       [name]: value,
     }));
+    console.log(userSelected);
     setRequestError(null);
   };
 
   //Acciones para mostrar los Modales
   const abrirCerrarModalInsertar = () => {
     setModalInsertar(!modalInsertar);
+    userSelected.name = "";
+    userSelected.uid = "";
+    userSelected.email = "";
+    userSelected.password = "";
+    userSelected.password_confirmation = "";
   };
 
   const abrirCerrarModalEditar = () => {
@@ -143,17 +157,31 @@ function Users() {
   };
 
   const createUser = async () => {
-    try {
-      const resp = await api.post("/users", userSelected).then((response) => {
-        setUsers(users.concat(response.data));
-        abrirCerrarModalInsertar();
-      });
-    } catch (error) {
-      setRequestError(error.response.data.message);
+    if (
+      userSelected.name !== "" &&
+      userSelected.uid !== "" &&
+      userSelected.email !== "" &&
+      userSelected.password !== "" &&
+      userSelected.password_confirmation !== ""
+    ) {
+      try {
+        const resp = await api.post("/users", userSelected).then((response) => {
+          setUsers(users.concat(response.data));
+
+          abrirCerrarModalInsertar();
+        });
+      } catch (error) {
+        setRequestError(error.response.data.message);
+      }
     }
   };
 
   const updateUser = async () => {
+    if (
+      userSelected.name !== "" &&
+      userSelected.uid !== "" &&
+      userSelected.email !== ""
+    ) {
     try {
       const resp = await api
         .put("/users/" + userSelected.id, userSelected)
@@ -171,7 +199,7 @@ function Users() {
         });
     } catch (error) {
       setRequestError(error.response.data.message);
-    }
+    }}
   };
 
   const deleteUser = async () => {
@@ -198,8 +226,8 @@ function Users() {
   }, []);
 
   const bodyInsertar = (
-    <div className={styles.modal}>
-      <form>
+    <div>
+      <form className={styles.modal} onSubmit={handleSubmit(onSubmit)}>
         <Typography variant="h4">Agregar Nuevo Usuario</Typography>
         <br />
         <br />
@@ -268,6 +296,7 @@ function Users() {
             variant="contained"
             color="primary"
             onClick={() => createUser()}
+            type="submit"
           >
             Insertar
           </Button>
@@ -285,8 +314,8 @@ function Users() {
   );
 
   const bodyEditar = (
-    <div className={styles.modal}>
-      <form>
+    <div>
+      <form className={styles.modal} onSubmit={handleSubmit(onSubmit)}>
         <Typography variant="h4">Editar Usuario</Typography>
         <br />
         <br />
@@ -336,6 +365,7 @@ function Users() {
             variant="contained"
             color="primary"
             onClick={() => updateUser()}
+            type="submit"
           >
             Editar
           </Button>

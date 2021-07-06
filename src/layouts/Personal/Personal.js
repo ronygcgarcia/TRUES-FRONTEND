@@ -1,6 +1,7 @@
 import React, { useEffect, useState, forwardRef } from "react";
 import api from "../../config/axios";
 import Alert from "@material-ui/lab/Alert";
+import { useForm } from "react-hook-form";
 
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
@@ -73,6 +74,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Personal() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+  const onSubmit = (data) => console.log(data);
   //-----------------------------------Definicion de columnas para material-table
   const columnas = [
     {
@@ -102,12 +110,14 @@ function Personal() {
       ...prevState,
       [name]: value,
     }));
+    console.log(personalSelected);
     setRequestError(null);
   };
 
   //Acciones para mostrar los Modales
   const abrirCerrarModalInsertar = () => {
     setModalInsertar(!modalInsertar);
+    personalSelected.nombre = "";
   };
 
   const abrirCerrarModalEditar = () => {
@@ -123,41 +133,46 @@ function Personal() {
     try {
       const resp = await api.get("/personal");
       setPersonal(resp.data);
+      console.log(resp.data);
     } catch (err) {
       console.error(err);
     }
   };
 
   const createPersonal = async () => {
-    try {
-      const resp = await api
-        .post("/personal", personalSelected)
-        .then((response) => {
-          setPersonal(personal.concat(response.data));
+    if (personalSelected.nombre !== "") {
+      try {
+        const resp = await api
+          .post("/personal", personalSelected)
+          .then((response) => {
+            setPersonal(personal.concat(response.data));
 
-          abrirCerrarModalInsertar();
-        });
-    } catch (error) {
-      setRequestError(error.response.data.message);
+            abrirCerrarModalInsertar();
+          });
+      } catch (error) {
+        setRequestError(error.response.data.message);
+      }
     }
   };
 
   const updatePersona = async () => {
-    try {
-      const resp = await api
-        .put("/personal/" + personalSelected.id, personalSelected)
-        .then((response) => {
-          var newPersonal = personal;
-          newPersonal.map((persona) => {
-            if (personalSelected.id === persona.id) {
-              persona.nombre = personalSelected.nombre;
-            }
+    if (personalSelected.nombre !== "") {
+      try {
+        const resp = await api
+          .put("/personal/" + personalSelected.id, personalSelected)
+          .then((response) => {
+            var newPersonal = personal;
+            newPersonal.map((persona) => {
+              if (personalSelected.id === persona.id) {
+                persona.nombre = personalSelected.nombre;
+              }
+            });
+            setPersonal(newPersonal);
+            abrirCerrarModalEditar();
           });
-          setPersonal(newPersonal);
-          abrirCerrarModalEditar();
-        });
-    } catch (error) {
-      setRequestError(error.response.data.message);
+      } catch (error) {
+        setRequestError(error.response.data.message);
+      }
     }
   };
 
@@ -187,19 +202,69 @@ function Personal() {
   }, []);
 
   const bodyInsertar = (
-    <div className={styles.modal}>
-      <Typography variant="h4">Agregar Nuevo Personal</Typography>
-      <br />
-      <br />
-      <div align="right">
+    <div>
+      <form className={styles.modal} onSubmit={handleSubmit(onSubmit)}>
+        <Typography variant="h4">Agregar Nuevo Personal</Typography>
+        <br />
+        <br />
+          <TextField
+            required
+            name="nombre"
+            className={styles.inputMaterial}
+            label="Nombre del Personal"
+            onChange={handleChange}
+            variant="outlined"
+          />
+          <br />
+          <br />
+          <div align="right">
+          {requestError != null ? (
+            <div className="alert danger-alert">
+              <Alert severity="error">
+                Ha ocurrido un error: {requestError}
+              </Alert>
+            </div>
+          ) : (
+            ""
+          )}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => createPersonal()}
+            type="submit"
+          >
+            Insertar
+          </Button>
+          &nbsp;&nbsp;
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => abrirCerrarModalInsertar()}
+          >
+            Cancelar
+          </Button>
+          </div>
+      </form>
+    </div>
+  );
+
+  const bodyEditar = (
+    <div>
+      <form className={styles.modal} onSubmit={handleSubmit(onSubmit)}>
+        <Typography variant="h4">Editar Personal</Typography>
+        <h3>Editar Personal</h3>
+        <br />
+        <br />
         <TextField
           required
           name="nombre"
           className={styles.inputMaterial}
-          label="Nombre del Personal"
+          label="Nombre"
           onChange={handleChange}
+          value={personalSelected && personalSelected.nombre}
           variant="outlined"
         />
+        <br />
         <br />
         <br />
         {requestError != null ? (
@@ -209,60 +274,25 @@ function Personal() {
         ) : (
           ""
         )}
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => createPersonal()}
-        >
-          Insertar
-        </Button>
-        &nbsp;&nbsp;
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => abrirCerrarModalInsertar()}
-        >
-          Cancelar
-        </Button>
-      </div>
-    </div>
-  );
-
-  const bodyEditar = (
-    <div className={styles.modal}>
-      <Typography variant="h4">Editar Personal</Typography>
-      <h3>Editar Personal</h3>
-      <br />
-      <br />
-      <TextField
-        required
-        name="nombre"
-        className={styles.inputMaterial}
-        label="Nombre"
-        onChange={handleChange}
-        value={personalSelected && personalSelected.nombre}
-        variant="outlined"
-      />
-      <br />
-      <br />
-      <br />
-      <div align="right">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => updatePersona()}
-        >
-          Editar
-        </Button>
-        &nbsp;&nbsp;
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() => abrirCerrarModalEditar()}
-        >
-          Cancelar
-        </Button>
-      </div>
+        <div align="right">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => updatePersona()}
+            type="submit"
+          >
+            Editar
+          </Button>
+          &nbsp;&nbsp;
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => abrirCerrarModalEditar()}
+          >
+            Cancelar
+          </Button>
+        </div>
+      </form>
     </div>
   );
   const bodyEliminar = (
@@ -325,8 +355,7 @@ function Personal() {
           {
             icon: Delete,
             tooltip: "Elimnar Personal",
-            onClick: (event, rowData) =>
-            (
+            onClick: (event, rowData) => (
               seleccionarPersona(rowData, "Eliminar"), setRequestError(null)
             ),
           },
