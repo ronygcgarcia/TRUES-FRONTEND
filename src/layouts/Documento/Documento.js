@@ -1,14 +1,18 @@
-import React, { useEffect, useState, forwardRef } from "react";
+import React, { useEffect, useState, forwardRef, useCallback } from "react";
 import api from "../../config/axios";
 import Alert from "@material-ui/lab/Alert";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Container from "@material-ui/core/Container";
+import { useForm } from "react-hook-form";
+import estiloDrop from "./Dropzone.css";
 
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
-import { Delete } from "@material-ui/icons";
+import { Delete, Label } from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
-import { DropzoneDialog } from "material-ui-dropzone";
+import Dropzone from "react-dropzone";
 
 //------------------------------------------------------------Material Table
 import MaterialTable from "material-table";
@@ -27,6 +31,10 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import axios from "axios";
+
+import { useDropzone } from "react-dropzone";
+import RootRef from "@material-ui/core/RootRef";
 
 //------------------------------------------------Iconos que usa material-table
 const tableIcons = {
@@ -72,10 +80,21 @@ const useStyles = makeStyles((theme) => ({
   inputMaterial: {
     width: "100%",
   },
+  dropzone: {
+    position: "absolute",
+    width: "50%",
+    backgroundColor: theme.palette.background.paper,
+    borderRadius: "8px",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+  },
 }));
 
 function Documento() {
-  /*const columnas = [
+  const columnas = [
     {
       title: "Nombre",
       field: "nombre",
@@ -84,35 +103,12 @@ function Documento() {
       title: "URL",
       field: "url",
     },
-  ];*/
-  const theme = createMuiTheme({
-    overrides: {
-      MuiDropzoneSnackbar: {
-        errorAlert: {
-          backgroundColor: "#AFA",
-          color: "#000",
-
-        },
-        successAlert: {
-          backgroundColor: "#FAA",
-          color: "#000",
-          successAlert:"Excelente",
-          text: "Hola"
-        },
-      }
-    }
-  });
-
-  const columnas = [
-    {
-      title: "Nombre",
-      field: "nombre",
-    },
   ];
 
   const [documentos, setDocumentos] = useState([]);
   const styles = useStyles();
   const [requestError, setRequestError] = useState(null);
+  const getAccessToken = () => localStorage.getItem("token");
 
   //Estados para los modales para las acciones de los usuarios
   const [modalInsertar, setModalInsertar] = useState(false);
@@ -124,17 +120,6 @@ function Documento() {
     nombre: "",
     url: "",
   });
-
-  //Obtener los que el usuarion escribe en los textfield
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setDocumentSelected((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-    setRequestError(null);
-  };
-
   //Acciones para mostrar los Modales
   const abrirCerrarModalInsertar = () => {
     setModalInsertar(!modalInsertar);
@@ -148,68 +133,177 @@ function Documento() {
     setModalEliminar(!modalEliminar);
   };
 
-  const [personal, setPersonal] = useState([]);
-  const getPersonal = async () => {
-    try {
-      const resp = await api.get("/personal");
-      setPersonal(resp.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const [open, setOpen] = React.useState(false);
-
   //Seleccionar el usuario de la tabla al cual realizar acciones
   const seleccionarDocumento = (documento, caso) => {
     setDocumentSelected(documento);
     caso === "Editar" ? abrirCerrarModalEditar() : abrirCerrarModalEliminar();
   };
   useEffect(() => {
-    getPersonal();
+    getDocumentos();
   }, []);
 
-  
+  //Obtener los que el usuarion escribe en los textfield
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDocumentSelected((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+    setRequestError(null);
+  };
 
+  //-----------------------------------------------------
+  const getDocumentos = async () => {
+    try {
+      const resp = await api.get("/documento");
+      setDocumentos(resp.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const deleteDocumento = async () => {
+    try {
+      const resp = await api
+        .delete("/documento/" + documentSelected.id)
+        .then((response) => {
+          setDocumentos(
+            documentos.filter(
+              (documento) => documento.id !== documentSelected.id
+            )
+          );
+          abrirCerrarModalEliminar();
+        });
+    } catch (error) {
+      setRequestError(error.response.data.message);
+    }
+  };
+  //----------------------------------------------------------
+
+  const onDrop = useCallback(async (acceptedFiles) => {
+    console.log(acceptedFiles);
+    let url = "https://trues-backend.herokuapp.com/api/documento";
+    const formData = new FormData();
+    formData.append("documento", acceptedFiles[0]);
+    try {
+      axios({
+        method: "post",
+        url: url,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${getAccessToken()}`,
+        },
+      })
+        .then(function (response) {
+          console.log("funciona ->" + response);
+          setDocumentos(documentos.concat(response.data));
+          setModalInsertar(false);
+        })
+        .catch(function (response) {
+          console.log("No Funciona ->" + response);
+        });
+    } catch (error) {
+      console.log("Error axios" + error);
+    }
+  }, []);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept:
+      "application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/application/vnd.oasis.opendocument.text",
+    multiple: false,
+  });
+
+  const bodyInsertar = (
+    <div className={styles.dropzone}>
+      <div {...getRootProps()} className="dropzone">
+        <input
+          {...getInputProps()}
+          className={`${estiloDrop.dropzone} ${
+            isDragActive ? estiloDrop.active : null
+          }`}
+        />
+        <p>
+          Haga CLICK para buscar el archivo o simplemente ARRASTRELO a esta area
+          y se subirá
+        </p>
+      </div>
+      <br />
+      
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => abrirCerrarModalInsertar()}
+          >
+            Cancelar
+          </Button>
+    </div>
+  );
+
+  const bodyEliminar = (
+    <div className={styles.modal}>
+      <p>Estás seguro que deseas eliminar a {documentSelected.nombre} ? </p>
+      <br />
+      <br />
+      <div align="right">
+        {requestError != null ? (
+          <div className="alert danger-alert">
+            <Alert severity="error">Ha ocurrido un error: {requestError}</Alert>
+          </div>
+        ) : (
+          ""
+        )}
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => deleteDocumento()}
+        >
+          Sí
+        </Button>
+        &nbsp;&nbsp;
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => abrirCerrarModalEliminar()}
+        >
+          No
+        </Button>
+      </div>
+    </div>
+  );
+
+  ///////////////////////////////RETURN////////////////////////////////
   return (
     <div>
       <br />
-      <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
+      >
         Agregar un Documento
       </Button>
-      <MuiThemeProvider theme={theme}>
-      <DropzoneDialog
-        filesLimit={1}
-        dropzoneText="Arrastra y suelta el archivo aquí"
-        acceptedFiles={["application/pdf"]}
-        cancelButtonText={"cancel"}
-        submitButtonText={"submit"}
-        maxFileSize={5000000}
-        open={open}
-        onClose={() => setOpen(false)}
-        onSave={(files) => {
-          console.log("Files:", files);
-          setOpen(false);
-        }}
-        showPreviews={true}
-        showFileNamesInPreview={true}
-      />
-      </MuiThemeProvider>
+
       <br />
       <br />
       <MaterialTable
         icons={tableIcons}
-        title="Personal del sistema"
+        title="Documentos"
         columns={columnas}
-        data={personal}
+        data={documentos}
         actions={[
           {
             icon: Edit,
-            tooltip: "Modificar Información del Personal",
+            tooltip: "Modificar Información del Documento",
+            onClick: (event, rowData) => (
+              seleccionarDocumento(rowData, "Editar"), setRequestError(null)
+            ),
           },
           {
             icon: Delete,
-            tooltip: "Elimnar Personal",
+            tooltip: "Elimnar Documento",
+            onClick: (event, rowData) => (
+              seleccionarDocumento(rowData, "Eliminar"), setRequestError(null)
+            ),
           },
         ]}
         options={{ actionsColumnIndex: -1 }}
@@ -220,8 +314,13 @@ function Documento() {
         }}
       />
 
-      <Modal open={modalEditar} onClose={abrirCerrarModalEditar}></Modal>
-      <Modal open={modalEliminar} onClose={abrirCerrarModalEliminar}></Modal>
+      <Modal open={modalInsertar} onClose={abrirCerrarModalInsertar}>
+        {bodyInsertar}
+      </Modal>
+
+      <Modal open={modalEliminar} onClose={abrirCerrarModalEliminar}>
+        {bodyEliminar}
+      </Modal>
     </div>
   );
 }
