@@ -1,18 +1,12 @@
 import React, { useEffect, useState, forwardRef, useCallback } from "react";
 import api from "../../config/axios";
 import Alert from "@material-ui/lab/Alert";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
-import { useForm } from "react-hook-form";
 import estiloDrop from "./Dropzone.css";
 
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
-import { Delete, Label } from "@material-ui/icons";
-import Typography from "@material-ui/core/Typography";
-import Dropzone from "react-dropzone";
+import { Delete } from "@material-ui/icons";
 
 //------------------------------------------------------------Material Table
 import MaterialTable from "material-table";
@@ -34,7 +28,6 @@ import ViewColumn from "@material-ui/icons/ViewColumn";
 import axios from "axios";
 
 import { useDropzone } from "react-dropzone";
-import RootRef from "@material-ui/core/RootRef";
 
 //------------------------------------------------Iconos que usa material-table
 const tableIcons = {
@@ -209,7 +202,7 @@ function Documento() {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept:
-      "application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/application/vnd.oasis.opendocument.text",
+      "application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text",
     multiple: false,
   });
 

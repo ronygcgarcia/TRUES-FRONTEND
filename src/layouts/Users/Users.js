@@ -103,6 +103,22 @@ function Users() {
   const styles = useStyles();
   const [requestError, setRequestError] = useState(null);
 
+  const [valName, setValName] = useState({
+    valName: "",
+  });
+  const [valUID, setValUID] = useState({
+    valUID: "",
+  });
+  const [valErrors, setValErrors] = useState({
+    valEmail: "",
+  });
+  const [valPass, setValPass] = useState({
+    valPass: "",
+  });
+  const [valPassConf, setValPassConf] = useState({
+    valPassConf: "",
+  });
+
   //Estados para los modales para las acciones de los usuarios
   const [modalInsertar, setModalInsertar] = useState(false);
   const [modalEditar, setModalEditar] = useState(false);
@@ -120,11 +136,100 @@ function Users() {
   //Obtener los que el usuarion escribe en los textfield
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    switch (name) {
+      case "name":
+        setValName({
+          valName: "",
+        });
+        break;
+      case "uid":
+        setValUID({
+          valUID: "",
+        });
+        break;
+      case "email":
+        setValErrors({
+          valEmail: "",
+        });
+        break;
+      case "password":
+        setValPass({
+          valPass: "",
+        });
+        break;
+        case "password_confirmation":
+        setValPassConf({
+          valPassConf: "",
+        });
+        break;
+
+      default:
+        break;
+    }
+
     setUserSelected((prevState) => ({
       ...prevState,
       [name]: value,
     }));
-    console.log(userSelected);
+
+    switch (name) {
+      case "name":
+        let regName = new RegExp(/^[A-zÀ-ú.\s]{0,49}$/).test(value);
+        console.log(regName);
+        if (!regName) {
+          setValName({
+            valName:
+              "El nombre no debe contener números ni carácteres especiales. Maximo: 50 carácteres",
+          });
+        }
+        break;
+      case "uid":
+        let regUID = new RegExp(/^[a-zA-Z0-9]\S{7,50}$/).test(value);
+        console.log(regUID);
+        if (!regUID) {
+          setValUID({
+            valUID:
+              "El usuario debe tener al menos 8 letras y/o numeros sin espacios",
+          });
+        }
+        break;
+      case "email":
+        let regEmail = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{1,9}$/).test(
+          value
+        );
+        if (!regEmail) {
+          setValErrors({
+            valEmail: "Aun no es un correo valido",
+          });
+        }
+        break;
+      case "password":
+        //PasswordFacil: /^[a-zA-Z0-9]{7,16}$/
+        let regPass = new RegExp(
+          /^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{7,16}$/
+        ).test(value);
+        console.log(regPass);
+        if (!regPass) {
+          setValPass({
+            valPass:
+              "La contraseña debe tener al menos 8 caracteres, 1 numero, 1 minuscula, 1 una mayuscula ",
+          });
+        }
+        break;
+        case "password_confirmation":
+        if(userSelected.password !== value){
+          setValPassConf({
+            valPassConf:
+              "Las contraseñas no coinciden",
+          });
+        }
+        break;
+
+      default:
+        break;
+    }
+
     setRequestError(null);
   };
 
@@ -182,24 +287,25 @@ function Users() {
       userSelected.uid !== "" &&
       userSelected.email !== ""
     ) {
-    try {
-      const resp = await api
-        .put("/users/" + userSelected.id, userSelected)
-        .then((response) => {
-          var newUsers = users;
-          newUsers.map((user) => {
-            if (userSelected.id === user.id) {
-              user.name = userSelected.name;
-              user.uid = userSelected.uid;
-              user.email = userSelected.email;
-            }
+      try {
+        const resp = await api
+          .put("/users/" + userSelected.id, userSelected)
+          .then((response) => {
+            var newUsers = users;
+            newUsers.map((user) => {
+              if (userSelected.id === user.id) {
+                user.name = userSelected.name;
+                user.uid = userSelected.uid;
+                user.email = userSelected.email;
+              }
+            });
+            setUsers(newUsers);
+            abrirCerrarModalEditar();
           });
-          setUsers(newUsers);
-          abrirCerrarModalEditar();
-        });
-    } catch (error) {
-      setRequestError(error.response.data.message);
-    }}
+      } catch (error) {
+        setRequestError(error.response.data.message);
+      }
+    }
   };
 
   const deleteUser = async () => {
@@ -232,52 +338,68 @@ function Users() {
         <br />
         <br />
         <TextField
+          autoFocus
+          value={userSelected.name}
           required
           name="name"
           className={styles.inputMaterial}
           label="Nombre del Usuario"
           onChange={handleChange}
           variant="outlined"
+          error={Boolean(valName?.valName)}
+          helperText={valName?.valName}
         />
         <br />
         <br />
         <TextField
+          value={userSelected.uid}
           name="uid"
           required
           className={styles.inputMaterial}
           label="Nombre de Usuario"
           onChange={handleChange}
           variant="outlined"
+          error={Boolean(valUID?.valUID)}
+          helperText={valUID?.valUID}
         />
         <br />
         <br />
         <TextField
+          value={userSelected.email}
           name="email"
           required
           className={styles.inputMaterial}
           label="Correo Electronico"
           onChange={handleChange}
           variant="outlined"
+          error={Boolean(valErrors?.valEmail)}
+          helperText={valErrors?.valEmail}
         />
         <br />
         <br />
         <TextField
+          value={userSelected.password}
           type="password"
           name="password"
           className={styles.inputMaterial}
           label="Contraseña"
           onChange={handleChange}
           variant="outlined"
+          error={Boolean(valPass?.valPass)}
+          helperText={valPass?.valPass}
         />
         <br />
         <br />
         <TextField
+        value={userSelected.password_confirmation}
           type="password"
           name="password_confirmation"
           className={styles.inputMaterial}
           label="Repetir Contraseña"
           onChange={handleChange}
           variant="outlined"
+          error={Boolean(valPassConf?.valPassConf)}
+          helperText={valPassConf?.valPassConf}
         />
         <br />
         <br />
@@ -320,6 +442,7 @@ function Users() {
         <br />
         <br />
         <TextField
+        value={userSelected.name}
           name="name"
           required
           className={styles.inputMaterial}
@@ -327,10 +450,13 @@ function Users() {
           onChange={handleChange}
           value={userSelected && userSelected.name}
           variant="outlined"
+          error={Boolean(valName?.valName)}
+          helperText={valName?.valName}
         />
         <br />
         <br />
         <TextField
+        value={userSelected.uid}
           name="uid"
           required
           className={styles.inputMaterial}
@@ -338,10 +464,13 @@ function Users() {
           onChange={handleChange}
           value={userSelected && userSelected.uid}
           variant="outlined"
+          error={Boolean(valUID?.valUID)}
+          helperText={valUID?.valUID}
         />
         <br />
         <br />
         <TextField
+         value={userSelected.email}
           name="email"
           required
           className={styles.inputMaterial}
@@ -349,8 +478,35 @@ function Users() {
           onChange={handleChange}
           value={userSelected && userSelected.email}
           variant="outlined"
+          error={Boolean(valErrors?.valEmail)}
+          helperText={valErrors?.valEmail}
         />
         <br />
+        <br />
+        <TextField
+          value={userSelected.password}
+          type="password"
+          name="password"
+          className={styles.inputMaterial}
+          label="Contraseña"
+          onChange={handleChange}
+          variant="outlined"
+          error={Boolean(valPass?.valPass)}
+          helperText={valPass?.valPass}
+        />
+        <br />
+        <br />
+        <TextField
+        value={userSelected.password_confirmation}
+          type="password"
+          name="password_confirmation"
+          className={styles.inputMaterial}
+          label="Repetir Contraseña"
+          onChange={handleChange}
+          variant="outlined"
+          error={Boolean(valPassConf?.valPassConf)}
+          helperText={valPassConf?.valPassConf}
+        />
         <br />
         <br />
         {requestError != null ? (
