@@ -7,6 +7,8 @@ import estiloDrop from "./Dropzone.css";
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
 
 //------------------------------------------------------------Material Table
 import MaterialTable from "material-table";
@@ -115,6 +117,10 @@ function Documento() {
   });
   //Acciones para mostrar los Modales
   const abrirCerrarModalInsertar = () => {
+    setSwitchState((prevState) => ({
+      ...prevState,
+      switchmultiple: false,
+    }));
     setModalInsertar(!modalInsertar);
   };
 
@@ -171,39 +177,46 @@ function Documento() {
     }
   };
   //----------------------------------------------------------
+  const [switchState, setSwitchState] = useState({
+    switchmultiple: false
+  });
 
-  const onDrop = useCallback(async (acceptedFiles) => {
-    console.log(acceptedFiles);
+  const handleSwitch = (event) => {
+    setSwitchState({
+      switchmultiple: event.target.checked,
+    });
+  };
+
+  const onDrop = useCallback((acceptedFiles) => {
     let url = "https://trues-backend.herokuapp.com/api/documento";
-    const formData = new FormData();
-    formData.append("documento", acceptedFiles[0]);
-    try {
-      axios({
-        method: "post",
-        url: url,
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${getAccessToken()}`,
-        },
-      })
-        .then(function (response) {
-          console.log("funciona ->" + response);
-          setDocumentos(documentos.concat(response.data));
-          setModalInsertar(false);
+    acceptedFiles.forEach(async (acceptedFile) => {
+      const formData = new FormData();
+      formData.append("documento", acceptedFile);
+      try {
+        axios({
+          method: "post",
+          url: url,
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${getAccessToken()}`,
+          },
         })
-        .catch(function (response) {
-          console.log("No Funciona ->" + response);
-        });
-    } catch (error) {
-      console.log("Error axios" + error);
-    }
+          .then(function (response) {
+            getDocumentos();
+            setModalInsertar(false);
+          })
+          .catch(function (response) {
+          });
+      } catch (error) {
+      }
+    });
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept:
       "application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text",
-    multiple: false,
+    multiple: switchState.switchmultiple,
   });
 
   const bodyInsertar = (
@@ -221,14 +234,18 @@ function Documento() {
         </p>
       </div>
       <br />
-      
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => abrirCerrarModalInsertar()}
-          >
-            Cancelar
-          </Button>
+      <FormControlLabel
+        control={<Switch onChange={handleSwitch} name="switchmultiple" />}
+        label="Subir varios archivos"
+      />
+
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={() => abrirCerrarModalInsertar()}
+      >
+        Cancelar
+      </Button>
     </div>
   );
 
