@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
-import { Delete } from "@material-ui/icons";
+import { Add, Delete, DeleteForever } from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 
 //------------------------------------------------------------Material Table
@@ -26,6 +26,7 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import EditIcon from "@material-ui/icons/Edit";
 
 //------------------------------------------------Iconos que usa material-table
 const tableIcons = {
@@ -331,10 +332,11 @@ function Personal() {
     <div className="personal-crud">
       <br />
       <Button
-        variant="contained"
+        variant="outlined"
         color="primary"
         onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
       >
+        <Add />&nbsp;
         Crear Nuevo Personal
       </Button>
       <br />
@@ -346,14 +348,22 @@ function Personal() {
         data={personal}
         actions={[
           {
-            icon: Edit,
+            icon: (props) => (
+              <Button variant="outlined" color="primary" >
+                <EditIcon />
+              </Button>
+            ),
             tooltip: "Modificar Información del Personal",
             onClick: (event, rowData) => (
               seleccionarPersona(rowData, "Editar"), setRequestError(null)
             ),
           },
           {
-            icon: Delete,
+            icon: (props) => (
+              <Button variant="outlined" color="secondary" >
+                <DeleteForever />
+              </Button>
+            ),
             tooltip: "Elimnar Personal",
             onClick: (event, rowData) => (
               seleccionarPersona(rowData, "Eliminar"), setRequestError(null)

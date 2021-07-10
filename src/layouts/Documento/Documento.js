@@ -6,7 +6,7 @@ import estiloDrop from "./Dropzone.css";
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
-import { Delete } from "@material-ui/icons";
+import { Add, Delete, DeleteForever } from "@material-ui/icons";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 
@@ -27,6 +27,7 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import EditIcon from "@material-ui/icons/Edit";
 import axios from "axios";
 
 import { useDropzone } from "react-dropzone";
@@ -286,10 +287,11 @@ function Documento() {
     <div>
       <br />
       <Button
-        variant="contained"
+        variant="outlined"
         color="primary"
         onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
       >
+        <Add />&nbsp;
         Agregar un Documento
       </Button>
 
@@ -302,14 +304,22 @@ function Documento() {
         data={documentos}
         actions={[
           {
-            icon: Edit,
+            icon: (props) => (
+              <Button variant="outlined" color="primary" >
+                <EditIcon />
+              </Button>
+            ),
             tooltip: "Modificar Información del Documento",
             onClick: (event, rowData) => (
               seleccionarDocumento(rowData, "Editar"), setRequestError(null)
             ),
           },
           {
-            icon: Delete,
+            icon:  (props) => (
+              <Button variant="outlined" color="secondary" >
+                <DeleteForever />
+              </Button>
+            ),
             tooltip: "Elimnar Documento",
             onClick: (event, rowData) => (
               seleccionarDocumento(rowData, "Eliminar"), setRequestError(null)

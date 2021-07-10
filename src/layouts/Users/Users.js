@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
-import { Delete } from "@material-ui/icons";
+import { Add, Delete, DeleteForever } from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 
 //------------------------------------------------------------Material Table
@@ -27,6 +27,7 @@ import Remove from "@material-ui/icons/Remove";
 import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import EditIcon from "@material-ui/icons/Edit";
 
 //------------------------------------------------Iconos que usa material-table
 const tableIcons = {
@@ -158,7 +159,7 @@ function Users() {
           valPass: "",
         });
         break;
-        case "password_confirmation":
+      case "password_confirmation":
         setValPassConf({
           valPassConf: "",
         });
@@ -217,11 +218,10 @@ function Users() {
           });
         }
         break;
-        case "password_confirmation":
-        if(userSelected.password !== value){
+      case "password_confirmation":
+        if (userSelected.password !== value) {
           setValPassConf({
-            valPassConf:
-              "Las contraseñas no coinciden",
+            valPassConf: "Las contraseñas no coinciden",
           });
         }
         break;
@@ -391,7 +391,7 @@ function Users() {
         <br />
         <br />
         <TextField
-        value={userSelected.password_confirmation}
+          value={userSelected.password_confirmation}
           type="password"
           name="password_confirmation"
           className={styles.inputMaterial}
@@ -442,7 +442,7 @@ function Users() {
         <br />
         <br />
         <TextField
-        value={userSelected.name}
+          value={userSelected.name}
           name="name"
           required
           className={styles.inputMaterial}
@@ -456,7 +456,7 @@ function Users() {
         <br />
         <br />
         <TextField
-        value={userSelected.uid}
+          value={userSelected.uid}
           name="uid"
           required
           className={styles.inputMaterial}
@@ -470,7 +470,7 @@ function Users() {
         <br />
         <br />
         <TextField
-         value={userSelected.email}
+          value={userSelected.email}
           name="email"
           required
           className={styles.inputMaterial}
@@ -497,7 +497,7 @@ function Users() {
         <br />
         <br />
         <TextField
-        value={userSelected.password_confirmation}
+          value={userSelected.password_confirmation}
           type="password"
           name="password_confirmation"
           className={styles.inputMaterial}
@@ -571,15 +571,14 @@ function Users() {
       </div>
     </div>
   );
-
   return (
     <div className="users__crud">
-      <br />
       <Button
-        variant="contained"
+        variant="outlined"
         color="primary"
         onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
       >
+        <Add />&nbsp;
         Crear Nuevo Usuario
       </Button>
       <br />
@@ -591,14 +590,22 @@ function Users() {
         data={users}
         actions={[
           {
-            icon: Edit,
+            icon: (props) => (
+              <Button variant="outlined" color="primary" >
+                <EditIcon />
+              </Button>
+            ),
             tooltip: "Modificar Información del Usuario",
             onClick: (event, rowData) => (
               seleccionarUser(rowData, "Editar"), setRequestError(null)
             ),
           },
           {
-            icon: Delete,
+            icon: (props) => (
+              <Button variant="outlined" color="secondary" >
+                <DeleteForever />
+              </Button>
+            ),
             tooltip: "Elimnar Usuario",
             onClick: (event, rowData) => (
               seleccionarUser(rowData, "Eliminar"), setRequestError(null)
