@@ -9,50 +9,19 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
 import { Add, Delete, DeleteForever } from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
-
-//------------------------------------------------------------Material Table
-import MaterialTable from "material-table";
-import AddBox from "@material-ui/icons/AddBox";
-import ArrowDownward from "@material-ui/icons/ArrowDownward";
-import Check from "@material-ui/icons/Check";
-import ChevronLeft from "@material-ui/icons/ChevronLeft";
-import ChevronRight from "@material-ui/icons/ChevronRight";
-import Clear from "@material-ui/icons/Clear";
-import DeleteOutline from "@material-ui/icons/DeleteOutline";
-import Edit from "@material-ui/icons/Edit";
-import FilterList from "@material-ui/icons/FilterList";
-import FirstPage from "@material-ui/icons/FirstPage";
-import LastPage from "@material-ui/icons/LastPage";
-import Remove from "@material-ui/icons/Remove";
-import SaveAlt from "@material-ui/icons/SaveAlt";
-import Search from "@material-ui/icons/Search";
-import ViewColumn from "@material-ui/icons/ViewColumn";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TablePagination from "@material-ui/core/TablePagination";
+import TableRow from "@material-ui/core/TableRow";
+import TableFooter from "@material-ui/core/TableFooter";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import Box from "@material-ui/core/Box";
+import Paper from "@material-ui/core/Paper";
+import Chip from "@material-ui/core/Chip";
 import EditIcon from "@material-ui/icons/Edit";
-
-//------------------------------------------------Iconos que usa material-table
-const tableIcons = {
-  Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-  Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
-  Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
-  DetailPanel: forwardRef((props, ref) => (
-    <ChevronRight {...props} ref={ref} />
-  )),
-  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-  Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
-  Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
-  FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-  LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-  NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-  PreviousPage: forwardRef((props, ref) => (
-    <ChevronLeft {...props} ref={ref} />
-  )),
-  ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
-  Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
-  SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
-  ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
-  ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
-};
 
 //----------------------------------------------------Estilos para los Modales
 const useStyles = makeStyles((theme) => ({
@@ -73,6 +42,18 @@ const useStyles = makeStyles((theme) => ({
   inputMaterial: {
     width: "100%",
   },
+  container: {},
+  root: {
+    flexShrink: 0,
+    marginLeft: theme.spacing(2.5),
+  },
+  chip: {
+    margin: theme.spacing(0.5),
+  },
+  table: {
+    minWidth: 500,
+    minHeight: 500,
+  },
 }));
 
 //-----------------------------------FUNCION PRINCIPAL---------------------------//
@@ -87,16 +68,35 @@ function Users() {
   //-----------------------------------Definicion de columnas para material-table
   const columnas = [
     {
-      title: "Nombre",
-      field: "name",
+      id: "users",
+      label: "Nombre",
+      minWidth: 170,
+      align: "left",
+      format: (value) => value.toLocaleString("en-US"),
     },
     {
-      title: "Username",
-      field: "uid",
+      id: "username",
+      label: "Nombre de Usuario",
+      minWidth: 100,
+      align: "left",
     },
     {
-      title: "Correo Electronico",
-      field: "email",
+      id: "email",
+      label: "Correo Electronico",
+      minWidth: 100,
+      align: "left",
+    },
+    {
+      id: "role",
+      label: "Rol",
+      minWidth: 100,
+      align: "center",
+    },
+    {
+      id: "actions",
+      label: "Acciones",
+      minWidth: 100,
+      align: "center",
     },
   ];
 
@@ -124,6 +124,8 @@ function Users() {
   const [modalInsertar, setModalInsertar] = useState(false);
   const [modalEditar, setModalEditar] = useState(false);
   const [modalEliminar, setModalEliminar] = useState(false);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
   //Estado para el usuario al cual hacer acciones
   const [userSelected, setUserSelected] = useState({
@@ -233,6 +235,15 @@ function Users() {
     setRequestError(null);
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
+
   //Acciones para mostrar los Modales
   const abrirCerrarModalInsertar = () => {
     setModalInsertar(!modalInsertar);
@@ -256,6 +267,7 @@ function Users() {
     try {
       const resp = await api.get("/users");
       setUsers(resp.data);
+      console.log(resp.data);
     } catch (err) {
       console.error(err);
     }
@@ -271,12 +283,13 @@ function Users() {
     ) {
       try {
         const resp = await api.post("/users", userSelected).then((response) => {
-          setUsers(users.concat(response.data));
+          //setUsers(users.concat(response.data));
+          getUsers();
 
           abrirCerrarModalInsertar();
         });
       } catch (error) {
-        setRequestError(error.response.data.message);
+        console.log(error)
       }
     }
   };
@@ -324,7 +337,18 @@ function Users() {
   //Seleccionar el usuario de la tabla al cual realizar acciones
   const seleccionarUser = (user, caso) => {
     setUserSelected(user);
-    caso === "Editar" ? abrirCerrarModalEditar() : abrirCerrarModalEliminar();
+    switch (caso) {
+      case "Editar":
+        abrirCerrarModalEditar();
+        break;
+      case "Eliminar":
+        abrirCerrarModalEliminar();
+        break;
+        
+      default:
+        break;
+    }
+    //caso === "Editar" ? abrirCerrarModalEditar() : abrirCerrarModalEliminar();
   };
 
   useEffect(() => {
@@ -405,15 +429,7 @@ function Users() {
         <br />
         <br />
         <div align="right">
-          {requestError != null ? (
-            <div className="alert danger-alert">
-              <Alert severity="error">
-                Ha ocurrido un error: {requestError}
-              </Alert>
-            </div>
-          ) : (
-            ""
-          )}
+         
           <Button
             variant="contained"
             color="primary"
@@ -578,47 +594,82 @@ function Users() {
         color="primary"
         onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
       >
-        <Add />&nbsp;
-        Crear Nuevo Usuario
+        <Add />
+        &nbsp; Crear Nuevo Usuario
       </Button>
       <br />
       <br />
-      <MaterialTable
-        icons={tableIcons}
-        title="Usuarios del sistema"
-        columns={columnas}
-        data={users}
-        actions={[
-          {
-            icon: (props) => (
-              <Button variant="outlined" color="primary" >
-                <EditIcon />
-              </Button>
-            ),
-            tooltip: "Modificar Información del Usuario",
-            onClick: (event, rowData) => (
-              seleccionarUser(rowData, "Editar"), setRequestError(null)
-            ),
-          },
-          {
-            icon: (props) => (
-              <Button variant="outlined" color="secondary" >
-                <DeleteForever />
-              </Button>
-            ),
-            tooltip: "Elimnar Usuario",
-            onClick: (event, rowData) => (
-              seleccionarUser(rowData, "Eliminar"), setRequestError(null)
-            ),
-          },
-        ]}
-        options={{ actionsColumnIndex: -1 }}
-        localization={{
-          header: {
-            actions: "Opciones",
-          },
-        }}
-      />
+      <Paper className={styles.root}>
+        <TableContainer className={styles.container}>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHead>
+              <TableRow>
+                {columnas.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {(rowsPerPage > 0
+                ? users.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : users
+              ).map((element, index) => (
+                <TableRow hover>
+                  <TableCell key={index} align="left">
+                    {element.name}
+                  </TableCell>
+                  <TableCell align="left">{element.uid}</TableCell>
+                  <TableCell align="left">{element.email}</TableCell>
+                  <TableCell align="center">
+                    {element.role.map((rol, index) => (
+                      <Chip key={rol.id} label={rol.name} className={styles.chip} />
+                    ))}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Box pr={1} pl={1}>
+                      <Button variant="outlined" color="primary" 
+                      onClick={() => {
+                        seleccionarUser(element, "Editar");
+                        abrirCerrarModalEditar();
+                      }}
+                      >
+                        <EditIcon />
+                      </Button>{" "}
+                      <Button variant="outlined" color="secondary" 
+                      onClick={() => {
+                        seleccionarUser(element, "Eliminar");
+                        abrirCerrarModalEliminar();
+                      }}
+                      >
+                        <DeleteForeverIcon />
+                      </Button>
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination 
+          rowsPerPageOptions={[10, 25, 100]}
+          component="div"
+          count={users.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          
+          onChangePage={handleChangePage}
+          onChangeRowsPerPage={handleChangeRowsPerPage}
+        />
+      </Paper>
 
       <Modal open={modalInsertar} onClose={abrirCerrarModalInsertar}>
         {bodyInsertar}

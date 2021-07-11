@@ -9,6 +9,7 @@ import { Button, Modal, TextField } from "@material-ui/core";
 import { Add, Delete, DeleteForever } from "@material-ui/icons";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+import ArchiveIcon from "@material-ui/icons/Archive";
 
 //------------------------------------------------------------Material Table
 import MaterialTable from "material-table";
@@ -136,7 +137,18 @@ function Documento() {
   //Seleccionar el usuario de la tabla al cual realizar acciones
   const seleccionarDocumento = (documento, caso) => {
     setDocumentSelected(documento);
-    caso === "Editar" ? abrirCerrarModalEditar() : abrirCerrarModalEliminar();
+    switch (caso) {
+      case "Editar":
+        abrirCerrarModalEditar();
+        break;
+      case "Eliminar":
+        abrirCerrarModalEliminar();
+        break;
+      case "Descargar":
+        
+      default:
+        break;
+    }
   };
   useEffect(() => {
     getDocumentos();
@@ -179,7 +191,7 @@ function Documento() {
   };
   //----------------------------------------------------------
   const [switchState, setSwitchState] = useState({
-    switchmultiple: false
+    switchmultiple: false,
   });
 
   const handleSwitch = (event) => {
@@ -207,10 +219,8 @@ function Documento() {
             getDocumentos();
             setModalInsertar(false);
           })
-          .catch(function (response) {
-          });
-      } catch (error) {
-      }
+          .catch(function (response) {});
+      } catch (error) {}
     });
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -291,8 +301,8 @@ function Documento() {
         color="primary"
         onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
       >
-        <Add />&nbsp;
-        Agregar un Documento
+        <Add />
+        &nbsp; Agregar un Documento
       </Button>
 
       <br />
@@ -305,7 +315,7 @@ function Documento() {
         actions={[
           {
             icon: (props) => (
-              <Button variant="outlined" color="primary" >
+              <Button variant="outlined" color="primary">
                 <EditIcon />
               </Button>
             ),
@@ -315,14 +325,25 @@ function Documento() {
             ),
           },
           {
-            icon:  (props) => (
-              <Button variant="outlined" color="secondary" >
+            icon: (props) => (
+              <Button variant="outlined" color="secondary">
                 <DeleteForever />
               </Button>
             ),
             tooltip: "Elimnar Documento",
             onClick: (event, rowData) => (
               seleccionarDocumento(rowData, "Eliminar"), setRequestError(null)
+            ),
+          },
+          {
+            icon: (props) => (
+              <Button variant="outlined" color="primary">
+                <ArchiveIcon />
+              </Button>
+            ),
+            tooltip: "Descargar Documento",
+            onClick: (event, rowData) => (
+              seleccionarDocumento(rowData, "Descargar"), setRequestError(null)
             ),
           },
         ]}
