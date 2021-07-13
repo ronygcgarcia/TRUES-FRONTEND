@@ -12,7 +12,6 @@ import Drawer from '../components/Drawer/Drawer';
 import Users from '../layouts/Users/Users';
 import Personal from '../layouts/Personal/Personal';
 import Documento from '../layouts/Documento/Documento';
-import Requisito from '../layouts/Requisitos/Requisito';
 
 class Routes extends Component {
     render() {
@@ -33,7 +32,6 @@ class Routes extends Component {
                         <Route path='/users' exact component={Users} />
                         <Route path='/personal' exact component={Personal} />
                         <Route path='/documentos' exact component={Documento} />
-                        <Route path='/requisitos' exact component={Requisito} />
                     </Switch>
                 </Router>
             </Drawer>
