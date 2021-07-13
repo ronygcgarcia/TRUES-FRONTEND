@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../config/axios";
 import "./User.css";
 import Alert from "@material-ui/lab/Alert";
@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 //---------------------------------------------------------------Material UI
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
-import { Add, Delete, DeleteForever } from "@material-ui/icons";
+import { Add } from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -16,7 +16,6 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TablePagination from "@material-ui/core/TablePagination";
 import TableRow from "@material-ui/core/TableRow";
-import TableFooter from "@material-ui/core/TableFooter";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
@@ -27,9 +26,7 @@ import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
-import ListItemText from "@material-ui/core/ListItemText";
 import Select from "@material-ui/core/Select";
-import Checkbox from "@material-ui/core/Checkbox";
 //----------------------------------------------------Estilos para los Modales
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -77,10 +74,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-//rolLista, userSelected.role
-//function getStyles(name, personName, theme) {
   function getStyles(rolLista, rolSeleccionado, theme) {
-    
   return {
     fontWeight:
       rolSeleccionado.indexOf(rolLista) === -1
@@ -100,10 +94,9 @@ api.get('/roles').then((response) => {
 //-----------------------------------FUNCION PRINCIPAL---------------------------//
 function Users() {
   const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
+     handleSubmit,
+    
+    formState: {  },
   } = useForm();
   const onSubmit = (data) => {
     
@@ -336,7 +329,6 @@ function Users() {
 
     userSelected.roles = arrayID;
     
-    console.log(arrayID);
     if (
       userSelected.name !== "" &&
       userSelected.uid !== "" &&
@@ -345,14 +337,12 @@ function Users() {
       userSelected.password_confirmation !== ""
     ) {
       try {
-        const resp = await api.post("/users", userSelected).then((response) => {
-          //setUsers(users.concat(response.data));
+        await api.post("/users", userSelected).then((response) => {
           getUsers();
 
           abrirCerrarModalInsertar();
         });
       } catch (error) {
-        console.log("Error crear User CATH: "+error);
       }
     }
   };
@@ -364,8 +354,6 @@ function Users() {
     })
 
     userSelected.roles = arrayID;
-    
-    console.log(arrayID);
 
     if (
       userSelected.name !== "" &&
@@ -373,7 +361,7 @@ function Users() {
       userSelected.email !== ""
     ) {
       try {
-        const resp = await api
+        await api
           .put("/users/" + userSelected.id, userSelected)
           .then((response) => {
             var newUsers = users;
@@ -395,7 +383,7 @@ function Users() {
 
   const deleteUser = async () => {
     try {
-      const resp = await api
+      await api
         .delete("/users/" + userSelected.id)
         .then((response) => {
           setUsers(users.filter((user) => user.id !== userSelected.id));
@@ -422,34 +410,22 @@ function Users() {
       default:
         break;
     }
-    //caso === "Editar" ? abrirCerrarModalEditar() : abrirCerrarModalEliminar();
   };
 
-  const [rolUser, setRolUser] = React.useState([]);
   const rolesToSend = [];
-
   const theme = useTheme();
-  const [personName, setPersonName] = React.useState([]);
 
   const handleChangeRol = (event) => {
-
- 
-
-
-
     rolesToSend.push(event.target.value.id);
     setUserSelected({
       ...userSelected,
       role: event.target.value,
       roles: event.target.value,
     });
-    console.log(rolesToSend);
-    console.log(userSelected);
     
   };
   useEffect(() => {
     getUsers();
-    //getRolesApi();
   }, []);
 
   const bodyInsertar = (
@@ -536,7 +512,6 @@ function Users() {
             input={<Input />}
             
             renderValue={(selected) =>{ 
-              console.log(selected);
               return(
               <div className={styles.chips}>
                 {selected.map((elemento) => (
@@ -590,7 +565,6 @@ function Users() {
           className={styles.inputMaterial}
           label="Nombre"
           onChange={handleChange}
-          value={userSelected && userSelected.name}
           variant="outlined"
           error={Boolean(valName?.valName)}
           helperText={valName?.valName}
@@ -604,7 +578,6 @@ function Users() {
           className={styles.inputMaterial}
           label="Nombre de Usuario"
           onChange={handleChange}
-          value={userSelected && userSelected.uid}
           variant="outlined"
           error={Boolean(valUID?.valUID)}
           helperText={valUID?.valUID}
@@ -618,7 +591,6 @@ function Users() {
           className={styles.inputMaterial}
           label="Correo Electronico"
           onChange={handleChange}
-          value={userSelected && userSelected.email}
           variant="outlined"
           error={Boolean(valErrors?.valEmail)}
           helperText={valErrors?.valEmail}
@@ -670,7 +642,6 @@ function Users() {
             input={<Input />}
             
             renderValue={(selected) =>{ 
-              console.log(selected);
               return(
               <div className={styles.chips}>
                 {selected.map((elemento) => (

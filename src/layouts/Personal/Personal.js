@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
-import { Add, Delete, DeleteForever } from "@material-ui/icons";
+import { Add, DeleteForever } from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
 
 //------------------------------------------------------------Material Table
@@ -57,7 +57,7 @@ const tableIcons = {
 const useStyles = makeStyles((theme) => ({
   modal: {
     position: "absolute",
-    width: 400,
+    width: "auto",
     backgroundColor: theme.palette.background.paper,
     borderRadius: "8px",
     boxShadow: theme.shadows[5],
@@ -75,12 +75,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Personal() {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
+  const { handleSubmit } = useForm();
   const onSubmit = (data) => console.log(data);
   //-----------------------------------Definicion de columnas para material-table
   const columnas = [
@@ -93,6 +88,9 @@ function Personal() {
   const [personal, setPersonal] = useState([]);
   const styles = useStyles();
   const [requestError, setRequestError] = useState(null);
+  const [validacionNombre, setValidacionNombre] = useState({
+    mensajeError: "",
+  });
 
   //Estados para los modales para las acciones de los usuarios
   const [modalInsertar, setModalInsertar] = useState(false);
@@ -106,12 +104,21 @@ function Personal() {
 
   //Obtener los que el usuarion escribe en los textfield
   const handleChange = (e) => {
+    setValidacionNombre({
+      mensajeError: "",
+    });
     const { name, value } = e.target;
     setPersonalSelected((prevState) => ({
       ...prevState,
       [name]: value,
     }));
-    console.log(personalSelected);
+    let regName = new RegExp(/^[A-zÀ-ú.\s]{0,49}$/).test(value);
+    if (!regName) {
+      setValidacionNombre({
+        mensajeError:
+          "El nombre no debe contener números ni carácteres especiales. Maximo: 50 carácteres",
+      });
+    }
     setRequestError(null);
   };
 
@@ -134,7 +141,6 @@ function Personal() {
     try {
       const resp = await api.get("/personal");
       setPersonal(resp.data);
-      console.log(resp.data);
     } catch (err) {
       console.error(err);
     }
@@ -143,13 +149,11 @@ function Personal() {
   const createPersonal = async () => {
     if (personalSelected.nombre !== "") {
       try {
-        const resp = await api
-          .post("/personal", personalSelected)
-          .then((response) => {
-            setPersonal(personal.concat(response.data));
+        await api.post("/personal", personalSelected).then((response) => {
+          setPersonal(personal.concat(response.data));
 
-            abrirCerrarModalInsertar();
-          });
+          abrirCerrarModalInsertar();
+        });
       } catch (error) {
         setRequestError(error.response.data.message);
       }
@@ -159,7 +163,7 @@ function Personal() {
   const updatePersona = async () => {
     if (personalSelected.nombre !== "") {
       try {
-        const resp = await api
+        await api
           .put("/personal/" + personalSelected.id, personalSelected)
           .then((response) => {
             var newPersonal = personal;
@@ -179,14 +183,12 @@ function Personal() {
 
   const deletePersona = async () => {
     try {
-      const resp = await api
-        .delete("/personal/" + personalSelected.id)
-        .then((response) => {
-          setPersonal(
-            personal.filter((persona) => persona.id !== personalSelected.id)
-          );
-          abrirCerrarModalEliminar();
-        });
+      await api.delete("/personal/" + personalSelected.id).then((response) => {
+        setPersonal(
+          personal.filter((persona) => persona.id !== personalSelected.id)
+        );
+        abrirCerrarModalEliminar();
+      });
     } catch (error) {
       setRequestError(error.response.data.message);
     }
@@ -208,17 +210,19 @@ function Personal() {
         <Typography variant="h4">Agregar Nuevo Personal</Typography>
         <br />
         <br />
-          <TextField
-            required
-            name="nombre"
-            className={styles.inputMaterial}
-            label="Nombre del Personal"
-            onChange={handleChange}
-            variant="outlined"
-          />
-          <br />
-          <br />
-          <div align="right">
+        <TextField
+          required
+          name="nombre"
+          className={styles.inputMaterial}
+          label="Nombre del Personal"
+          onChange={handleChange}
+          variant="outlined"
+          error={Boolean(validacionNombre?.mensajeError)}
+          helperText={validacionNombre?.mensajeError}
+        />
+        <br />
+        <br />
+        <div align="right">
           {requestError != null ? (
             <div className="alert danger-alert">
               <Alert severity="error">
@@ -244,7 +248,7 @@ function Personal() {
           >
             Cancelar
           </Button>
-          </div>
+        </div>
       </form>
     </div>
   );
@@ -336,8 +340,8 @@ function Personal() {
         color="primary"
         onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
       >
-        <Add />&nbsp;
-        Crear Nuevo Personal
+        <Add />
+        &nbsp; Crear Nuevo Personal
       </Button>
       <br />
       <br />
@@ -349,7 +353,7 @@ function Personal() {
         actions={[
           {
             icon: (props) => (
-              <Button variant="outlined" color="primary" >
+              <Button variant="outlined" color="primary">
                 <EditIcon />
               </Button>
             ),
@@ -360,7 +364,7 @@ function Personal() {
           },
           {
             icon: (props) => (
-              <Button variant="outlined" color="secondary" >
+              <Button variant="outlined" color="secondary">
                 <DeleteForever />
               </Button>
             ),

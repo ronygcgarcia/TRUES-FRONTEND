@@ -5,8 +5,8 @@ import estiloDrop from "./Dropzone.css";
 
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Modal, TextField } from "@material-ui/core";
-import { Add, Delete, DeleteForever } from "@material-ui/icons";
+import { Button, Modal } from "@material-ui/core";
+import { Add, DeleteForever } from "@material-ui/icons";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import ArchiveIcon from "@material-ui/icons/Archive";
@@ -145,24 +145,16 @@ function Documento() {
         abrirCerrarModalEliminar();
         break;
       case "Descargar":
-        
-      default:
         break;
+      default:
+      break;
     }
   };
   useEffect(() => {
     getDocumentos();
   }, []);
 
-  //Obtener los que el usuarion escribe en los textfield
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setDocumentSelected((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-    setRequestError(null);
-  };
+
 
   //-----------------------------------------------------
   const getDocumentos = async () => {
@@ -175,7 +167,7 @@ function Documento() {
   };
   const deleteDocumento = async () => {
     try {
-      const resp = await api
+      await api
         .delete("/documento/" + documentSelected.id)
         .then((response) => {
           setDocumentos(
