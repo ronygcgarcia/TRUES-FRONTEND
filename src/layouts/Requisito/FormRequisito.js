@@ -36,7 +36,10 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         } else if (props.formType === 'edit') {
             //console.log(requisito)
@@ -53,7 +56,10 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         } else {
             api.delete("/requisito/" + props.unidadId).then((response) => {
@@ -65,7 +71,10 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         }        
     }

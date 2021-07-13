@@ -65,7 +65,10 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         } else if (props.formType === 'edit') {
             //console.log(rol)
@@ -82,7 +85,10 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         } else {
             api.delete("/roles/" + props.rolId).then((response) => {
@@ -94,7 +100,10 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         }
         //console.log("ESTADO ANTES DE ENVIAR",{...rol,permissions:permisos});

@@ -71,7 +71,10 @@ const FormRole = (props) => {
                 props.setRows(props.rows.concat(response.data));
                 props.handleClose();
             }, (error) => {
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         } else if (props.formType === 'edit') {
             //console.log(paso)
@@ -92,7 +95,10 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         } else {
             api.delete("/pasos/" + props.pasoId).then((response) => {
@@ -104,7 +110,10 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         }
         //console.log("ESTADO ANTES DE ENVIAR", { ...paso });
