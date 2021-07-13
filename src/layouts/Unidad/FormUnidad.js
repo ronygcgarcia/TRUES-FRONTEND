@@ -25,6 +25,24 @@ const FormRole = (props) => {
     const [unidad, setUnidad] = React.useState({ id: 0, nombre: '' });
     const [requestError, setRequestError] = useState();
     const classes = useStyles();
+    const [validacionNombre, setValidacionNombre] = useState({
+        mensajeError: "",
+      });
+    const validarNombre = (nombre) => {
+        setValidacionNombre({
+            mensajeError:
+          "",
+        });
+        console.log("Nombre: "+nombre);
+        let regName = new RegExp(/^[a-zA-ZñÑáéíóúÁÉÍÓÚ0-9-\s]{3,100}$/).test(nombre);
+        console.log("RegName"+regName);
+        if (!regName) {
+            setValidacionNombre({
+                mensajeError:
+              "El nombre debe ser de un minimo de 3 caracteres y un maximo de 100 caracteres ",
+            });
+        }
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -89,7 +107,12 @@ const FormRole = (props) => {
                 placeholder="Nombre unidad*"
                 value={unidad.nombre}
                 variant="outlined"
-                onChange={(e) => setUnidad({ ...unidad, nombre: e.target.value })}
+                onChange={(e) => (setUnidad({ 
+                    ...unidad, 
+                    nombre: e.target.value 
+                }),validarNombre(e.target.value ))}
+                error={Boolean(validacionNombre?.mensajeError)}
+                    helperText={validacionNombre?.mensajeError}
             />
         </FormGroup>);
     }
