@@ -69,6 +69,24 @@ const FormRole = (props) => {
     //const [requisito, setRequisito] = useState([]);
     //const [paso, setPaso] = useState([]);
     const classes = useStyles();
+    const [validacionNombre, setValidacionNombre] = useState({
+        mensajeError: "",
+      });
+    const validarNombre = (nombre) => {
+        setValidacionNombre({
+            mensajeError:
+          "",
+        });
+        console.log("Nombre: "+nombre);
+        let regName = new RegExp(/^[A-zÀ-ú0-9.\s]{5,50}$/).test(nombre);
+        console.log("RegName"+regName);
+        if (!regName) {
+            setValidacionNombre({
+                mensajeError:
+              "El nombre debe ser de un minimo de 5 caracteres y un maximo de 50 caracteres ",
+            });
+        }
+    }
 
     const editTramite = (response, docs, reqs, pas) => {
         if (docs.length) {
@@ -191,7 +209,13 @@ const FormRole = (props) => {
                     placeholder="Nombre tramite*"
                     value={tramite.nombre}
                     variant="outlined"
-                    onChange={(e) => setTramite({ ...tramite, nombre: e.target.value })}
+                    onChange={(e) => (setTramite({
+                         ...tramite, 
+                         nombre: e.target.value 
+                        }),validarNombre(e.target.value ))
+                    }
+                    error={Boolean(validacionNombre?.mensajeError)}
+                    helperText={validacionNombre?.mensajeError}
                 />
                 <FormControl className={classes.formControl} >
 
