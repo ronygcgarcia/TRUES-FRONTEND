@@ -117,7 +117,10 @@ const FormRole = (props) => {
                 editTramite(response, docs, reqs, pas)
                 props.handleClose();
             }, (error) => {
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         } else if (props.formType === 'edit') {
             //console.log(tramite)
@@ -149,7 +152,10 @@ const FormRole = (props) => {
                 })
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         }
     }
