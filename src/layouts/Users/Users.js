@@ -5,7 +5,7 @@ import Alert from "@material-ui/lab/Alert";
 import { useForm } from "react-hook-form";
 
 //---------------------------------------------------------------Material UI
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
 import { Add, Delete, DeleteForever } from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
@@ -23,6 +23,13 @@ import Paper from "@material-ui/core/Paper";
 import Chip from "@material-ui/core/Chip";
 import EditIcon from "@material-ui/icons/Edit";
 
+import Input from "@material-ui/core/Input";
+import InputLabel from "@material-ui/core/InputLabel";
+import MenuItem from "@material-ui/core/MenuItem";
+import FormControl from "@material-ui/core/FormControl";
+import ListItemText from "@material-ui/core/ListItemText";
+import Select from "@material-ui/core/Select";
+import Checkbox from "@material-ui/core/Checkbox";
 //----------------------------------------------------Estilos para los Modales
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -47,6 +54,10 @@ const useStyles = makeStyles((theme) => ({
     flexShrink: 0,
     marginLeft: theme.spacing(2.5),
   },
+  chips: {
+    display: "flex",
+    flexWrap: "wrap",
+  },
   chip: {
     margin: theme.spacing(0.5),
   },
@@ -54,7 +65,37 @@ const useStyles = makeStyles((theme) => ({
     minWidth: 500,
     minHeight: 500,
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+    maxWidth: 300,
+  },
+  noLabel: {
+    marginTop: theme.spacing(3),
+  },
 }));
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+//rolLista, userSelected.role
+//function getStyles(name, personName, theme) {
+  function getStyles(rolLista, rolSeleccionado, theme) {
+    
+  return {
+    fontWeight:
+      rolSeleccionado.indexOf(rolLista) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
+
+const roles = [];
+
+api.get('/roles').then((response) => {
+  response.data.forEach(function (element) {
+      roles.push(element)
+  })
+})
 
 //-----------------------------------FUNCION PRINCIPAL---------------------------//
 function Users() {
@@ -64,7 +105,9 @@ function Users() {
     watch,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    
+  };
   //-----------------------------------Definicion de columnas para material-table
   const columnas = [
     {
@@ -101,6 +144,7 @@ function Users() {
   ];
 
   const [users, setUsers] = useState([]);
+
   const styles = useStyles();
   const [requestError, setRequestError] = useState(null);
 
@@ -132,6 +176,7 @@ function Users() {
     name: "",
     uid: "",
     email: "",
+    role: [],
     password: "",
     password_confirmation: "",
   });
@@ -179,7 +224,7 @@ function Users() {
     switch (name) {
       case "name":
         let regName = new RegExp(/^[A-zÀ-ú.\s]{0,49}$/).test(value);
-        console.log(regName);
+        
         if (!regName) {
           setValName({
             valName:
@@ -189,7 +234,7 @@ function Users() {
         break;
       case "uid":
         let regUID = new RegExp(/^[a-zA-Z0-9]\S{7,50}$/).test(value);
-        console.log(regUID);
+        
         if (!regUID) {
           setValUID({
             valUID:
@@ -212,7 +257,7 @@ function Users() {
         let regPass = new RegExp(
           /^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{7,16}$/
         ).test(value);
-        console.log(regPass);
+        
         if (!regPass) {
           setValPass({
             valPass:
@@ -235,6 +280,15 @@ function Users() {
     setRequestError(null);
   };
 
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -250,9 +304,11 @@ function Users() {
     userSelected.name = "";
     userSelected.uid = "";
     userSelected.email = "";
+    userSelected.role = [];
     userSelected.password = "";
     userSelected.password_confirmation = "";
   };
+
 
   const abrirCerrarModalEditar = () => {
     setModalEditar(!modalEditar);
@@ -267,13 +323,20 @@ function Users() {
     try {
       const resp = await api.get("/users");
       setUsers(resp.data);
-      console.log(resp.data);
     } catch (err) {
       console.error(err);
     }
   };
 
   const createUser = async () => {
+
+    const arrayID = userSelected.role.map((elemento) => {
+      return elemento.id
+    })
+
+    userSelected.roles = arrayID;
+    
+    console.log(arrayID);
     if (
       userSelected.name !== "" &&
       userSelected.uid !== "" &&
@@ -289,12 +352,21 @@ function Users() {
           abrirCerrarModalInsertar();
         });
       } catch (error) {
-        console.log(error)
+        console.log("Error crear User CATH: "+error);
       }
     }
   };
 
   const updateUser = async () => {
+
+    const arrayID = userSelected.role.map((elemento) => {
+      return elemento.id
+    })
+
+    userSelected.roles = arrayID;
+    
+    console.log(arrayID);
+
     if (
       userSelected.name !== "" &&
       userSelected.uid !== "" &&
@@ -312,7 +384,7 @@ function Users() {
                 user.email = userSelected.email;
               }
             });
-            setUsers(newUsers);
+            getUsers();
             abrirCerrarModalEditar();
           });
       } catch (error) {
@@ -337,22 +409,47 @@ function Users() {
   //Seleccionar el usuario de la tabla al cual realizar acciones
   const seleccionarUser = (user, caso) => {
     setUserSelected(user);
+   
     switch (caso) {
       case "Editar":
         abrirCerrarModalEditar();
+        //obtenerRolesUser(user);
         break;
       case "Eliminar":
         abrirCerrarModalEliminar();
         break;
-        
+
       default:
         break;
     }
     //caso === "Editar" ? abrirCerrarModalEditar() : abrirCerrarModalEliminar();
   };
 
+  const [rolUser, setRolUser] = React.useState([]);
+  const rolesToSend = [];
+
+  const theme = useTheme();
+  const [personName, setPersonName] = React.useState([]);
+
+  const handleChangeRol = (event) => {
+
+ 
+
+
+
+    rolesToSend.push(event.target.value.id);
+    setUserSelected({
+      ...userSelected,
+      role: event.target.value,
+      roles: event.target.value,
+    });
+    console.log(rolesToSend);
+    console.log(userSelected);
+    
+  };
   useEffect(() => {
     getUsers();
+    //getRolesApi();
   }, []);
 
   const bodyInsertar = (
@@ -428,8 +525,37 @@ function Users() {
         <br />
         <br />
         <br />
+        <FormControl className={styles.formControl}>
+          <InputLabel id="demo-mutiple-checkbox-label">Roles</InputLabel>
+          <Select
+            labelId="demo-mutiple-checkbox-label"
+            id="demo-mutiple-checkbox"
+            multiple
+            value={userSelected.role}
+            onChange={handleChangeRol}
+            input={<Input />}
+            
+            renderValue={(selected) =>{ 
+              console.log(selected);
+              return(
+              <div className={styles.chips}>
+                {selected.map((elemento) => (
+                  <Chip key={elemento.id} label={elemento.name} className={styles.chip} />
+                ))
+               }
+              </div>
+            )
+          }}
+            MenuProps={MenuProps}
+          >
+            {roles.map((rolLista) => (
+            <MenuItem key={rolLista.id} value={rolLista} style={getStyles(rolLista.name, userSelected.role, theme)}>
+              {rolLista.name}
+            </MenuItem>
+          ))}
+          </Select>
+        </FormControl>
         <div align="right">
-         
           <Button
             variant="contained"
             color="primary"
@@ -532,6 +658,37 @@ function Users() {
         ) : (
           ""
         )}
+
+        <FormControl className={styles.formControl}>
+          <InputLabel id="demo-mutiple-checkbox-label">Roles</InputLabel>
+          <Select
+            labelId="demo-mutiple-checkbox-label"
+            id="demo-mutiple-checkbox"
+            multiple
+            value={userSelected.role}
+            onChange={handleChangeRol}
+            input={<Input />}
+            
+            renderValue={(selected) =>{ 
+              console.log(selected);
+              return(
+              <div className={styles.chips}>
+                {selected.map((elemento) => (
+                  <Chip key={elemento.id} label={elemento.name} className={styles.chip} />
+                ))
+               }
+              </div>
+            )
+          }}
+            MenuProps={MenuProps}
+          >
+            {roles.map((rolLista) => (
+            <MenuItem key={rolLista.id} value={rolLista} style={getStyles(rolLista.name, userSelected.role, theme)}>
+              {rolLista.name}
+            </MenuItem>
+          ))}
+          </Select>
+        </FormControl>
         <div align="right">
           <Button
             variant="contained"
@@ -623,32 +780,40 @@ function Users() {
                   )
                 : users
               ).map((element, index) => (
-                <TableRow hover>
-                  <TableCell key={index} align="left">
+                <TableRow hover key={index}>
+                  <TableCell key={element.id} align="left">
                     {element.name}
                   </TableCell>
                   <TableCell align="left">{element.uid}</TableCell>
                   <TableCell align="left">{element.email}</TableCell>
                   <TableCell align="center">
                     {element.role.map((rol, index) => (
-                      <Chip key={rol.id} label={rol.name} className={styles.chip} />
+                      <Chip
+                        key={rol.id}
+                        label={rol.name}
+                        className={styles.chip}
+                      />
                     ))}
                   </TableCell>
                   <TableCell align="right">
                     <Box pr={1} pl={1}>
-                      <Button variant="outlined" color="primary" 
-                      onClick={() => {
-                        seleccionarUser(element, "Editar");
-                        abrirCerrarModalEditar();
-                      }}
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => {
+                          seleccionarUser(element, "Editar");
+                          abrirCerrarModalEditar();
+                        }}
                       >
                         <EditIcon />
                       </Button>{" "}
-                      <Button variant="outlined" color="secondary" 
-                      onClick={() => {
-                        seleccionarUser(element, "Eliminar");
-                        abrirCerrarModalEliminar();
-                      }}
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={() => {
+                          seleccionarUser(element, "Eliminar");
+                          abrirCerrarModalEliminar();
+                        }}
                       >
                         <DeleteForeverIcon />
                       </Button>
@@ -659,13 +824,12 @@ function Users() {
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination 
+        <TablePagination
           rowsPerPageOptions={[10, 25, 100]}
           component="div"
           count={users.length}
           rowsPerPage={rowsPerPage}
           page={page}
-          
           onChangePage={handleChangePage}
           onChangeRowsPerPage={handleChangeRowsPerPage}
         />
