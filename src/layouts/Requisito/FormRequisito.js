@@ -25,6 +25,58 @@ const FormRole = (props) => {
     const [requisito, setRequisito] = React.useState({ id: 0, nombre: '', descripcion:'' });
     const [requestError, setRequestError] = useState();
     const classes = useStyles();
+    const [validacionNombre, setValidacionNombre] = useState({
+    mensajeError: "",
+    });
+    const [validacionDescripcion, setValidacionDescripcion] = useState({
+    mensajeError: "",
+    });
+
+    const validacionCampos = (e) => {
+        const { name, value } = e.target;
+        console.log(e.target);
+        switch (name) {
+            case "nombre":
+                setValidacionNombre({
+                mensajeError: "",
+                });
+            break;
+            case "descripcion":
+                setValidacionDescripcion({
+                mensajeError: "",
+                });
+              break;
+            default:
+              break;
+        }
+
+        switch (name) {
+            case "nombre":
+              let ExpRegName = new RegExp(/^[A-zÀ-ú0-9.\s]{5,100}$/).test(value);
+              
+              if (!ExpRegName) {
+                setValidacionNombre({
+                    mensajeError:
+                    "El nombre debe ser de un minimo de 5 caracteres y un maximo de 1000 caracteres",
+                });
+              }
+              break;
+            case "descripcion":
+                let ExpRegDescripcion = new RegExp(/^[A-zÀ-ú0-9.\s]{0,255}$/).test(value);
+              
+              if (!ExpRegDescripcion) {
+                setValidacionDescripcion({
+                    mensajeError:
+                    "La descripcion tiene un limite de 255 caracteres",
+                });
+              }
+              break;
+      
+            default:
+              break;
+          }
+
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -94,20 +146,28 @@ const FormRole = (props) => {
     function createOrEdit() {
         return (<FormGroup style={{ justifyContent: 'center' }}>
             <TextField
+                name="nombre"
                 required
                 id="outlined-required"
                 placeholder="Nombre requisito*"
                 value={requisito.nombre}
                 variant="outlined"
-                onChange={(e) => setRequisito({ ...requisito, nombre: e.target.value })}
+                onChange={(e) => (setRequisito({ ...requisito, nombre: e.target.value }),
+                validacionCampos(e))}
+                error={Boolean(validacionNombre?.mensajeError)}
+                helperText={validacionNombre?.mensajeError}
             />
             <TextField
+                name="descripcion"
                 required
                 id="outlined-required"
                 placeholder="Descripcion*"
                 value={requisito.descripcion}
                 variant="outlined"
-                onChange={(e) => setRequisito({ ...requisito, descripcion: e.target.value })}
+                onChange={(e) => (setRequisito({ ...requisito, descripcion: e.target.value },
+                validacionCampos(e)))}
+                error={Boolean(validacionDescripcion?.mensajeError)}
+                helperText={validacionDescripcion?.mensajeError}
             />
         </FormGroup>);
     }
