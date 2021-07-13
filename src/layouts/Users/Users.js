@@ -20,6 +20,7 @@ import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import Box from "@material-ui/core/Box";
 import Paper from "@material-ui/core/Paper";
 import Chip from "@material-ui/core/Chip";
+import FaceIcon from "@material-ui/icons/Face";
 import EditIcon from "@material-ui/icons/Edit";
 
 import Input from "@material-ui/core/Input";
@@ -40,6 +41,10 @@ const useStyles = makeStyles((theme) => ({
     transform: "translate(-50%, -50%)",
     borderRadius: "8px",
   },
+  head: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white,
+  },
   iconos: {
     cursor: "pointer",
   },
@@ -54,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
   chips: {
     display: "flex",
     flexWrap: "wrap",
+    variant: "outlined",
   },
   chip: {
     margin: theme.spacing(0.5),
@@ -74,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-  function getStyles(rolLista, rolSeleccionado, theme) {
+function getStyles(rolLista, rolSeleccionado, theme) {
   return {
     fontWeight:
       rolSeleccionado.indexOf(rolLista) === -1
@@ -85,22 +91,20 @@ const ITEM_PADDING_TOP = 8;
 
 const roles = [];
 
-api.get('/roles').then((response) => {
+api.get("/roles").then((response) => {
   response.data.forEach(function (element) {
-      roles.push(element)
-  })
-})
+    roles.push(element);
+  });
+});
 
 //-----------------------------------FUNCION PRINCIPAL---------------------------//
 function Users() {
   const {
-     handleSubmit,
-    
-    formState: {  },
+    handleSubmit,
+
+    formState: {},
   } = useForm();
-  const onSubmit = (data) => {
-    
-  };
+  const onSubmit = (data) => {};
   //-----------------------------------Definicion de columnas para material-table
   const columnas = [
     {
@@ -217,7 +221,7 @@ function Users() {
     switch (name) {
       case "name":
         let regName = new RegExp(/^[A-zÀ-ú.\s]{0,49}$/).test(value);
-        
+
         if (!regName) {
           setValName({
             valName:
@@ -227,7 +231,7 @@ function Users() {
         break;
       case "uid":
         let regUID = new RegExp(/^[a-zA-Z0-9]\S{7,50}$/).test(value);
-        
+
         if (!regUID) {
           setValUID({
             valUID:
@@ -250,7 +254,7 @@ function Users() {
         let regPass = new RegExp(
           /^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{7,16}$/
         ).test(value);
-        
+
         if (!regPass) {
           setValPass({
             valPass:
@@ -302,7 +306,6 @@ function Users() {
     userSelected.password_confirmation = "";
   };
 
-
   const abrirCerrarModalEditar = () => {
     setModalEditar(!modalEditar);
   };
@@ -322,13 +325,12 @@ function Users() {
   };
 
   const createUser = async () => {
-
     const arrayID = userSelected.role.map((elemento) => {
-      return elemento.id
-    })
+      return elemento.id;
+    });
 
     userSelected.roles = arrayID;
-    
+
     if (
       userSelected.name !== "" &&
       userSelected.uid !== "" &&
@@ -342,16 +344,14 @@ function Users() {
 
           abrirCerrarModalInsertar();
         });
-      } catch (error) {
-      }
+      } catch (error) {}
     }
   };
 
   const updateUser = async () => {
-
     const arrayID = userSelected.role.map((elemento) => {
-      return elemento.id
-    })
+      return elemento.id;
+    });
 
     userSelected.roles = arrayID;
 
@@ -383,12 +383,10 @@ function Users() {
 
   const deleteUser = async () => {
     try {
-      await api
-        .delete("/users/" + userSelected.id)
-        .then((response) => {
-          setUsers(users.filter((user) => user.id !== userSelected.id));
-          abrirCerrarModalEliminar();
-        });
+      await api.delete("/users/" + userSelected.id).then((response) => {
+        setUsers(users.filter((user) => user.id !== userSelected.id));
+        abrirCerrarModalEliminar();
+      });
     } catch (error) {
       setRequestError(error.response.data.message);
     }
@@ -397,7 +395,7 @@ function Users() {
   //Seleccionar el usuario de la tabla al cual realizar acciones
   const seleccionarUser = (user, caso) => {
     setUserSelected(user);
-   
+
     switch (caso) {
       case "Editar":
         abrirCerrarModalEditar();
@@ -422,7 +420,6 @@ function Users() {
       role: event.target.value,
       roles: event.target.value,
     });
-    
   };
   useEffect(() => {
     getUsers();
@@ -510,24 +507,31 @@ function Users() {
             value={userSelected.role}
             onChange={handleChangeRol}
             input={<Input />}
-            
-            renderValue={(selected) =>{ 
-              return(
-              <div className={styles.chips}>
-                {selected.map((elemento) => (
-                  <Chip key={elemento.id} label={elemento.name} className={styles.chip} />
-                ))
-               }
-              </div>
-            )
-          }}
+            renderValue={(selected) => {
+              return (
+                <div className={styles.chips}>
+                  {selected.map((elemento) => (
+                    <Chip
+                      key={elemento.id}
+                      label={elemento.name}
+                      className={styles.chip}
+                      variant="outlined"
+                    />
+                  ))}
+                </div>
+              );
+            }}
             MenuProps={MenuProps}
           >
             {roles.map((rolLista) => (
-            <MenuItem key={rolLista.id} value={rolLista} style={getStyles(rolLista.name, userSelected.role, theme)}>
-              {rolLista.name}
-            </MenuItem>
-          ))}
+              <MenuItem
+                key={rolLista.id}
+                value={rolLista}
+                style={getStyles(rolLista.name, userSelected.role, theme)}
+              >
+                {rolLista.name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <div align="right">
@@ -640,24 +644,31 @@ function Users() {
             value={userSelected.role}
             onChange={handleChangeRol}
             input={<Input />}
-            
-            renderValue={(selected) =>{ 
-              return(
-              <div className={styles.chips}>
-                {selected.map((elemento) => (
-                  <Chip key={elemento.id} label={elemento.name} className={styles.chip} />
-                ))
-               }
-              </div>
-            )
-          }}
+            renderValue={(selected) => {
+              return (
+                <div className={styles.chips}>
+                  {selected.map((elemento) => (
+                    <Chip
+                      key={elemento.id}
+                      label={elemento.name}
+                      className={styles.chip}
+                      variant="outlined"
+                    />
+                  ))}
+                </div>
+              );
+            }}
             MenuProps={MenuProps}
           >
             {roles.map((rolLista) => (
-            <MenuItem key={rolLista.id} value={rolLista} style={getStyles(rolLista.name, userSelected.role, theme)}>
-              {rolLista.name}
-            </MenuItem>
-          ))}
+              <MenuItem
+                key={rolLista.id}
+                value={rolLista}
+                style={getStyles(rolLista.name, userSelected.role, theme)}
+              >
+                {rolLista.name}
+              </MenuItem>
+            ))}
           </Select>
         </FormControl>
         <div align="right">
@@ -729,7 +740,7 @@ function Users() {
       <br />
       <Paper className={styles.root}>
         <TableContainer className={styles.container}>
-          <Table stickyHeader aria-label="sticky table">
+          <Table stickyHeader aria-label="sticky table" className={styles.header}>
             <TableHead>
               <TableRow>
                 {columnas.map((column) => (
@@ -760,9 +771,12 @@ function Users() {
                   <TableCell align="center">
                     {element.role.map((rol, index) => (
                       <Chip
+                        color="primary"
+                        icon={<FaceIcon />}
                         key={rol.id}
                         label={rol.name}
                         className={styles.chip}
+                        variant="outlined"
                       />
                     ))}
                   </TableCell>

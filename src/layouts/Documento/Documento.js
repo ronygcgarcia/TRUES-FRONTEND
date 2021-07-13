@@ -102,6 +102,8 @@ function Documento() {
     },
   ];
 
+  const [selectedRow, setSelectedRow] = useState(null);
+
   const [documentos, setDocumentos] = useState([]);
   const styles = useStyles();
   const [requestError, setRequestError] = useState(null);
@@ -339,7 +341,15 @@ function Documento() {
             ),
           },
         ]}
-        options={{ actionsColumnIndex: -1 }}
+        onRowClick={((evt, selectedRow) => setSelectedRow(selectedRow.tableData.id))}
+        options={{ 
+          actionsColumnIndex: -1 ,
+          rowStyle: rowData => ({
+            backgroundColor: (selectedRow === rowData.tableData.id) ? '#fafbfd' : '#FFF',
+            fontWeight: (selectedRow === rowData.tableData.id) ? 'bold' : 'normal',
+            color: (selectedRow === rowData.tableData.id) ? '#000' : '#000',
+          })
+        }}
         localization={{
           header: {
             actions: "Opciones",
