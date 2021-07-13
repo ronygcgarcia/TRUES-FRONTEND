@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme) => ({
             width: '100ch',
         },
     },
-    formContubicacion: {
+    formContunidad: {
         margin: theme.spacing(1),
         minWidth: 120,
         maxWidth: 300,
@@ -22,19 +22,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const FormRole = (props) => {
-    const [ubicacion, setUbicacion] = React.useState({ id: 0, name: '', permissions: [] });
+    const [requisito, setRequisito] = React.useState({ id: 0, nombre: '', descripcion:'' });
     const [requestError, setRequestError] = useState();
     const classes = useStyles();
     const [validacionNombre, setValidacionNombre] = useState({
     mensajeError: "",
     });
     const [validacionDescripcion, setValidacionDescripcion] = useState({
-    mensajeError: "",
-    });
-    const [validacionLongitud, setValidacionLongitud] = useState({
-    mensajeError: "",
-    });
-    const [validacionLatitud, setValidacionLatitud] = useState({
     mensajeError: "",
     });
 
@@ -52,23 +46,13 @@ const FormRole = (props) => {
                 mensajeError: "",
                 });
               break;
-            case "longitud":
-                setValidacionLongitud({
-                mensajeError: "",
-                });
-              break;
-            case "latitud":
-                setValidacionLatitud({
-                 mensajeError: "",
-                });
-              break;
             default:
               break;
         }
 
         switch (name) {
             case "nombre":
-              let ExpRegName = new RegExp(/^[a-zA-Z0-9-\s]{3,100}$/).test(value);
+              let ExpRegName = new RegExp(/^[A-zÀ-ú0-9.\s]{5,100}$/).test(value);
               
               if (!ExpRegName) {
                 setValidacionNombre({
@@ -87,24 +71,6 @@ const FormRole = (props) => {
                 });
               }
               break;
-            case "longitud":
-                let ExpRegLongitud = new RegExp(/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/).test(value);
-              if (!ExpRegLongitud) {
-                setValidacionLongitud({
-                    mensajeError: "La coordenada de longitud no es correcta",
-                });
-              }
-              break;
-            case "latitud":
-              let ExpRegLatitud = new RegExp(/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/).test(value);
-              
-              if (!ExpRegLatitud) {
-                setValidacionLatitud({
-                    mensajeError:
-                    "La coordenada de latitud no es correcta",
-                });
-              }
-              break;
       
             default:
               break;
@@ -114,25 +80,27 @@ const FormRole = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        //console.log("ESTADO ANTES DE PERMISOS",ubicacion);        
+        //console.log("ESTADO ANTES DE PERMISOS",requisito);        
         if (props.formType === 'new') {
-            //console.log(ubicacion)
-            api.post("/ubicacion", ubicacion).then((response) => {
+            console.log(requisito)
+            api.post("/requisito", requisito).then((response) => {
                 props.setRows(props.rows.concat(response.data));
+                props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         } else if (props.formType === 'edit') {
-            //console.log(ubicacion)
-            api.put("/ubicacion/" + props.ubicacionId, ubicacion).then((response) => {
+            //console.log(requisito)
+            api.put("/requisito/" + props.unidadId, requisito).then((response) => {
                 var newRows = props.rows
                 newRows.forEach(function (row) {
                     if (row.id === response.data.id) {
-                        row.nombre = ubicacion.nombre
-                        row.descripcion = ubicacion.descripcion
-                        row.longitud = ubicacion.longitud
-                        row.latitud = ubicacion.latitud
+                        row.nombre = requisito.nombre
+                        row.descripcion=requisito.descripcion
                     }
                 })
                 props.setRows([])
@@ -140,36 +108,40 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         } else {
-            api.delete("/ubicacion/" + props.ubicacionId).then((response) => {
+            api.delete("/requisito/" + props.unidadId).then((response) => {
                 //console.log(response)
-                api.get('/ubicacion').then((response) => {
+                api.get('/requisito').then((response) => {
                     props.setRows([])
                     props.setRows(response.data)
                 })
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
-                props.handleClose();
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
-        }
-        //console.log("ESTADO ANTES DE ENVIAR",{...ubicacion,permissions:permisos});        
+        }        
     }
 
     useEffect(() => {
-        if (props.ubicacionId && props.ubicacionId !== 0) {
-            api.get('/ubicacion/' + props.ubicacionId).then((response) => {
+        if (props.unidadId && props.unidadId !== 0) {
+            api.get('/requisito/' + props.unidadId).then((response) => {
                 // los objetos permiso, se cambian a strings para que el select funcione
                 //console.log(response)
-                setUbicacion({
-                    id: props.ubicacionId, nombre: response.data.nombre, descripcion: response.data.descripcion, longitud: response.data.longitud, latitud: response.data.latitud
+                setRequisito({
+                    id: props.unidadId, nombre: response.data.nombre, descripcion:response.data.descripcion
                 });
             })
         }
-    }, [props.ubicacionId]);
+    }, [props.unidadId]);
 
     function createOrEdit() {
         return (<FormGroup style={{ justifyContent: 'center' }}>
@@ -177,10 +149,10 @@ const FormRole = (props) => {
                 name="nombre"
                 required
                 id="outlined-required"
-                placeholder="Nombre ubicacion*"
-                value={ubicacion.nombre}
+                placeholder="Nombre requisito*"
+                value={requisito.nombre}
                 variant="outlined"
-                onChange={(e) => (setUbicacion({ ...ubicacion, nombre: e.target.value }),
+                onChange={(e) => (setRequisito({ ...requisito, nombre: e.target.value }),
                 validacionCampos(e))}
                 error={Boolean(validacionNombre?.mensajeError)}
                 helperText={validacionNombre?.mensajeError}
@@ -190,36 +162,12 @@ const FormRole = (props) => {
                 required
                 id="outlined-required"
                 placeholder="Descripcion*"
-                value={ubicacion.descripcion}
+                value={requisito.descripcion}
                 variant="outlined"
-                onChange={(e) => (setUbicacion({ ...ubicacion, descripcion: e.target.value },
+                onChange={(e) => (setRequisito({ ...requisito, descripcion: e.target.value },
                 validacionCampos(e)))}
                 error={Boolean(validacionDescripcion?.mensajeError)}
                 helperText={validacionDescripcion?.mensajeError}
-            />
-            <TextField
-                name="longitud"
-                required
-                id="outlined-required"
-                placeholder="Longitud*"
-                value={ubicacion.longitud}
-                variant="outlined"
-                onChange={(e) => (setUbicacion({ ...ubicacion, longitud: e.target.value }),
-                validacionCampos(e))}
-                error={Boolean(validacionLongitud?.mensajeError)}
-                helperText={validacionLongitud?.mensajeError}
-            />
-            <TextField
-                name="latitud"
-                required
-                id="outlined-required"
-                placeholder="Latitud*"
-                value={ubicacion.latitud}
-                variant="outlined"
-                onChange={(e) => (setUbicacion({ ...ubicacion, latitud: e.target.value }),
-                validacionCampos(e))}
-                error={Boolean(validacionLatitud?.mensajeError)}
-                helperText={validacionLatitud?.mensajeError}
             />
         </FormGroup>);
     }
@@ -229,7 +177,7 @@ const FormRole = (props) => {
         <div>
             <form onSubmit={handleSubmit} className={classes.root}>
                 {requestError != null ? <p className="alert danger-alert"><Alert severity="error">Ha ocurrido un error: {requestError}</Alert></p> : ''}
-                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este ubicacion?</p> : createOrEdit()}
+                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este requisito?</p> : createOrEdit()}
                 <FormControl style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '1rem' }}>
                     <Button variant="contained" color="secondary" onClick={props.handleClose}>
                         Cerrar

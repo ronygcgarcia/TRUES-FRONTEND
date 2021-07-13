@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import FormTramite from './FormTramite';
+import FormPaso from './FormPaso';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
@@ -19,14 +19,49 @@ import Fade from '@material-ui/core/Fade';
 import Backdrop from '@material-ui/core/Backdrop'
 import api from '../../config/axios';
 import Typography from '@material-ui/core/Typography';
+
 const columns = [
-    { id: 'id', label: 'Tramite', align: 'center',minWidth: 170 },
+    { id: 'id', label: 'id' },
     {
         id: 'nombre',
+        label: 'Nombre',
+        minWidth: 170,
+        align: 'right',
+        format: (value) => value.toLocaleString('en-US'),
+    },
+    {
+        id: 'indicaciones',
+        label: 'Indicacion',
+        minWidth: 170,
+        align: 'right',
+        format: (value) => value.toLocaleString('en-US'),
+    },
+    {
+        id: 'complejidad',
+        label: 'Complejidad',
+        minWidth: 170,
+        align: 'right',
+        format: (value) => value.toLocaleString('en-US'),
+    },
+    {
+        id: 'ubicacion',
+        label: 'Ubicacion',
+        minWidth: 170,
+        align: 'right',
+        format: (value) => value.toLocaleString('en-US'),
+    },
+    {
+        id: 'personal',
+        label: 'Personal',
+        minWidth: 170,
+        align: 'right',
+        format: (value) => value.toLocaleString('en-US'),
+    },
+    {
+        id: 'actions',
         label: 'Acciones',
         minWidth: 170,
-        align: 'center',
-        format: (value) => value.toLocaleString('en-US'),
+        align: 'center'
     }
 ];
 
@@ -64,8 +99,8 @@ export default function StickyHeadTable() {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [open, setOpen] = React.useState(false);
     const [formType, setFormType] = React.useState('');
-    //const [unidades, setTramite] = useState();
-    const [tramite, setTramite] = useState({ id: 0, nombre: '', documentos: [], requisitos: [], pasos: [] });
+    //const [pasos, setRoles] = useState();
+    const [paso, setPaso] = useState({ id: 0, nombre: '', indicaciones: '', complejidad: 0, ubicacion_id: 0, personal_id: 0 });
     const [rows, setRows] = useState([]);
 
     const handleOpen = () => {
@@ -84,9 +119,11 @@ export default function StickyHeadTable() {
         setPage(0);
     };
 
-    const getTramite = async () => {
-        try {            
-            const resp = await api.get('/tramite');            
+
+
+    const getPasos = async () => {
+        try {
+            const resp = await api.get('/pasos');
             setRows(resp.data)
         } catch (err) {
             // Handle Error Here
@@ -95,8 +132,8 @@ export default function StickyHeadTable() {
     };
 
     useEffect(() => {
-        getTramite()        
-    }, [])    
+        getPasos()
+    }, [])
 
     //console.log(rows)
     return (
@@ -105,9 +142,9 @@ export default function StickyHeadTable() {
                 <Button variant="outlined" color="primary" onClick={() => {
                     handleOpen();
                     setFormType('new');
-                    setTramite({ id: 0, nombre: '', documentos: [], requisitos: [], pasos: [] })
+                    setPaso({ id: 0, name: '', permisos: [] })
                 }} style={{ display: 'block', marginLeft: 'auto' }}>
-                    <AddIcon /> Crear nuevo tramite
+                    <AddIcon /> Crear nuevo paso
                 </Button>
             </Box>
             <Paper className={classes.root} >
@@ -129,21 +166,36 @@ export default function StickyHeadTable() {
                         <TableBody>
                             {rows.map((element, index) => (
                                 <TableRow>
-                                    <TableCell key={index} align='center'>
+                                    <TableCell key={index}>
+                                        {element.id}
+                                    </TableCell>
+                                    <TableCell align='right'>
                                         {element.nombre}
-                                    </TableCell>                                    
+                                    </TableCell>
+                                    <TableCell align='right'>
+                                        {element.indicaciones}
+                                    </TableCell>
+                                    <TableCell align='right'>
+                                        {element.complejidad*100+'%'}
+                                    </TableCell>
+                                    <TableCell align='right'>
+                                        {element.ubicacion_id}
+                                    </TableCell>
+                                    <TableCell align='right'>
+                                        {element.personal_id}
+                                    </TableCell>
                                     <TableCell align='center'>
                                         <Box pr={1} pl={1}>
                                             <Button variant="outlined" color="primary" onClick={() => {
                                                 handleOpen();
                                                 setFormType('edit');
-                                                setTramite(element);                                                
+                                                setPaso(element);
                                             }}>
                                                 <EditIcon />
                                             </Button> <Button variant="outlined" color="secondary" onClick={() => {
                                                 handleOpen();
                                                 setFormType('delete');
-                                                setTramite(element);
+                                                setPaso(element);
                                             }}>
                                                 <DeleteForeverIcon />
                                             </Button>
@@ -178,8 +230,8 @@ export default function StickyHeadTable() {
                 >
                     <Fade in={open}>
                         <div className={classes.paper}>
-                            <h1 id="transition-modal-title">{formType === 'new' ? <Typography variant="h4">Crear tramite</Typography>: formType === 'edit' ?  <Typography variant="h4">Editar tramite</Typography> :  <Typography variant="h4">Eliminar tramite</Typography>}</h1>
-                            <FormTramite tramiteId={tramite.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormTramite>
+                            <h1 id="transition-modal-title">{formType === 'new' ? <Typography variant="h4">Crear paso</Typography> : formType === 'edit' ? <Typography variant="h4">Editar paso</Typography> : <Typography variant="h4">Eliminar paso</Typography>}</h1>
+                            <FormPaso pasoId={paso.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormPaso>
                         </div>
                     </Fade>
                 </Modal>

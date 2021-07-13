@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import FormTramite from './FormTramite';
+import FormRequisito from './FormRequisito';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
@@ -19,13 +19,14 @@ import Fade from '@material-ui/core/Fade';
 import Backdrop from '@material-ui/core/Backdrop'
 import api from '../../config/axios';
 import Typography from '@material-ui/core/Typography';
+
 const columns = [
-    { id: 'id', label: 'Tramite', align: 'center',minWidth: 170 },
+    { id: 'id', label: 'nombre', align: 'center',minWidth: 170 },
     {
         id: 'nombre',
-        label: 'Acciones',
+        label: 'Nombre',
         minWidth: 170,
-        align: 'center',
+        align: 'right',
         format: (value) => value.toLocaleString('en-US'),
     }
 ];
@@ -64,8 +65,8 @@ export default function StickyHeadTable() {
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [open, setOpen] = React.useState(false);
     const [formType, setFormType] = React.useState('');
-    //const [unidades, setTramite] = useState();
-    const [tramite, setTramite] = useState({ id: 0, nombre: '', documentos: [], requisitos: [], pasos: [] });
+    //const [unidades, setRequisito] = useState();
+    const [requisito, setRequisito] = useState({ id: 0, nombre: '', descripcion:''});
     const [rows, setRows] = useState([]);
 
     const handleOpen = () => {
@@ -84,9 +85,11 @@ export default function StickyHeadTable() {
         setPage(0);
     };
 
-    const getTramite = async () => {
+
+
+    const getUnidad = async () => {
         try {            
-            const resp = await api.get('/tramite');            
+            const resp = await api.get('/requisito');
             setRows(resp.data)
         } catch (err) {
             // Handle Error Here
@@ -95,7 +98,7 @@ export default function StickyHeadTable() {
     };
 
     useEffect(() => {
-        getTramite()        
+        getUnidad()        
     }, [])    
 
     //console.log(rows)
@@ -105,9 +108,9 @@ export default function StickyHeadTable() {
                 <Button variant="outlined" color="primary" onClick={() => {
                     handleOpen();
                     setFormType('new');
-                    setTramite({ id: 0, nombre: '', documentos: [], requisitos: [], pasos: [] })
+                    setRequisito({ id: 0, name: '', permisos: [] })
                 }} style={{ display: 'block', marginLeft: 'auto' }}>
-                    <AddIcon /> Crear nuevo tramite
+                    <AddIcon /> Crear nuevo requisito
                 </Button>
             </Box>
             <Paper className={classes.root} >
@@ -137,13 +140,13 @@ export default function StickyHeadTable() {
                                             <Button variant="outlined" color="primary" onClick={() => {
                                                 handleOpen();
                                                 setFormType('edit');
-                                                setTramite(element);                                                
+                                                setRequisito(element);                                                
                                             }}>
                                                 <EditIcon />
                                             </Button> <Button variant="outlined" color="secondary" onClick={() => {
                                                 handleOpen();
                                                 setFormType('delete');
-                                                setTramite(element);
+                                                setRequisito(element);
                                             }}>
                                                 <DeleteForeverIcon />
                                             </Button>
@@ -178,8 +181,8 @@ export default function StickyHeadTable() {
                 >
                     <Fade in={open}>
                         <div className={classes.paper}>
-                            <h1 id="transition-modal-title">{formType === 'new' ? <Typography variant="h4">Crear tramite</Typography>: formType === 'edit' ?  <Typography variant="h4">Editar tramite</Typography> :  <Typography variant="h4">Eliminar tramite</Typography>}</h1>
-                            <FormTramite tramiteId={tramite.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormTramite>
+                        <h1 id="transition-modal-title">{formType === 'new' ? <Typography variant="h4">Crear requisito</Typography>: formType === 'edit' ?  <Typography variant="h4">Editar requisito</Typography> :  <Typography variant="h4">Eliminar requisito</Typography>}</h1>
+                            <FormRequisito unidadId={requisito.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormRequisito>
                         </div>
                     </Fade>
                 </Modal>

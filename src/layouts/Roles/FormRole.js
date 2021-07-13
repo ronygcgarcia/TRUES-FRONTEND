@@ -51,6 +51,24 @@ const FormRole = (props) => {
     const [rol, setRol] = React.useState({ id: 0, name: '', permissions: [] });
     const [requestError, setRequestError] = useState();
     const classes = useStyles();
+    const [validacionNombre, setValidacionNombre] = useState({
+        mensajeError: "",
+      });
+    const validarNombre = (nombre) => {
+        setValidacionNombre({
+            mensajeError:
+          "",
+        });
+        console.log("Nombre: "+nombre);
+        let regName = new RegExp(/^[A-zÀ-ú0-9.\s]{5,100}$/).test(nombre);
+        console.log("RegName"+regName);
+        if (!regName) {
+            setValidacionNombre({
+                mensajeError:
+              "El nombre debe ser de un minimo de 5 caracteres y un maximo de 100 caracteres ",
+            });
+        }
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -65,7 +83,10 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         } else if (props.formType === 'edit') {
             //console.log(rol)
@@ -82,7 +103,10 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         } else {
             api.delete("/roles/" + props.rolId).then((response) => {
@@ -94,7 +118,10 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message)
+                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                    console.log(el);
+                    return el;
+                }))
             })
         }
         //console.log("ESTADO ANTES DE ENVIAR",{...rol,permissions:permisos});
@@ -129,7 +156,12 @@ const FormRole = (props) => {
                 label="Nombre rol"
                 value={rol.name}
                 variant="outlined"
-                onChange={(e) => setRol({ ...rol, name: e.target.value })}
+                onChange={(e) => (setRol({
+                     ...rol, 
+                     name: e.target.value 
+                    }),validarNombre(e.target.value ))}
+                error={Boolean(validacionNombre?.mensajeError)}
+                helperText={validacionNombre?.mensajeError}
             />
             <FormControl className={classes.formControl} >
 
