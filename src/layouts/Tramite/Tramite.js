@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import FormUbicacion from './FormTramite';
+import FormTramite from './FormTramite';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
@@ -65,7 +65,7 @@ export default function StickyHeadTable() {
     const [open, setOpen] = React.useState(false);
     const [formType, setFormType] = React.useState('');
     //const [unidades, setTramite] = useState();
-    const [tramite, setTramite] = useState({ id: 0, nombre: '' });
+    const [tramite, setTramite] = useState({ id: 0, nombre: '', documentos: [], requisitos: [], pasos: [] });
     const [rows, setRows] = useState([]);
 
     const handleOpen = () => {
@@ -86,7 +86,7 @@ export default function StickyHeadTable() {
 
     const getTramite = async () => {
         try {            
-            const resp = await api.get('/ubicacion');
+            const resp = await api.get('/tramite');            
             setRows(resp.data)
         } catch (err) {
             // Handle Error Here
@@ -105,7 +105,7 @@ export default function StickyHeadTable() {
                 <Button variant="outlined" color="primary" onClick={() => {
                     handleOpen();
                     setFormType('new');
-                    setTramite({ id: 0, name: '', permisos: [] })
+                    setTramite({ id: 0, nombre: '', documentos: [], requisitos: [], pasos: [] })
                 }} style={{ display: 'block', marginLeft: 'auto' }}>
                     <AddIcon /> Crear nuevo tramite
                 </Button>
@@ -179,7 +179,7 @@ export default function StickyHeadTable() {
                     <Fade in={open}>
                         <div className={classes.paper}>
                             <h1 id="transition-modal-title">{formType === 'new' ? <Typography variant="h4">Crear tramite</Typography>: formType === 'edit' ?  <Typography variant="h4">Editar tramite</Typography> :  <Typography variant="h4">Eliminar tramite</Typography>}</h1>
-                            <FormUbicacion unidadId={tramite.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormUbicacion>
+                            <FormTramite tramiteId={tramite.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormTramite>
                         </div>
                     </Fade>
                 </Modal>
