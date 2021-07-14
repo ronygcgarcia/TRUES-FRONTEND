@@ -5,14 +5,14 @@ import estiloDrop from "./Dropzone.css";
 
 //---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
-import { Button, Modal } from "@material-ui/core";
+import { Button, Modal, TablePagination } from "@material-ui/core";
 import { Add, DeleteForever } from "@material-ui/icons";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import ArchiveIcon from "@material-ui/icons/Archive";
 
 //------------------------------------------------------------Material Table
-import MaterialTable from "material-table";
+import MaterialTable, { MTableBodyRow } from "material-table";
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Check from "@material-ui/icons/Check";
@@ -79,11 +79,11 @@ const useStyles = makeStyles((theme) => ({
   },
   dropzone: {
     position: "absolute",
-    width: "50%",
+    width: "60%",
     backgroundColor: theme.palette.background.paper,
     borderRadius: "8px",
     boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
+    padding: theme.spacing(2, 2, 2),
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
@@ -103,6 +103,9 @@ function Documento() {
   ];
 
   const [selectedRow, setSelectedRow] = useState(null);
+  const [hoveringOver, setHoveringOver] = useState("");
+  const handleRowHover = (event, propsData) => setHoveringOver(propsData.index);
+  const handleRowHoverLeave = (event, propsData) => setHoveringOver("");
 
   const [documentos, setDocumentos] = useState([]);
   const styles = useStyles();
@@ -125,10 +128,18 @@ function Documento() {
       ...prevState,
       switchmultiple: false,
     }));
+    setDocumentSelected({
+      nombre: "",
+      url: "",
+    });
     setModalInsertar(!modalInsertar);
   };
 
   const abrirCerrarModalEditar = () => {
+    setSwitchState((prevState) => ({
+      ...prevState,
+      switchmultiple: false,
+    }));
     setModalEditar(!modalEditar);
   };
 
@@ -142,6 +153,7 @@ function Documento() {
     switch (caso) {
       case "Editar":
         abrirCerrarModalEditar();
+        console.log(documento);
         break;
       case "Eliminar":
         abrirCerrarModalEliminar();
@@ -149,14 +161,12 @@ function Documento() {
       case "Descargar":
         break;
       default:
-      break;
+        break;
     }
   };
   useEffect(() => {
     getDocumentos();
   }, []);
-
-
 
   //-----------------------------------------------------
   const getDocumentos = async () => {
@@ -169,16 +179,12 @@ function Documento() {
   };
   const deleteDocumento = async () => {
     try {
-      await api
-        .delete("/documento/" + documentSelected.id)
-        .then((response) => {
-          setDocumentos(
-            documentos.filter(
-              (documento) => documento.id !== documentSelected.id
-            )
-          );
-          abrirCerrarModalEliminar();
-        });
+      await api.delete("/documento/" + documentSelected.id).then((response) => {
+        setDocumentos(
+          documentos.filter((documento) => documento.id !== documentSelected.id)
+        );
+        abrirCerrarModalEliminar();
+      });
     } catch (error) {
       setRequestError(error.response.data.message);
     }
@@ -212,12 +218,20 @@ function Documento() {
           .then(function (response) {
             getDocumentos();
             setModalInsertar(false);
+            setModalEditar(false);
           })
           .catch(function (response) {});
       } catch (error) {}
     });
   }, []);
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    isDragAccept,
+    isDragReject,
+  } = useDropzone({
     onDrop,
     accept:
       "application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text",
@@ -230,24 +244,76 @@ function Documento() {
         <input
           {...getInputProps()}
           className={`${estiloDrop.dropzone} ${
-            isDragActive ? estiloDrop.active : null
+            isDragReject ? estiloDrop.active : null
           }`}
         />
         <p>
-          Haga CLICK para buscar el archivo o simplemente ARRASTRELO a esta area
-          y se subirá
-        </p>
+        CLICK para buscar el archivo o ARRASTRELO a esta area
+        y se subirá
+      </p>
+        
       </div>
+      {isDragReject ? (
+        <div>
+          <Alert severity="warning">
+            Este tipo de archivo no está permitido o está arrastrando más de los permitidos
+          </Alert>
+        </div>
+      ) : null}
+      {isDragAccept ? (
+          <div>
+            <Alert >
+              Puede soltar el archivo ahora
+            </Alert>
+          </div>
+        ) : null}
       <br />
       <FormControlLabel
-        control={<Switch onChange={handleSwitch} name="switchmultiple" />}
-        label="Subir varios archivos"
-      />
+        control={<Switch onChange={handleSwitch} name="switchmultiple"  color="primary" />}
+        label="Activar para subir varios archivos"
+      />&nbsp;&nbsp;&nbsp;&nbsp;
 
       <Button
         variant="contained"
         color="secondary"
         onClick={() => abrirCerrarModalInsertar()}
+      >
+        Cancelar
+      </Button>
+    </div>
+  );
+
+  const bodyEditar = (
+    <div className={styles.dropzone}>
+      <div {...getRootProps()} className="dropzone">
+        <input
+          {...getInputProps()}
+          className={`${estiloDrop.dropzone}`}
+        />
+        <p>
+          Haga CLICK para buscar el archivo o simplemente ARRASTRELO a esta area
+          y se actualizará
+        </p>
+      </div>
+      {isDragReject ? (
+        <div>
+          <Alert severity="warning">
+            Este tipo de archivo no está permitido o está arrastrando más de los permitidos
+          </Alert>
+        </div>
+      ) : null}
+      {isDragAccept ? (
+          <div>
+            <Alert >
+              Puede soltar el archivo ahora
+            </Alert>
+          </div>
+        ) : null}
+      <br />
+      <Button
+        variant="contained"
+        color="secondary"
+        onClick={() => abrirCerrarModalEditar()}
       >
         Cancelar
       </Button>
@@ -293,7 +359,10 @@ function Documento() {
       <Button
         variant="outlined"
         color="primary"
-        onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
+        onClick={() => (
+          abrirCerrarModalInsertar(),
+          setRequestError(null)
+        )}
       >
         <Add />
         &nbsp; Agregar un Documento
@@ -320,17 +389,6 @@ function Documento() {
           },
           {
             icon: (props) => (
-              <Button variant="outlined" color="secondary">
-                <DeleteForever />
-              </Button>
-            ),
-            tooltip: "Elimnar Documento",
-            onClick: (event, rowData) => (
-              seleccionarDocumento(rowData, "Eliminar"), setRequestError(null)
-            ),
-          },
-          {
-            icon: (props) => (
               <Button variant="outlined" color="primary">
                 <ArchiveIcon />
               </Button>
@@ -340,15 +398,57 @@ function Documento() {
               seleccionarDocumento(rowData, "Descargar"), setRequestError(null)
             ),
           },
+          {
+            icon: (props) => (
+              <Button variant="outlined" color="secondary">
+                <DeleteForever />
+              </Button>
+            ),
+            tooltip: "Elimnar Documento",
+            onClick: (event, rowData) => (
+              seleccionarDocumento(rowData, "Eliminar"), setRequestError(null)
+            ),
+          },
         ]}
-        onRowClick={((evt, selectedRow) => setSelectedRow(selectedRow.tableData.id))}
-        options={{ 
-          actionsColumnIndex: -1 ,
-          rowStyle: rowData => ({
-            backgroundColor: (selectedRow === rowData.tableData.id) ? '#fafbfd' : '#FFF',
-            fontWeight: (selectedRow === rowData.tableData.id) ? 'bold' : 'normal',
-            color: (selectedRow === rowData.tableData.id) ? '#000' : '#000',
-          })
+        onRowClick={(evt, selectedRow) =>
+          setSelectedRow(selectedRow.tableData.id)
+        }
+        options={{
+          tableLayout: "auto",
+          pageSize: 10,
+          pageSizeOptions: [10, 20, 30],
+          actionsColumnIndex: -1,
+          rowStyle: (rowData) => ({
+            backgroundColor:
+              rowData.tableData.id === hoveringOver ? "##f5f5f5" : "",
+            fontWeight:
+              selectedRow === rowData.tableData.id ? "bold" : "normal",
+            color: selectedRow === rowData.tableData.id ? "#000" : "#000",
+          }),
+          Pagination: (props) => (
+            <TablePagination
+              {...props}
+              rowsPerPage={this.state.numberRowPerPage}
+              count={this.state.totalRow}
+              page={this.state.pageNumber}
+              onChangePage={(e, page) => this.handleChangePage(page + 1)}
+              onChangeRowsPerPage={(event) => {
+                props.onChangeRowsPerPage(event);
+                this.handleChangeRowPerPage(event.target.value);
+              }}
+            />
+          ),
+        }}
+        components={{
+          Row: (props) => {
+            return (
+              <MTableBodyRow
+                {...props}
+                onMouseEnter={(e) => handleRowHover(e, props)}
+                onMouseLeave={(e) => handleRowHoverLeave(e, props)}
+              />
+            );
+          },
         }}
         localization={{
           header: {
@@ -359,6 +459,9 @@ function Documento() {
 
       <Modal open={modalInsertar} onClose={abrirCerrarModalInsertar}>
         {bodyInsertar}
+      </Modal>
+      <Modal open={modalEditar} onClose={abrirCerrarModalEditar}>
+        {bodyEditar}
       </Modal>
 
       <Modal open={modalEliminar} onClose={abrirCerrarModalEliminar}>
