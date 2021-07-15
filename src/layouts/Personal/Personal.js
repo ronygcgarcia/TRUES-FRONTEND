@@ -374,7 +374,12 @@ function Personal() {
             ),
           },
         ]}
-        options={{ actionsColumnIndex: -1 }}
+        options={{ 
+          tableLayout: "auto",
+          pageSize: 10,
+          pageSizeOptions: [10, 20, 30],
+          actionsColumnIndex: -1,
+        }}
         localization={{
           header: {
             actions: "Opciones",
