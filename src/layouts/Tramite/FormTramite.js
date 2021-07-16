@@ -88,19 +88,20 @@ const FormRole = (props) => {
         }
     }
 
-    const editTramite = (id,hasMany) => {        
+    const editTramite = (id, hasMany) => {        
+        
         if (hasMany.documento_id.length) {
             api.post("/tra-doc", {tramite_id:id,documento_id:hasMany.documento_id}).then((response) => {                
             }, (error) => {
             })
         }
-
+        
         if (hasMany.requisito_id.length) {
             api.post("/tra-req", {tramite_id:id,requisito_id:hasMany.requisito_id}).then((response) => {
             }, (error) => {
             })
         }
-
+        
         if (hasMany.paso_id.length) {
             api.post("/tra-pas", {tramite_id:id,paso_id:hasMany.paso_id}).then((response) => {                
             }, (error) => {                
@@ -110,6 +111,7 @@ const FormRole = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        
         const hasMany = {
             documento_id: tramite.documento_id.map((el) => {
                 return documentos.find(p => p.nombre === el).id;
@@ -120,18 +122,7 @@ const FormRole = (props) => {
             paso_id: tramite.paso_id.map((el) => {
                 return pasos.find(p => p.nombre === el).id;
             })
-        };        
-        /*const reqs = {
-            requisito_id: tramite.requisito_id.map((el) => {
-                return requisitos.find(p => p.nombre === el).id;
-            })
-        };
-
-        const pas = {
-            paso_id: tramite.paso_id.map((el) => {
-                return pasos.find(p => p.nombre === el).id;
-            })
-        };*/
+        };     
         //console.log("ESTADO ANTES DE PERMISOS",tramite);        
         if (props.formType === 'new') {
             api.post("/tramite", { nombre: tramite.nombre }).then((response) => {
