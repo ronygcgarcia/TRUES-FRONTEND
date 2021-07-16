@@ -19,7 +19,6 @@ class Routes extends Component {
     return (
       <Router>
         <Drawer>
-        </Drawer>
           <Switch>
             <Route
               path="/"
@@ -39,7 +38,7 @@ class Routes extends Component {
             <Route path="/personal" exact component={Personal} />{" "}
             <Route path="/documentos" exact component={Documento} />{" "}
           </Switch>{" "}
-        
+          </Drawer>
       </Router>
     );
   }
