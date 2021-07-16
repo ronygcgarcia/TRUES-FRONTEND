@@ -110,7 +110,6 @@ const FormRole = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
         const hasMany = {
             documento_id: tramite.documento_id.map((el) => {
                 return documentos.find(p => p.nombre === el).id;
