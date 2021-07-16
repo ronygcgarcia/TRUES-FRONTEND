@@ -96,10 +96,7 @@ function Documento() {
       title: "Nombre",
       field: "nombre",
     },
-    {
-      title: "URL",
-      field: "url",
-    },
+   
   ];
 
   const [selectedRow, setSelectedRow] = useState(null);
@@ -159,6 +156,7 @@ function Documento() {
         abrirCerrarModalEliminar();
         break;
       case "Descargar":
+        window.open(documento.url, "_blank")
         break;
       default:
         break;
