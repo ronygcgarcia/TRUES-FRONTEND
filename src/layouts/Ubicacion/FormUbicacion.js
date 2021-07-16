@@ -25,6 +25,92 @@ const FormRole = (props) => {
     const [ubicacion, setUbicacion] = React.useState({ id: 0, name: '', permissions: [] });
     const [requestError, setRequestError] = useState();
     const classes = useStyles();
+    const [validacionNombre, setValidacionNombre] = useState({
+    mensajeError: "",
+    });
+    const [validacionDescripcion, setValidacionDescripcion] = useState({
+    mensajeError: "",
+    });
+    const [validacionLongitud, setValidacionLongitud] = useState({
+    mensajeError: "",
+    });
+    const [validacionLatitud, setValidacionLatitud] = useState({
+    mensajeError: "",
+    });
+
+    const validacionCampos = (e) => {
+        const { name, value } = e.target;
+        console.log(e.target);
+        switch (name) {
+            case "nombre":
+                setValidacionNombre({
+                mensajeError: "",
+                });
+            break;
+            case "descripcion":
+                setValidacionDescripcion({
+                mensajeError: "",
+                });
+              break;
+            case "longitud":
+                setValidacionLongitud({
+                mensajeError: "",
+                });
+              break;
+            case "latitud":
+                setValidacionLatitud({
+                 mensajeError: "",
+                });
+              break;
+            default:
+              break;
+        }
+
+        switch (name) {
+            case "nombre":
+              let ExpRegName = new RegExp(/^[a-zA-Z0-9-\s]{3,100}$/).test(value);
+              
+              if (!ExpRegName) {
+                setValidacionNombre({
+                    mensajeError:
+                    "El nombre debe ser de un minimo de 5 caracteres y un maximo de 1000 caracteres",
+                });
+              }
+              break;
+            case "descripcion":
+                let ExpRegDescripcion = new RegExp(/^[A-zÀ-ú0-9.\s]{0,255}$/).test(value);
+              
+              if (!ExpRegDescripcion) {
+                setValidacionDescripcion({
+                    mensajeError:
+                    "La descripcion tiene un limite de 255 caracteres",
+                });
+              }
+              break;
+            case "longitud":
+                let ExpRegLongitud = new RegExp(/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/).test(value);
+              if (!ExpRegLongitud) {
+                setValidacionLongitud({
+                    mensajeError: "La coordenada de longitud no es correcta",
+                });
+              }
+              break;
+            case "latitud":
+              let ExpRegLatitud = new RegExp(/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/).test(value);
+              
+              if (!ExpRegLatitud) {
+                setValidacionLatitud({
+                    mensajeError:
+                    "La coordenada de latitud no es correcta",
+                });
+              }
+              break;
+      
+            default:
+              break;
+          }
+
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -88,36 +174,52 @@ const FormRole = (props) => {
     function createOrEdit() {
         return (<FormGroup style={{ justifyContent: 'center' }}>
             <TextField
+                name="nombre"
                 required
                 id="outlined-required"
                 placeholder="Nombre ubicacion*"
                 value={ubicacion.nombre}
                 variant="outlined"
-                onChange={(e) => setUbicacion({ ...ubicacion, nombre: e.target.value })}
+                onChange={(e) => (setUbicacion({ ...ubicacion, nombre: e.target.value }),
+                validacionCampos(e))}
+                error={Boolean(validacionNombre?.mensajeError)}
+                helperText={validacionNombre?.mensajeError}
             />
             <TextField
+                name="descripcion"
                 required
                 id="outlined-required"
                 placeholder="Descripcion*"
                 value={ubicacion.descripcion}
                 variant="outlined"
-                onChange={(e) => setUbicacion({ ...ubicacion, descripcion: e.target.value })}
+                onChange={(e) => (setUbicacion({ ...ubicacion, descripcion: e.target.value },
+                validacionCampos(e)))}
+                error={Boolean(validacionDescripcion?.mensajeError)}
+                helperText={validacionDescripcion?.mensajeError}
             />
             <TextField
+                name="longitud"
                 required
                 id="outlined-required"
                 placeholder="Longitud*"
                 value={ubicacion.longitud}
                 variant="outlined"
-                onChange={(e) => setUbicacion({ ...ubicacion, longitud: e.target.value })}
+                onChange={(e) => (setUbicacion({ ...ubicacion, longitud: e.target.value }),
+                validacionCampos(e))}
+                error={Boolean(validacionLongitud?.mensajeError)}
+                helperText={validacionLongitud?.mensajeError}
             />
             <TextField
+                name="latitud"
                 required
                 id="outlined-required"
                 placeholder="Latitud*"
                 value={ubicacion.latitud}
                 variant="outlined"
-                onChange={(e) => setUbicacion({ ...ubicacion, latitud: e.target.value })}
+                onChange={(e) => (setUbicacion({ ...ubicacion, latitud: e.target.value }),
+                validacionCampos(e))}
+                error={Boolean(validacionLatitud?.mensajeError)}
+                helperText={validacionLatitud?.mensajeError}
             />
         </FormGroup>);
     }

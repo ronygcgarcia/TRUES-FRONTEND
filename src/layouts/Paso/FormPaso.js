@@ -60,6 +60,74 @@ const FormRole = (props) => {
     const [paso, setPaso] = React.useState({ id: 0, nombre: '', indicaciones: '', complejidad: 0, ubicacion_id: 0, personal_id: 0 });
     const [requestError, setRequestError] = useState();
     const classes = useStyles();
+    const [validacionNombre, setValidacionNombre] = useState({
+    mensajeError: "",
+    });
+    const [validacionIndicacion, setValidacionIndicacion] = useState({
+    mensajeError: "",
+    });
+    const [validacionComplejidad, setValidacionComplejidad] = useState({
+    mensajeError: "",
+    });
+
+    const validacionCampos = (e) => {
+        const { name, value } = e.target;
+        console.log(e.target);
+        switch (name) {
+            case "nombre":
+                setValidacionNombre({
+                mensajeError: "",
+                });
+            break;
+            case "indicacion":
+                setValidacionIndicacion({
+                mensajeError: "",
+                });
+            break;
+            case "complejidad":
+                setValidacionComplejidad({
+                mensajeError: "",
+                });
+            break;
+            default:
+              break;
+        }
+
+        switch (name) {
+          case "nombre":
+            let ExpRegName = new RegExp(/^[A-zÀ-ú0-9.\s]{5,100}$/).test(value);
+
+            if (!ExpRegName) {
+              setValidacionNombre({
+                mensajeError:
+                  "El nombre debe ser de un minimo de 5 caracteres y un maximo de 1000 caracteres",
+              });
+            }
+            break;
+          case "indicacion":
+            let ExpRegIndicacion = new RegExp(/^[A-zÀ-ú0-9.\s]{0,255}$/).test(
+              value
+            );
+
+            if (!ExpRegIndicacion) {
+              setValidacionIndicacion({
+                mensajeError: "La indicacion tiene un limite de 255 caracteres",
+              });
+            }
+            break;
+          case "complejidad":
+            if ((value < 0)||(value > 100)) {
+              setValidacionComplejidad({
+                mensajeError: "La indicacion tiene un limite de 255 caracteres",
+              });
+            }
+            break;
+
+          default:
+            break;
+        }
+
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -136,32 +204,46 @@ const FormRole = (props) => {
     function createOrEdit() {
         return (<FormGroup style={{ justifyContent: 'center' }}>
             <TextField
+                name="nombre"
                 required
                 id="outlined-required"
                 label="Nombre paso"
                 value={paso.nombre}
                 variant="outlined"
-                onChange={(e) => setPaso({ ...paso, nombre: e.target.value })}
+                onChange={(e) => (setPaso({ ...paso, nombre: e.target.value }),
+                validacionCampos(e))}
+                error={Boolean(validacionNombre?.mensajeError)}
+                helperText={validacionNombre?.mensajeError}
             />
             <TextField
+                name="indicacion"
                 required
                 id="outlined-required"
                 label="Indicacion"
                 value={paso.indicaciones}
                 variant="outlined"
-                onChange={(e) => setPaso({ ...paso, indicaciones: e.target.value })}
+                onChange={(e) => (setPaso({ ...paso, indicaciones: e.target.value },
+                validacionCampos(e)))}
+                error={Boolean(validacionIndicacion?.mensajeError)}
+                helperText={validacionIndicacion?.mensajeError}
             />
             <TextField
+				name="complejidad"
                 required
                 type={'number'}
-                inputProps={{                                        
-                    step:"1"                   
+                inputProps={{  
+                    min: "0",
+                    max: "100",
+                    step:"5",               
                   }}
                 id="outlined-required"
-                label="complejidad"
+                label="complejidad %"
                 value={paso.complejidad}
                 variant="outlined"
-                onChange={(e) => setPaso({ ...paso, complejidad: e.target.value })}
+                onChange={(e) => (setPaso({ ...paso, complejidad: e.target.value },
+				validacionCampos(e)))}
+				error={Boolean(validacionComplejidad?.mensajeError)}
+                helperText={validacionComplejidad?.mensajeError}
             />
             <FormControl className={classes.formControl} >
                 <InputLabel id="demo-mutiple-checkbox-label">Ubicacion</InputLabel>
