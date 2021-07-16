@@ -63,35 +63,29 @@ api.get('/pasos').then((response) => {
 })
 
 const FormRole = (props) => {
-    const [tramite, setTramite] = React.useState({ id: 0, nombre: '', documentos: [], requisitos: [], pasos: [] });
+    const [tramite, setTramite] = React.useState({ id: 0, nombre: '', documento_id: [], requisito_id: [], paso_id: [] });
     const [requestError, setRequestError] = useState();
     //const [documento, setDocumento] = useState([]);
     //const [requisito, setRequisito] = useState([]);
     //const [paso, setPaso] = useState([]);
     const classes = useStyles();
 
-    const editTramite = (response, docs, reqs, pas) => {
-        if (docs.length) {
-            docs.forEach((documento_id) => {
-                api.post("/tra-doc", { tramite_id: response.data.id, documento_id }).then((response) => {
-                }, (error) => {            
-                })
+    const editTramite = (id,hasMany) => {        
+        if (hasMany.documento_id.length) {
+            api.post("/tra-doc", {tramite_id:id,documento_id:hasMany.documento_id}).then((response) => {                
+            }, (error) => {
             })
         }
 
-        if (reqs.length) {
-            reqs.forEach((requisito_id) => {
-                api.post("/tra-req", { tramite_id: response.data.id, requisito_id }).then((response) => {
-                }, (error) => {                   
-                })
+        if (hasMany.requisito_id.length) {
+            api.post("/tra-req", {tramite_id:id,requisito_id:hasMany.requisito_id}).then((response) => {
+            }, (error) => {
             })
         }
 
-        if (pas.length) {
-            pas.forEach((paso_id) => {
-                api.post("/tra-pas", { tramite_id: response.data.id, paso_id }).then((response) => {
-                }, (error) => {                   
-                })
+        if (hasMany.paso_id.length) {
+            api.post("/tra-pas", {tramite_id:id,paso_id:hasMany.paso_id}).then((response) => {                
+            }, (error) => {                
             })
         }
     }
@@ -99,25 +93,36 @@ const FormRole = (props) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const docs = tramite.documentos.map((el) => {
-            return documentos.find(p => p.nombre === el).id;
-        });
-        //console.log(docs)
-        const reqs = tramite.requisitos.map((el) => {
-            return requisitos.find(p => p.nombre === el).id;
-        });
+        const hasMany = {
+            documento_id: tramite.documento_id.map((el) => {
+                return documentos.find(p => p.nombre === el).id;
+            }),
+            requisito_id: tramite.requisito_id.map((el) => {
+                return requisitos.find(p => p.nombre === el).id;
+            }),
+            paso_id: tramite.paso_id.map((el) => {
+                return pasos.find(p => p.nombre === el).id;
+            })
+        };        
+        /*const reqs = {
+            requisito_id: tramite.requisito_id.map((el) => {
+                return requisitos.find(p => p.nombre === el).id;
+            })
+        };
 
-        const pas = tramite.pasos.map((el) => {
-            return pasos.find(p => p.nombre === el).id;
-        });
+        const pas = {
+            paso_id: tramite.paso_id.map((el) => {
+                return pasos.find(p => p.nombre === el).id;
+            })
+        };*/
         //console.log("ESTADO ANTES DE PERMISOS",tramite);        
         if (props.formType === 'new') {
             api.post("/tramite", { nombre: tramite.nombre }).then((response) => {
                 props.setRows(props.rows.concat(response.data));
-                editTramite(response, docs, reqs, pas)
+                editTramite(response.data.id,hasMany)
                 props.handleClose();
             }, (error) => {
-                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                setRequestError(error.response.data.message + ' ' + error.response.data.errors.map((el) => {
                     console.log(el);
                     return el;
                 }))
@@ -133,11 +138,11 @@ const FormRole = (props) => {
                 })
                 props.setRows([])
                 props.setRows(newRows)
-                editTramite(response, docs, reqs, pas)
-                //props.handleClose()
+                editTramite(response.data.id,hasMany)
+                props.handleClose()
             }, (error) => {
                 console.log(error.response.data.errors)
-                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                setRequestError(error.response.data.message + ' ' + error.response.data.errors.map((el) => {
                     console.log(el);
                     return el;
                 }))
@@ -152,7 +157,7 @@ const FormRole = (props) => {
                 })
             }, (error) => {
                 console.log(error.response.data.message)
-                setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
+                setRequestError(error.response.data.message + ' ' + error.response.data.errors.map((el) => {
                     console.log(el);
                     return el;
                 }))
@@ -167,13 +172,13 @@ const FormRole = (props) => {
                 //console.log(tramite)
                 setTramite({
                     id: props.tramiteId, nombre: response.data.nombre,
-                    documentos: response.data.documentos.map((ele) => {
+                    documento_id: response.data.documentos.map((ele) => {
                         return ele.nombre
                     }),
-                    requisitos: response.data.requisitos.map((ele) => {
+                    requisito_id: response.data.requisitos.map((ele) => {
                         return ele.nombre
                     }),
-                    pasos: response.data.pasos.map((ele) => {
+                    paso_id: response.data.pasos.map((ele) => {
                         return ele.nombre
                     })
                 });
@@ -200,15 +205,15 @@ const FormRole = (props) => {
                         labelId="demo-mutiple-checkbox-label"
                         id="demo-mutiple-checkbox"
                         multiple
-                        value={tramite.documentos}
-                        onChange={(e) => setTramite({ ...tramite, documentos: e.target.value })}
+                        value={tramite.documento_id}
+                        onChange={(e) => setTramite({ ...tramite, documento_id: e.target.value })}
                         input={<Input />}
                         renderValue={(selected) => selected.join(', ')}
                         MenuProps={MenuProps}
                     >
                         {documentos.map((element) => (
                             <MenuItem key={element.id} value={element.nombre}>
-                                <Checkbox checked={tramite.documentos.indexOf(element.nombre) > -1} />
+                                <Checkbox checked={tramite.documento_id.indexOf(element.nombre) > -1} />
                                 <ListItemText primary={element.nombre} />
                             </MenuItem>
                         ))}
@@ -220,15 +225,15 @@ const FormRole = (props) => {
                         labelId="demo-mutiple-checkbox-label"
                         id="demo-mutiple-checkbox"
                         multiple
-                        value={tramite.requisitos}
-                        onChange={(e) => setTramite({ ...tramite, requisitos: e.target.value })}
+                        value={tramite.requisito_id}
+                        onChange={(e) => setTramite({ ...tramite, requisito_id: e.target.value })}
                         input={<Input />}
                         renderValue={(selected) => selected.join(', ')}
                         MenuProps={MenuProps}
                     >
                         {requisitos.map((element) => (
                             <MenuItem key={element.id} value={element.nombre}>
-                                <Checkbox checked={tramite.requisitos.indexOf(element.nombre) > -1} />
+                                <Checkbox checked={tramite.requisito_id.indexOf(element.nombre) > -1} />
                                 <ListItemText primary={element.nombre} />
                             </MenuItem>
                         ))}
@@ -240,15 +245,15 @@ const FormRole = (props) => {
                         labelId="demo-mutiple-checkbox-label"
                         id="demo-mutiple-checkbox"
                         multiple
-                        value={tramite.pasos}
-                        onChange={(e) => setTramite({ ...tramite, pasos: e.target.value })}
+                        value={tramite.paso_id}
+                        onChange={(e) => setTramite({ ...tramite, paso_id: e.target.value })}
                         input={<Input />}
                         renderValue={(selected) => selected.join(', ')}
                         MenuProps={MenuProps}
                     >
                         {pasos.map((element) => (
                             <MenuItem key={element.id} value={element.nombre}>
-                                <Checkbox checked={tramite.pasos.indexOf(element.nombre) > -1} />
+                                <Checkbox checked={tramite.paso_id.indexOf(element.nombre) > -1} />
                                 <ListItemText primary={element.nombre} />
                             </MenuItem>
                         ))}
