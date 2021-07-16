@@ -80,14 +80,6 @@ const useStyles = makeStyles((theme) => ({
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-function getStyles(rolLista, rolSeleccionado, theme) {
-  return {
-    fontWeight:
-      rolSeleccionado.indexOf(rolLista) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
 
 const roles = [];
 
@@ -410,6 +402,30 @@ function Users() {
     }
   };
 
+  const eliminarRolUSer = async (rol, user) => {
+    setUserSelected(user);
+    const arrayID = [];
+    const arrayRoles = [];
+    user.role.map((elemento) => {
+      if (elemento.id !== rol.id) {
+        arrayID.push(elemento.id);
+        arrayRoles.push(elemento);
+      }
+    });
+
+    user.roles = arrayID;
+    console.log(user);
+    try {
+      await api.put("/users/" + user.id, user).then((response) => {
+        console.log(response);
+      });
+      getUsers();
+    } catch (error) {
+      setRequestError(error.response.data.message);
+      console.log(error.response.data.message);
+    }
+  };
+
   const rolesToSend = [];
   const theme = useTheme();
 
@@ -424,6 +440,10 @@ function Users() {
   useEffect(() => {
     getUsers();
   }, []);
+
+  const handleDelete = (e) => {
+    console.info(e.target);
+  };
 
   const bodyInsertar = (
     <div>
@@ -524,11 +544,7 @@ function Users() {
             MenuProps={MenuProps}
           >
             {roles.map((rolLista) => (
-              <MenuItem
-                key={rolLista.id}
-                value={rolLista}
-                style={getStyles(rolLista.name, userSelected.role, theme)}
-              >
+              <MenuItem key={rolLista.id} value={rolLista}>
                 {rolLista.name}
               </MenuItem>
             ))}
@@ -661,11 +677,7 @@ function Users() {
             MenuProps={MenuProps}
           >
             {roles.map((rolLista) => (
-              <MenuItem
-                key={rolLista.id}
-                value={rolLista}
-                style={getStyles(rolLista.name, userSelected.role, theme)}
-              >
+              <MenuItem key={rolLista.id} value={rolLista}>
                 {rolLista.name}
               </MenuItem>
             ))}
@@ -740,7 +752,11 @@ function Users() {
       <br />
       <Paper className={styles.root}>
         <TableContainer className={styles.container}>
-          <Table stickyHeader aria-label="sticky table" className={styles.header}>
+          <Table
+            stickyHeader
+            aria-label="sticky table"
+            className={styles.header}
+          >
             <TableHead>
               <TableRow>
                 {columnas.map((column) => (
@@ -777,6 +793,9 @@ function Users() {
                         label={rol.name}
                         className={styles.chip}
                         variant="outlined"
+                        onDelete={() => {
+                          eliminarRolUSer(rol, element);
+                        }}
                       />
                     ))}
                   </TableCell>
