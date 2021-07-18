@@ -12,7 +12,8 @@ import Drawer from "../components/Drawer/Drawer";
 import Users from "../layouts/Users/Users";
 import Personal from "../layouts/Personal/Personal";
 import Documento from "../layouts/Documento/Documento";
-
+import UsuarioTramite from "../layouts/UsuarioTramite/UsuarioTramite";
+import Aviso from "../layouts/Aviso/Aviso";
 
 class Routes extends Component {
   render() {
@@ -24,7 +25,7 @@ class Routes extends Component {
               path="/"
               exact
               component={() => {
-                return <p> </p>;
+                return <p> Hola</p>;
               }}
             />{" "}
             <Route path="/roles" exact component={createRole} />{" "}
@@ -37,8 +38,10 @@ class Routes extends Component {
             <Route path="/users" exact component={Users} />{" "}
             <Route path="/personal" exact component={Personal} />{" "}
             <Route path="/documentos" exact component={Documento} />{" "}
+            <Route path="/usuariotramite" exact component={UsuarioTramite} />{" "}
+            <Route path="/aviso" exact component={Aviso} />{" "}
           </Switch>{" "}
-          </Drawer>
+        </Drawer>
       </Router>
     );
   }

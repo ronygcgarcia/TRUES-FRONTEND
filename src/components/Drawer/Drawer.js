@@ -31,6 +31,7 @@ import FaceIcon from "@material-ui/icons/Face";
 import HomeWorkIcon from "@material-ui/icons/HomeWork";
 import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
+import ViewCarouselIcon from '@material-ui/icons/ViewCarousel';
 
 const drawerWidth = 240;
 
@@ -268,6 +269,22 @@ export default function PersistentDrawerLeft(props) {
                 <FormatListNumberedIcon />
               </ListItemIcon>
               <ListItemText>Pasos</ListItemText>
+            </ListItem>
+          </Link>
+          <Link to="/usuariotramite">
+            <ListItem button>
+              <ListItemIcon>
+                <FormatListNumberedIcon />
+              </ListItemIcon>
+              <ListItemText>Tramites de Usuarios</ListItemText>
+            </ListItem>
+          </Link>
+          <Link to="/aviso">
+            <ListItem button>
+              <ListItemIcon>
+                <ViewCarouselIcon />
+              </ListItemIcon>
+              <ListItemText>Aviso</ListItemText>
             </ListItem>
           </Link>
           <Divider />
