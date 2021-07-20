@@ -71,47 +71,47 @@ const FormRole = (props) => {
     const classes = useStyles();
     const [validacionNombre, setValidacionNombre] = useState({
         mensajeError: "",
-      });
+    });
     const validarNombre = (nombre) => {
         setValidacionNombre({
             mensajeError:
-          "",
+                "",
         });
-        console.log("Nombre: "+nombre);
+        console.log("Nombre: " + nombre);
         let regName = new RegExp(/^[A-zÀ-ú0-9.\s]{5,50}$/).test(nombre);
-        console.log("RegName"+regName);
+        console.log("RegName" + regName);
         if (!regName) {
             setValidacionNombre({
                 mensajeError:
-              "El nombre debe ser de un minimo de 5 caracteres y un maximo de 50 caracteres ",
+                    "El nombre debe ser de un minimo de 5 caracteres y un maximo de 50 caracteres ",
             });
         }
     }
 
-    const editTramite = (id, hasMany) => {        
-        
+    const editTramite = (id, hasMany) => {
+
         if (hasMany.documento_id.length) {
-            api.post("/tra-doc", {tramite_id:id,documento_id:hasMany.documento_id}).then((response) => {                
+            api.post("/tra-doc", { tramite_id: id, documento_id: hasMany.documento_id }).then((response) => {
             }, (error) => {
             })
         }
-        
+
         if (hasMany.requisito_id.length) {
-            api.post("/tra-req", {tramite_id:id,requisito_id:hasMany.requisito_id}).then((response) => {
+            api.post("/tra-req", { tramite_id: id, requisito_id: hasMany.requisito_id }).then((response) => {
             }, (error) => {
             })
         }
-        
+
         if (hasMany.paso_id.length) {
-            api.post("/tra-pas", {tramite_id:id,paso_id:hasMany.paso_id}).then((response) => {                
-            }, (error) => {                
+            api.post("/tra-pas", { tramite_id: id, paso_id: hasMany.paso_id }).then((response) => {
+            }, (error) => {
             })
         }
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         const hasMany = {
             documento_id: tramite.documento_id.map((el) => {
                 return documentos.find(p => p.nombre === el).id;
@@ -122,12 +122,12 @@ const FormRole = (props) => {
             paso_id: tramite.paso_id.map((el) => {
                 return pasos.find(p => p.nombre === el).id;
             })
-        };     
+        };
         //console.log("ESTADO ANTES DE PERMISOS",tramite);        
         if (props.formType === 'new') {
             api.post("/tramite", { nombre: tramite.nombre }).then((response) => {
                 props.setRows(props.rows.concat(response.data));
-                editTramite(response.data.id,hasMany)
+                editTramite(response.data.id, hasMany)
                 props.handleClose();
             }, (error) => {
                 setRequestError(error.response.data.message + ' ' + error.response.data.errors.map((el) => {
@@ -146,7 +146,7 @@ const FormRole = (props) => {
                 })
                 props.setRows([])
                 props.setRows(newRows)
-                editTramite(response.data.id,hasMany)
+                editTramite(response.data.id, hasMany)
                 props.handleClose()
             }, (error) => {
                 console.log(error.response.data.errors)
@@ -204,10 +204,13 @@ const FormRole = (props) => {
                     placeholder="Nombre tramite*"
                     value={tramite.nombre}
                     variant="outlined"
-                    onChange={(e) => (setTramite({
-                         ...tramite, 
-                         nombre: e.target.value 
-                        }),validarNombre(e.target.value ))
+                    onChange={(e) => {
+                        setTramite({
+                            ...tramite,
+                            nombre: e.target.value
+                        })
+                        validarNombre(e.target.value)
+                    }
                     }
                     error={Boolean(validacionNombre?.mensajeError)}
                     helperText={validacionNombre?.mensajeError}

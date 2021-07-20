@@ -210,8 +210,8 @@ const FormRole = (props) => {
                 label="Nombre paso"
                 value={paso.nombre}
                 variant="outlined"
-                onChange={(e) => (setPaso({ ...paso, nombre: e.target.value }),
-                validacionCampos(e))}
+                onChange={(e) => {setPaso({ ...paso, nombre: e.target.value })
+                validacionCampos(e)}}
                 error={Boolean(validacionNombre?.mensajeError)}
                 helperText={validacionNombre?.mensajeError}
             />

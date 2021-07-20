@@ -156,10 +156,11 @@ const FormRole = (props) => {
                 label="Nombre rol"
                 value={rol.name}
                 variant="outlined"
-                onChange={(e) => (setRol({
+                onChange={(e) => {setRol({
                      ...rol, 
                      name: e.target.value 
-                    }),validarNombre(e.target.value ))}
+                    })
+                    validarNombre(e.target.value )}}
                 error={Boolean(validacionNombre?.mensajeError)}
                 helperText={validacionNombre?.mensajeError}
             />

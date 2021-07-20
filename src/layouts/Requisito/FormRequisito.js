@@ -152,8 +152,8 @@ const FormRole = (props) => {
                 placeholder="Nombre requisito*"
                 value={requisito.nombre}
                 variant="outlined"
-                onChange={(e) => (setRequisito({ ...requisito, nombre: e.target.value }),
-                validacionCampos(e))}
+                onChange={(e) =>{setRequisito({ ...requisito, nombre: e.target.value })
+                validacionCampos(e)}}
                 error={Boolean(validacionNombre?.mensajeError)}
                 helperText={validacionNombre?.mensajeError}
             />

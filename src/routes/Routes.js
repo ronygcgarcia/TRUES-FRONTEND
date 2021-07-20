@@ -7,6 +7,7 @@ import createRole from '../layouts/Roles/Roles';
 import Tramite from '../layouts/Tramite/Tramite';
 import Requisito from '../layouts/Requisito/Requisito';
 import Paso from '../layouts/Paso/Paso';
+import Historial from '../layouts/Historial/Historial';
 //import Home from '../layouts/Home/Home';
 import Drawer from '../components/Drawer/Drawer';
 
@@ -26,6 +27,7 @@ class Routes extends Component {
                         <Route path='/tramite' exact component={Tramite} />
                         <Route path='/requisito' exact component={Requisito} />
                         <Route path='/paso' exact component={Paso} />
+                        <Route path='/historial' exact component={Historial} />
                     </Switch>
                 </Router>
             </Drawer>

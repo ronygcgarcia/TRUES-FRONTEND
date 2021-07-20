@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import FormTramite from './FormTramite';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -10,20 +8,31 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import EditIcon from '@material-ui/icons/Edit';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import Box from '@material-ui/core/Box';
 import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
 import Backdrop from '@material-ui/core/Backdrop'
 import api from '../../config/axios';
-import Typography from '@material-ui/core/Typography';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
+
 const columns = [
-    { id: 'id', label: 'Tramite', align: 'center',minWidth: 170 },
+    { id: 'id', label: '', align: 'center', minWidth: 10 },
     {
-        id: 'nombre',
-        label: 'Acciones',
+        id: 'tramite',
+        label: 'Tramite',
+        minWidth: 170,
+        align: 'center',
+        format: (value) => value.toLocaleString('en-US'),
+    },
+    {
+        id: 'inicio',
+        label: 'Inicio',
+        minWidth: 170,
+        align: 'center',
+        format: (value) => value.toLocaleString('en-US'),
+    },
+    {
+        id: 'fin',
+        label: 'Fin',
         minWidth: 170,
         align: 'center',
         format: (value) => value.toLocaleString('en-US'),
@@ -63,14 +72,8 @@ export default function StickyHeadTable() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [open, setOpen] = React.useState(false);
-    const [formType, setFormType] = React.useState('');
-    //const [unidades, setTramite] = useState();
-    const [tramite, setTramite] = useState({ id: 0, nombre: '', documentos: [], requisitos: [], pasos: [] });
+    //const [unidades, setHistorial] = useState();    
     const [rows, setRows] = useState([]);
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
 
     const handleClose = () => {
         setOpen(false);
@@ -84,9 +87,11 @@ export default function StickyHeadTable() {
         setPage(0);
     };
 
-    const getTramite = async () => {
-        try {            
-            const resp = await api.get('/tramite');            
+
+
+    const getUnidad = async () => {
+        try {
+            const resp = await api.get('/historial');
             setRows(resp.data)
         } catch (err) {
             // Handle Error Here
@@ -95,21 +100,12 @@ export default function StickyHeadTable() {
     };
 
     useEffect(() => {
-        getTramite()        
-    }, [])    
+        getUnidad()
+    }, [])
 
     //console.log(rows)
     return (
         <div>
-            <Box pt={1} pb={1}>
-                <Button variant="outlined" color="primary" onClick={() => {
-                    handleOpen();
-                    setFormType('new');
-                    setTramite({ id: 0, nombre: '', documentos: [], requisitos: [], pasos: [] })
-                }} style={{ display: 'block', marginLeft: 'auto' }}>
-                    <AddIcon /> Crear nuevo tramite
-                </Button>
-            </Box>
             <Paper className={classes.root} >
                 <TableContainer className={classes.container}>
                     <Table stickyHeader aria-label="sticky table">
@@ -130,24 +126,16 @@ export default function StickyHeadTable() {
                             {rows.map((element, index) => (
                                 <TableRow>
                                     <TableCell key={index} align='center'>
-                                        {element.nombre}
-                                    </TableCell>                                    
-                                    <TableCell align='center'>
-                                        <Box pr={1} pl={1}>
-                                            <Button variant="outlined" color="primary" onClick={() => {
-                                                handleOpen();
-                                                setFormType('edit');
-                                                setTramite(element);                                                
-                                            }}>
-                                                <EditIcon />
-                                            </Button> <Button variant="outlined" color="secondary" onClick={() => {
-                                                handleOpen();
-                                                setFormType('delete');
-                                                setTramite(element);
-                                            }}>
-                                                <DeleteForeverIcon />
-                                            </Button>
-                                        </Box>
+                                        {element.completado === 0 ? <AccessTimeIcon /> : 'Completado'}
+                                    </TableCell>
+                                    <TableCell key={index} align='center'>
+                                        {element.tramite}
+                                    </TableCell>
+                                    <TableCell key={index} align='center'>
+                                        {element.inicio}
+                                    </TableCell>
+                                    <TableCell key={index} align='center'>
+                                        {element.fin}
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -178,8 +166,8 @@ export default function StickyHeadTable() {
                 >
                     <Fade in={open}>
                         <div className={classes.paper}>
-                            <h1 id="transition-modal-title">{formType === 'new' ? <Typography variant="h4">Crear tramite</Typography>: formType === 'edit' ?  <Typography variant="h4">Editar tramite</Typography> :  <Typography variant="h4">Eliminar tramite</Typography>}</h1>
-                            <FormTramite tramiteId={tramite.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormTramite>
+                            <h1 id="transition-modal-title">
+                            </h1>
                         </div>
                     </Fade>
                 </Modal>

@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
     },
     container: {
-        maxHeight: 440,
+        maxHeight: '100%',
     },
     modal: {
         display: 'flex',
