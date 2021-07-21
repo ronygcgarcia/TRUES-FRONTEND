@@ -14,10 +14,10 @@ const useStyles = makeStyles((theme) => ({
             width: '100ch',
         },
     },
-    formContunidad: {
+    formControl: {
         margin: theme.spacing(1),
         minWidth: 120,
-        maxWidth: 300,
+        maxWidth: '100%',
     },
 }));
 

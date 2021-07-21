@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FormGroup } from '@material-ui/core';
 import api from '../../config/axios';
 import Alert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -14,10 +15,10 @@ const useStyles = makeStyles((theme) => ({
             width: '100ch',
         },
     },
-    formContunidad: {
+    formControl: {
         margin: theme.spacing(1),
         minWidth: 120,
-        maxWidth: 300,
+        maxWidth: '100%',
     },
 }));
 
@@ -177,7 +178,7 @@ const FormRole = (props) => {
         <div>
             <form onSubmit={handleSubmit} className={classes.root}>
                 {requestError != null ? <p className="alert danger-alert"><Alert severity="error">Ha ocurrido un error: {requestError}</Alert></p> : ''}
-                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este requisito?</p> : createOrEdit()}
+                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este requisito?</p> : requisito.id?createOrEdit():<div style={{width:'100%',display:'flex',justifyContent:'center',padding:'10px'}} ><CircularProgress /></div>}
                 <FormControl style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '1rem' }}>
                     <Button variant="contained" color="secondary" onClick={props.handleClose}>
                         Cerrar

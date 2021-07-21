@@ -12,6 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -20,11 +21,14 @@ const useStyles = makeStyles((theme) => ({
             width: '100ch',
         },
     },
-    formContunidad: {
+    formControl: {
         margin: theme.spacing(1),
         minWidth: 120,
-        maxWidth: 300,
+        maxWidth: '100%',
     },
+    formulario:{
+        width: '100%%',
+    }
 }));
 
 const ITEM_HEIGHT = 48;
@@ -197,7 +201,7 @@ const FormRole = (props) => {
 
     function createOrEdit() {
         return (
-            <FormGroup style={{ justifyContent: 'center' }}>
+            <FormGroup style={{ justifyContent: 'center' }} >
                 <TextField
                     required
                     id="outlined-required"
@@ -282,9 +286,9 @@ const FormRole = (props) => {
 
     return (
         <div>
-            <form onSubmit={handleSubmit} className={classes.root}>
+            <form onSubmit={handleSubmit} className={classes.formulario}>
                 {requestError != null ? <p className="alert danger-alert"><Alert severity="error">Ha ocurrido un error: {requestError}</Alert></p> : ''}
-                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este tramite?</p> : createOrEdit()}
+                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este tramite?</p> : tramite.id?createOrEdit():<div style={{width:'100%',display:'flex',justifyContent:'center',padding:'10px'}} ><CircularProgress /></div>}
                 <FormControl style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '1rem' }}>
                     <Button variant="contained" color="secondary" onClick={props.handleClose}>
                         Cerrar
