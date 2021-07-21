@@ -1,10 +1,10 @@
 import './App.css';
-import Routes from './routes/Routes';
+import PersistentDrawerLeft from './components/Drawer/Drawer';
 
 function App() {
   return (
     <div className="App">
-      <Routes />
+      <PersistentDrawerLeft />
     </div>
   );
 }

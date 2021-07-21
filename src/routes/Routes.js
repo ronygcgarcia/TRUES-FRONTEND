@@ -9,33 +9,15 @@ import Requisito from '../layouts/Requisito/Requisito';
 import Paso from '../layouts/Paso/Paso';
 import Historial from '../layouts/Historial/Historial';
 //import Home from '../layouts/Home/Home';
-import Drawer from '../components/Drawer/Drawer';
+import PersistentDrawerLeft from '../components/Drawer/Drawer';
 
 class Routes extends Component {
     render() {
         return (
-            <Drawer>
-                <Router>
-                    <Switch>
-                        <Route path='/' exact component={()=>{
-                            return <p></p>
-                        }} />
-                        <Route path='/roles' exact component={createRole} />
-                        <Route path='/login' exact component={Login} />
-                        <Route path='/ubicacion' exact component={Ubicacion} />
-                        <Route path='/unidad' exact component={Unidad} />
-                        <Route path='/tramite' exact component={Tramite} />
-                        <Route path='/requisito' exact component={Requisito} />
-                        <Route path='/paso' exact component={Paso} />
-                        <Route path='/historial' exact component={Historial} />
-                    </Switch>
-                </Router>
-            </Drawer>
-            /*<Router>
-                <Switch>
-                    <Route path='/' exact component={Login} />
-                </Switch>
-            </Router>*/
+            <PersistentDrawerLeft>
+               
+            </PersistentDrawerLeft>
+           
         )
     }
 }
