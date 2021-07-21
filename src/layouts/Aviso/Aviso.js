@@ -1,15 +1,14 @@
 import {
   Button,
-  FormGroup,
+  
   TextField,
   Typography,
   Modal,
 } from "@material-ui/core";
-import React, { useEffect, useState, forwardRef, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import Paper from "@material-ui/core/Paper";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import clsx from "clsx";
 import FormControl from "@material-ui/core/FormControl";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
@@ -25,48 +24,6 @@ import Alert from "@material-ui/lab/Alert";
 
 const drawerWidth = 240;
 
-const avisosLocal = [
-  {
-    id: 1,
-    descripcion: "Rex",
-    url: "https://imperialsurplus.com/wp-content/uploads/2018/04/S4-6-Rex-933x1024.jpg",
-  },
-  {
-    id: 4,
-    descripcion: "Jessie",
-    url: "https://samoilovart.com/wp-content/uploads/2020/05/50TCShznqq8.jpg",
-  },
-  {
-    id: 40,
-    descripcion: "Wolffee",
-    url: "https://samoilovart.com/wp-content/uploads/2020/05/aWdTWtKwLbQ.jpg",
-  },
-  {
-    id: 44,
-    descripcion: "Hardcase",
-    url: "https://samoilovart.com/wp-content/uploads/2020/05/IMG_1126-scaled.jpg",
-  },
-  {
-    id: 55,
-    descripcion: "Fives",
-    url: "https://samoilovart.com/wp-content/uploads/2020/05/YmnaQNRo0nE.jpg",
-  },
-  {
-    id: 60,
-    descripcion: "Cody",
-    url: "https://samoilovart.com/wp-content/uploads/2020/05/YTTi7ljaeMg.jpg",
-  },
-  {
-    id: 70,
-    descripcion: "Hunter",
-    url: "https://samoilovart.com/wp-content/uploads/2020/05/XhWZjjyHLus.jpg",
-  },
-  {
-    id: 80,
-    descripcion: "Echo",
-    url: "https://samoilovart.com/wp-content/uploads/2020/05/IMG_0852-scaled.jpg",
-  },
-];
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -224,7 +181,6 @@ const useStyles = makeStyles((theme) => ({
 function Aviso() {
   const [files, setFiles] = useState([]);
   const classes = useStyles();
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const [avisos, setAvisos] = useState([]);
   const getAccessToken = () => localStorage.getItem("token");
   const [imagen, setImagen] = useState([]);
@@ -239,7 +195,7 @@ function Aviso() {
 
   const {
     acceptedFiles,
-    fileRejections,
+    
     getRootProps,
     getInputProps,
     isDragActive,
@@ -279,13 +235,7 @@ function Aviso() {
     });
   };
 
-  const thumbs = imagen.map((file) => (
-    <div className={classes.thumb} key={file.name}>
-      <div className={classes.thumbInner}>
-        <img src={file.preview} className={classes.img} />
-      </div>
-    </div>
-  ));
+
   useEffect(() => {
     getAvisos();
     // Make sure to revoke the data uris to avoid memory leaks

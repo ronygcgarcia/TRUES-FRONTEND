@@ -5,7 +5,7 @@ import Alert from "@material-ui/lab/Alert";
 import { useForm } from "react-hook-form";
 
 //---------------------------------------------------------------Material UI
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TextField } from "@material-ui/core";
 import { Add } from "@material-ui/icons";
 import Typography from "@material-ui/core/Typography";
@@ -91,11 +91,7 @@ api.get("/roles").then((response) => {
 
 //-----------------------------------FUNCION PRINCIPAL---------------------------//
 function Users() {
-  const {
-    handleSubmit,
-
-    formState: {},
-  } = useForm();
+  const { handleSubmit } = useForm();
   const onSubmit = (data) => {};
   //-----------------------------------Definicion de columnas para material-table
   const columnas = [
@@ -232,7 +228,7 @@ function Users() {
         }
         break;
       case "email":
-        let regEmail = new RegExp(/^[\w-\.]+@([\w-]+\.)+[\w-]{1,9}$/).test(
+        let regEmail = new RegExp(/^[\w-.]+@([\w-]+\.)+[\w-]{1,9}$/).test(
           value
         );
         if (!regEmail) {
@@ -356,14 +352,6 @@ function Users() {
         await api
           .put("/users/" + userSelected.id, userSelected)
           .then((response) => {
-            var newUsers = users;
-            newUsers.map((user) => {
-              if (userSelected.id === user.id) {
-                user.name = userSelected.name;
-                user.uid = userSelected.uid;
-                user.email = userSelected.email;
-              }
-            });
             getUsers();
             abrirCerrarModalEditar();
           });
@@ -427,7 +415,6 @@ function Users() {
   };
 
   const rolesToSend = [];
-  const theme = useTheme();
 
   const handleChangeRol = (event) => {
     rolesToSend.push(event.target.value.id);
@@ -440,10 +427,6 @@ function Users() {
   useEffect(() => {
     getUsers();
   }, []);
-
-  const handleDelete = (e) => {
-    console.info(e.target);
-  };
 
   const bodyInsertar = (
     <div>
@@ -743,7 +726,7 @@ function Users() {
       <Button
         variant="outlined"
         color="primary"
-        onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
+        onClick={() => {abrirCerrarModalInsertar(); setRequestError(null);}}
       >
         <Add />
         &nbsp; Crear Nuevo Usuario

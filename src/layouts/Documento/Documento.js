@@ -226,7 +226,7 @@ function Documento() {
   const {
     getRootProps,
     getInputProps,
-    isDragActive,
+    
     isDragAccept,
     isDragReject,
   } = useDropzone({
@@ -357,10 +357,10 @@ function Documento() {
       <Button
         variant="outlined"
         color="primary"
-        onClick={() => (
-          abrirCerrarModalInsertar(),
-          setRequestError(null)
-        )}
+        onClick={() => {
+          abrirCerrarModalInsertar();
+          setRequestError(null);
+        }}
       >
         <Add />
         &nbsp; Agregar un Documento
@@ -381,9 +381,9 @@ function Documento() {
               </Button>
             ),
             tooltip: "Modificar Información del Documento",
-            onClick: (event, rowData) => (
-              seleccionarDocumento(rowData, "Editar"), setRequestError(null)
-            ),
+            onClick: (event, rowData) => 
+            {  seleccionarDocumento(rowData, "Editar"); setRequestError(null);
+            },
           },
           {
             icon: (props) => (
@@ -392,9 +392,9 @@ function Documento() {
               </Button>
             ),
             tooltip: "Descargar Documento",
-            onClick: (event, rowData) => (
-              seleccionarDocumento(rowData, "Descargar"), setRequestError(null)
-            ),
+            onClick: (event, rowData) => {
+              seleccionarDocumento(rowData, "Descargar"); setRequestError(null);
+            },
           },
           {
             icon: (props) => (
@@ -403,9 +403,9 @@ function Documento() {
               </Button>
             ),
             tooltip: "Elimnar Documento",
-            onClick: (event, rowData) => (
-              seleccionarDocumento(rowData, "Eliminar"), setRequestError(null)
-            ),
+            onClick: (event, rowData) => {
+              seleccionarDocumento(rowData, "Eliminar"); setRequestError(null);
+            },
           },
         ]}
         onRowClick={(evt, selectedRow) =>

@@ -166,13 +166,7 @@ function Personal() {
         await api
           .put("/personal/" + personalSelected.id, personalSelected)
           .then((response) => {
-            var newPersonal = personal;
-            newPersonal.map((persona) => {
-              if (personalSelected.id === persona.id) {
-                persona.nombre = personalSelected.nombre;
-              }
-            });
-            setPersonal(newPersonal);
+            getPersonal();
             abrirCerrarModalEditar();
           });
       } catch (error) {
@@ -338,7 +332,7 @@ function Personal() {
       <Button
         variant="outlined"
         color="primary"
-        onClick={() => (abrirCerrarModalInsertar(), setRequestError(null))}
+        onClick={() => {abrirCerrarModalInsertar(); setRequestError(null);}}
       >
         <Add />
         &nbsp; Crear Nuevo Personal
@@ -358,9 +352,9 @@ function Personal() {
               </Button>
             ),
             tooltip: "Modificar Información del Personal",
-            onClick: (event, rowData) => (
-              seleccionarPersona(rowData, "Editar"), setRequestError(null)
-            ),
+            onClick: (event, rowData) => {
+              seleccionarPersona(rowData, "Editar"); setRequestError(null);
+            },
           },
           {
             icon: (props) => (
@@ -369,9 +363,9 @@ function Personal() {
               </Button>
             ),
             tooltip: "Elimnar Personal",
-            onClick: (event, rowData) => (
-              seleccionarPersona(rowData, "Eliminar"), setRequestError(null)
-            ),
+            onClick: (event, rowData) => {
+              seleccionarPersona(rowData, "Eliminar"); setRequestError(null);
+           },
           },
         ]}
         options={{ 
