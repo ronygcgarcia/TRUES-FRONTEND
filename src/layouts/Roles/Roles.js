@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
     },
     container: {
-        maxHeight: 440,
+        maxHeight: '100%',
     },
     modal: {
         display: 'flex',
@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: '4px',
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 4, 3),
-
+        maxWidth: '75%',
     },
 }));
 

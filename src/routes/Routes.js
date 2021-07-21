@@ -7,6 +7,7 @@ import createRole from "../layouts/Roles/Roles";
 import Tramite from "../layouts/Tramite/Tramite";
 import Requisito from "../layouts/Requisito/Requisito";
 import Paso from "../layouts/Paso/Paso";
+import Historial from "../layouts/Historial/Historial";
 //import Home from '../layouts/Home/Home';
 import Drawer from "../components/Drawer/Drawer";
 import Users from "../layouts/Users/Users";
@@ -18,31 +19,37 @@ import Aviso from "../layouts/Aviso/Aviso";
 class Routes extends Component {
   render() {
     return (
-      <Router>
-        <Drawer>
+      <Drawer>
+        <Router>
           <Switch>
             <Route
               path="/"
               exact
               component={() => {
-                return <p> Hola</p>;
+                return <p></p>;
               }}
-            />{" "}
-            <Route path="/roles" exact component={createRole} />{" "}
-            <Route path="/login" exact component={Login} />{" "}
-            <Route path="/ubicacion" exact component={Ubicacion} />{" "}
-            <Route path="/unidad" exact component={Unidad} />{" "}
-            <Route path="/tramite" exact component={Tramite} />{" "}
-            <Route path="/requisito" exact component={Requisito} />{" "}
-            <Route path="/paso" exact component={Paso} />{" "}
-            <Route path="/users" exact component={Users} />{" "}
-            <Route path="/personal" exact component={Personal} />{" "}
-            <Route path="/documentos" exact component={Documento} />{" "}
-            <Route path="/usuariotramite" exact component={UsuarioTramite} />{" "}
-            <Route path="/aviso" exact component={Aviso} />{" "}
-          </Switch>{" "}
-        </Drawer>
-      </Router>
+            />
+            <Route path="/roles" exact component={createRole} />
+            <Route path="/login" exact component={Login} />
+            <Route path="/ubicacion" exact component={Ubicacion} />
+            <Route path="/unidad" exact component={Unidad} />
+            <Route path="/tramite" exact component={Tramite} />
+            <Route path="/requisito" exact component={Requisito} />
+            <Route path="/paso" exact component={Paso} />
+            <Route path="/historial" exact component={Historial} />
+            <Route path="/users" exact component={Users} />
+            <Route path="/personal" exact component={Personal} />
+            <Route path="/documentos" exact component={Documento} />
+            <Route path="/usuariotramite" exact component={UsuarioTramite} />
+            <Route path="/aviso" exact component={Aviso} />
+          </Switch>
+        </Router>
+      </Drawer>
+      /*<Router>
+                <Switch>
+                    <Route path='/' exact component={Login} />
+                </Switch>
+            </Router>*/
     );
   }
 }

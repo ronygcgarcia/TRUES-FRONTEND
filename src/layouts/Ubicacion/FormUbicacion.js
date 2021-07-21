@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { FormGroup } from '@material-ui/core';
 import api from '../../config/axios';
 import Alert from '@material-ui/lab/Alert';
-
+import CircularProgress from '@material-ui/core/CircularProgress';
 const useStyles = makeStyles((theme) => ({
     root: {
         '& .MuiTextField-root': {
@@ -14,10 +14,10 @@ const useStyles = makeStyles((theme) => ({
             width: '100ch',
         },
     },
-    formContubicacion: {
+    formControl: {
         margin: theme.spacing(1),
         minWidth: 120,
-        maxWidth: 300,
+        maxWidth: '100%',
     },
 }));
 
@@ -26,16 +26,16 @@ const FormRole = (props) => {
     const [requestError, setRequestError] = useState();
     const classes = useStyles();
     const [validacionNombre, setValidacionNombre] = useState({
-    mensajeError: "",
+        mensajeError: "",
     });
     const [validacionDescripcion, setValidacionDescripcion] = useState({
-    mensajeError: "",
+        mensajeError: "",
     });
     const [validacionLongitud, setValidacionLongitud] = useState({
-    mensajeError: "",
+        mensajeError: "",
     });
     const [validacionLatitud, setValidacionLatitud] = useState({
-    mensajeError: "",
+        mensajeError: "",
     });
 
     const validacionCampos = (e) => {
@@ -44,71 +44,71 @@ const FormRole = (props) => {
         switch (name) {
             case "nombre":
                 setValidacionNombre({
-                mensajeError: "",
+                    mensajeError: "",
                 });
-            break;
+                break;
             case "descripcion":
                 setValidacionDescripcion({
-                mensajeError: "",
+                    mensajeError: "",
                 });
-              break;
+                break;
             case "longitud":
                 setValidacionLongitud({
-                mensajeError: "",
+                    mensajeError: "",
                 });
-              break;
+                break;
             case "latitud":
                 setValidacionLatitud({
-                 mensajeError: "",
+                    mensajeError: "",
                 });
-              break;
+                break;
             default:
-              break;
+                break;
         }
 
         switch (name) {
             case "nombre":
-              let ExpRegName = new RegExp(/^[a-zA-Z0-9-\s]{3,100}$/).test(value);
-              
-              if (!ExpRegName) {
-                setValidacionNombre({
-                    mensajeError:
-                    "El nombre debe ser de un minimo de 5 caracteres y un maximo de 1000 caracteres",
-                });
-              }
-              break;
+                let ExpRegName = new RegExp(/^[a-zA-Z0-9-\s]{3,100}$/).test(value);
+
+                if (!ExpRegName) {
+                    setValidacionNombre({
+                        mensajeError:
+                            "El nombre debe ser de un minimo de 5 caracteres y un maximo de 1000 caracteres",
+                    });
+                }
+                break;
             case "descripcion":
                 let ExpRegDescripcion = new RegExp(/^[A-zÀ-ú0-9.\s]{0,255}$/).test(value);
-              
-              if (!ExpRegDescripcion) {
-                setValidacionDescripcion({
-                    mensajeError:
-                    "La descripcion tiene un limite de 255 caracteres",
-                });
-              }
-              break;
+
+                if (!ExpRegDescripcion) {
+                    setValidacionDescripcion({
+                        mensajeError:
+                            "La descripcion tiene un limite de 255 caracteres",
+                    });
+                }
+                break;
             case "longitud":
                 let ExpRegLongitud = new RegExp(/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/).test(value);
-              if (!ExpRegLongitud) {
-                setValidacionLongitud({
-                    mensajeError: "La coordenada de longitud no es correcta",
-                });
-              }
-              break;
+                if (!ExpRegLongitud) {
+                    setValidacionLongitud({
+                        mensajeError: "La coordenada de longitud no es correcta",
+                    });
+                }
+                break;
             case "latitud":
-              let ExpRegLatitud = new RegExp(/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/).test(value);
-              
-              if (!ExpRegLatitud) {
-                setValidacionLatitud({
-                    mensajeError:
-                    "La coordenada de latitud no es correcta",
-                });
-              }
-              break;
-      
+                let ExpRegLatitud = new RegExp(/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/).test(value);
+
+                if (!ExpRegLatitud) {
+                    setValidacionLatitud({
+                        mensajeError:
+                            "La coordenada de latitud no es correcta",
+                    });
+                }
+                break;
+
             default:
-              break;
-          }
+                break;
+        }
 
     }
 
@@ -180,8 +180,10 @@ const FormRole = (props) => {
                 placeholder="Nombre ubicacion*"
                 value={ubicacion.nombre}
                 variant="outlined"
-                onChange={(e) => (setUbicacion({ ...ubicacion, nombre: e.target.value }),
-                validacionCampos(e))}
+                onChange={(e) => {
+                    setUbicacion({ ...ubicacion, nombre: e.target.value })
+                    validacionCampos(e)
+                }}
                 error={Boolean(validacionNombre?.mensajeError)}
                 helperText={validacionNombre?.mensajeError}
             />
@@ -192,8 +194,10 @@ const FormRole = (props) => {
                 placeholder="Descripcion*"
                 value={ubicacion.descripcion}
                 variant="outlined"
-                onChange={(e) => (setUbicacion({ ...ubicacion, descripcion: e.target.value },
-                validacionCampos(e)))}
+                onChange={(e) => {
+                    setUbicacion({ ...ubicacion, descripcion: e.target.value })
+                    validacionCampos(e)
+                }}
                 error={Boolean(validacionDescripcion?.mensajeError)}
                 helperText={validacionDescripcion?.mensajeError}
             />
@@ -204,8 +208,10 @@ const FormRole = (props) => {
                 placeholder="Longitud*"
                 value={ubicacion.longitud}
                 variant="outlined"
-                onChange={(e) => (setUbicacion({ ...ubicacion, longitud: e.target.value }),
-                validacionCampos(e))}
+                onChange={(e) => {
+                    setUbicacion({ ...ubicacion, longitud: e.target.value })
+                    validacionCampos(e)
+                }}
                 error={Boolean(validacionLongitud?.mensajeError)}
                 helperText={validacionLongitud?.mensajeError}
             />
@@ -216,8 +222,10 @@ const FormRole = (props) => {
                 placeholder="Latitud*"
                 value={ubicacion.latitud}
                 variant="outlined"
-                onChange={(e) => (setUbicacion({ ...ubicacion, latitud: e.target.value }),
-                validacionCampos(e))}
+                onChange={(e) => {
+                    setUbicacion({ ...ubicacion, latitud: e.target.value })
+                    validacionCampos(e)
+                }}
                 error={Boolean(validacionLatitud?.mensajeError)}
                 helperText={validacionLatitud?.mensajeError}
             />
@@ -229,7 +237,7 @@ const FormRole = (props) => {
         <div>
             <form onSubmit={handleSubmit} className={classes.root}>
                 {requestError != null ? <p className="alert danger-alert"><Alert severity="error">Ha ocurrido un error: {requestError}</Alert></p> : ''}
-                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este ubicacion?</p> : createOrEdit()}
+                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este ubicacion?</p> : ubicacion.id?createOrEdit():<div style={{width:'100%',display:'flex',justifyContent:'center',padding:'10px'}} ><CircularProgress /></div>}
                 <FormControl style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '1rem' }}>
                     <Button variant="contained" color="secondary" onClick={props.handleClose}>
                         Cerrar

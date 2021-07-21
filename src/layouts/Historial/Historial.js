@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import FormUbicacion from './FormUbicacion';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -10,41 +8,34 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import EditIcon from '@material-ui/icons/Edit';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import Box from '@material-ui/core/Box';
 import Modal from '@material-ui/core/Modal';
 import Fade from '@material-ui/core/Fade';
 import Backdrop from '@material-ui/core/Backdrop'
 import api from '../../config/axios';
-import Typography from '@material-ui/core/Typography';
+import AccessTimeIcon from '@material-ui/icons/AccessTime';
 
 const columns = [
-    { id: 'nombre', label: 'nombre', align: 'center',minWidth: 170 },
+    { id: 'id', label: '', align: 'center', minWidth: 10 },
     {
-        id: 'descripcion',
-        label: 'Nombre',
+        id: 'tramite',
+        label: 'Tramite',
         minWidth: 170,
-        align: 'right',
+        align: 'center',
         format: (value) => value.toLocaleString('en-US'),
     },
     {
-        id: 'longitud',
-        label: 'Longitud',
-        minWidth: 100,
-        align: 'center'
-    },{
-        id: 'latitud',
-        label: 'Latitud',
-        minWidth: 100,
-        align: 'center'
+        id: 'inicio',
+        label: 'Inicio',
+        minWidth: 170,
+        align: 'center',
+        format: (value) => value.toLocaleString('en-US'),
     },
     {
-        id: 'actions',
-        label: 'Acciones',
-        minWidth: 100,
-        align: 'center'
+        id: 'fin',
+        label: 'Fin',
+        minWidth: 170,
+        align: 'center',
+        format: (value) => value.toLocaleString('en-US'),
     }
 ];
 
@@ -81,14 +72,8 @@ export default function StickyHeadTable() {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [open, setOpen] = React.useState(false);
-    const [formType, setFormType] = React.useState('');
-    //const [ubicaciones, setUbicacion] = useState();
-    const [ubicacion, setUbicacion] = useState({ id: 0, nombre: '', descripcion:'',longitud:'',latitud:'' });
+    //const [unidades, setHistorial] = useState();    
     const [rows, setRows] = useState([]);
-
-    const handleOpen = () => {
-        setOpen(true);
-    };
 
     const handleClose = () => {
         setOpen(false);
@@ -104,9 +89,9 @@ export default function StickyHeadTable() {
 
 
 
-    const getUbicacion = async () => {
-        try {            
-            const resp = await api.get('/ubicacion');
+    const getUnidad = async () => {
+        try {
+            const resp = await api.get('/historial');
             setRows(resp.data)
         } catch (err) {
             // Handle Error Here
@@ -115,21 +100,12 @@ export default function StickyHeadTable() {
     };
 
     useEffect(() => {
-        getUbicacion()        
-    }, [])    
+        getUnidad()
+    }, [])
 
     //console.log(rows)
     return (
         <div>
-            <Box pt={1} pb={1}>
-                <Button variant="outlined" color="primary" onClick={() => {
-                    handleOpen();
-                    setFormType('new');
-                    setUbicacion({ id: 0, name: '', permisos: [] })
-                }} style={{ display: 'block', marginLeft: 'auto' }}>
-                    <AddIcon /> Crear nuevo ubicacion
-                </Button>
-            </Box>
             <Paper className={classes.root} >
                 <TableContainer className={classes.container}>
                     <Table stickyHeader aria-label="sticky table">
@@ -150,33 +126,16 @@ export default function StickyHeadTable() {
                             {rows.map((element, index) => (
                                 <TableRow>
                                     <TableCell key={index} align='center'>
-                                        {element.nombre}
+                                        {element.completado === 0 ? <AccessTimeIcon /> : 'Completado'}
                                     </TableCell>
-                                    <TableCell align='center'>
-                                        {element.descripcion}
+                                    <TableCell key={index} align='center'>
+                                        {element.tramite}
                                     </TableCell>
-                                    <TableCell align='center'>
-                                        {element.longitud}
+                                    <TableCell key={index} align='center'>
+                                        {element.inicio}
                                     </TableCell>
-                                    <TableCell align='center'>
-                                        {element.latitud}
-                                    </TableCell>
-                                    <TableCell align='center'>
-                                        <Box pr={1} pl={1}>
-                                            <Button variant="outlined" color="primary" onClick={() => {
-                                                handleOpen();
-                                                setFormType('edit');
-                                                setUbicacion(element);                                                
-                                            }}>
-                                                <EditIcon />
-                                            </Button> <Button variant="outlined" color="secondary" onClick={() => {
-                                                handleOpen();
-                                                setFormType('delete');
-                                                setUbicacion(element);
-                                            }}>
-                                                <DeleteForeverIcon />
-                                            </Button>
-                                        </Box>
+                                    <TableCell key={index} align='center'>
+                                        {element.fin}
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -207,8 +166,8 @@ export default function StickyHeadTable() {
                 >
                     <Fade in={open}>
                         <div className={classes.paper}>
-                        <h1 id="transition-modal-title">{formType === 'new' ? <Typography variant="h4">Crear ubicacion</Typography>: formType === 'edit' ?  <Typography variant="h4">Editar ubicacion</Typography> :  <Typography variant="h4">Eliminar ubicacion</Typography>}</h1>
-                            <FormUbicacion ubicacionId={ubicacion.id} formType={formType} rows={rows} setRows={setRows} handleClose={handleClose} ></FormUbicacion>
+                            <h1 id="transition-modal-title">
+                            </h1>
                         </div>
                     </Fade>
                 </Modal>
