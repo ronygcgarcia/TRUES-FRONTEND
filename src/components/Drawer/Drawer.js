@@ -44,6 +44,7 @@ import Personal from "../../layouts/Personal/Personal";
 import UsuarioTramite from "../../layouts/UsuarioTramite/UsuarioTramite";
 import Documento from "../../layouts/Documento/Documento";
 import Aviso from "../../layouts/Aviso/Aviso";
+import Home from "../../layouts/Home/Home";
 
 const drawerWidth = 240;
 
@@ -340,6 +341,7 @@ export default function PersistentDrawerLeft(props) {
             <Route path="/usuariotramite" exact component={UsuarioTramite} />
             <Route path="/documentos" exact component={Documento} />
             <Route path="/avisos" exact component={Aviso} />
+            <Route path="/home" exact component={Home} />
           </Switch>
         </main>
       </Router>
