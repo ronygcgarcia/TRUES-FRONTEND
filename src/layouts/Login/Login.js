@@ -1,8 +1,13 @@
 import React, { useState } from "react";
+import { Redirect, Route } from "react-router";
 import logo from "../../assets/ues_logo3.svg";
 import "./login.css";
 import api from "../../config/axios";
+import PersistentDrawerLeft from "../../components/Drawer/Drawer";
 const Login = (props) => {
+  if (!props.acceder) {
+    <Route to="/" component={PersistentDrawerLeft} />;
+  }
   const [user, setUser] = useState({
     username: "",
     password: "",

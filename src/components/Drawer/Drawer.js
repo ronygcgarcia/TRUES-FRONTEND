@@ -1,5 +1,6 @@
 import React from "react";
 import clsx from "clsx";
+import { Redirect } from "react-router";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -106,6 +107,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PersistentDrawerLeft(props) {
+  if (!props.acceder) {
+    <Redirect path="/login" component={Login} />;
+  }
   const [anchorEl, setAnchorEl] = React.useState(null);
   const classes = useStyles();
   const theme = useTheme();
@@ -126,6 +130,11 @@ export default function PersistentDrawerLeft(props) {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    props.acceder(false)
   };
 
   return (
@@ -182,6 +191,7 @@ export default function PersistentDrawerLeft(props) {
             >
               <MenuItem onClick={handleClose}>Profile</MenuItem>
               <MenuItem onClick={handleClose}>My account</MenuItem>
+              <MenuItem onClick={logout}>Cerrar Sesion</MenuItem>
             </Menu>
           </Toolbar>
         </AppBar>
@@ -206,7 +216,7 @@ export default function PersistentDrawerLeft(props) {
           <Divider />
 
           <List>
-            <Link to="/home">
+            <Link to="/">
               <ListItem button>
                 <ListItemIcon>
                   <HomeIcon />
@@ -322,12 +332,17 @@ export default function PersistentDrawerLeft(props) {
           {props.children}
           <Switch>
             <Route
-              path="/"
               exact
-              component={() => {
-                return <p></p>;
+              path="/usuarios"
+              render={() => {
+                return props.acceder ? (
+                  <Usuarios />
+                ) : (
+                  <Redirect to="/login" />
+                );
               }}
             />
+
             <Route path="/roles" exact component={createRole} />
             <Route path="/login" exact component={Login} />
             <Route path="/ubicacion" exact component={Ubicacion} />
@@ -336,12 +351,12 @@ export default function PersistentDrawerLeft(props) {
             <Route path="/requisito" exact component={Requisito} />
             <Route path="/paso" exact component={Paso} />
             <Route path="/historial" exact component={Historial} />
-            <Route path="/usuarios" exact component={Usuarios} />
+
             <Route path="/personal" exact component={Personal} />
             <Route path="/usuariotramite" exact component={UsuarioTramite} />
             <Route path="/documentos" exact component={Documento} />
             <Route path="/avisos" exact component={Aviso} />
-            <Route path="/home" exact component={Home} />
+            <Route path="/" exact component={Home} />
           </Switch>
         </main>
       </Router>
