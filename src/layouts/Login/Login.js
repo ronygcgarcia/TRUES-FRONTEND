@@ -26,7 +26,7 @@ const Login = (props) => {
         .then((response) => {
           localStorage.setItem("token", response.data.jwt);
           const respuesta =  api.get("/user").then((response) => {
-            console.log(response);
+            console.log(response.data);
           });
           props.acceder(respuesta)
         })

@@ -1,34 +1,45 @@
-import './App.css';
-import api from './config/axios';
-import React, {useState, useEffect} from 'react';
-import PersistentDrawerLeft from './components/Drawer/Drawer';
-import Login from './layouts/Login/Login';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import "./App.css";
+import api from "./config/axios";
+import React, { useState, useEffect } from "react";
+import PersistentDrawerLeft from "./components/Drawer/Drawer";
+import Login from "./layouts/Login/Login";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 function App() {
   const [usuario, setUsuario] = useState([]);
-  
-  const [conectado, setconectado] = useState(false);   
-  const acceder=(estado)=>{
+  const [obteniendo, setobteniendo] = useState(true);
+
+  const [conectado, setconectado] = useState(false);
+  const acceder = (estado) => {
     setconectado(estado);
     console.log(estado);
-  }
+    setUsuario(estado);
+  };
 
   useEffect(() => {
-    async function loadUser(){
-     if(localStorage.getItem('token')){
-       const usuarioAPI =  api.get("/user").then((response) => {
-         setUsuario(response.data);
-         setconectado(true);
-       });
-     }
+    async function loadUser() {
+      if (!localStorage.getItem("token")) {
+        setobteniendo(false);
+        return;
+      }
+      try {
+        const { data: usuarioAPI } = await api.get("/user");
+        setUsuario(usuarioAPI);
+        setconectado(true);
+        console.log(usuario)
+        setobteniendo(false);
+      } catch (error) {
+        console.log(error);
+      }
     }
     loadUser();
-    console.log(conectado);
-    console.log(usuario);
- }, [])
-  return (
-    !conectado ? <Login acceder={acceder}/> : <PersistentDrawerLeft acceder={acceder}/>
+  }, []);
+  return !conectado ? (
+    <Login acceder={acceder} />
+  ) : obteniendo ? (
+    <CircularProgress />
+  ) : (
+    <PersistentDrawerLeft acceder={acceder} usuario={JSON.stringify(usuario)} />
   );
 }
 
