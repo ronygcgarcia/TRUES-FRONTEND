@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Redirect, Route } from "react-router";
+import {  Route } from "react-router";
 import logo from "../../assets/ues_logo3.svg";
 import "./login.css";
 import api from "../../config/axios";

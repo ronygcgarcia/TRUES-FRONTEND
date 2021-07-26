@@ -93,7 +93,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Documento() {
+function Documento({ usuario }) {
   const columnas = [
     {
       title: "Nombre",
@@ -354,6 +354,11 @@ function Documento() {
     <div className={styles.main}>
       <br />
       <Button
+        disabled={
+          !usuario.permissions.find(
+            (permiso) => permiso.name === "crear documento"
+          )
+        }
         variant="outlined"
         color="primary"
         onClick={() => {
@@ -374,6 +379,9 @@ function Documento() {
         data={documentos}
         actions={[
           {
+            disabled: !usuario.permissions.find(
+              (permiso) => permiso.name === "editar documento"
+            ),
             icon: (props) => (
               <Button variant="outlined" color="primary">
                 <EditIcon />
@@ -398,6 +406,9 @@ function Documento() {
             },
           },
           {
+            disabled: !usuario.permissions.find(
+              (permiso) => permiso.name === "eliminar documento"
+            ),
             icon: (props) => (
               <Button variant="outlined" color="secondary">
                 <DeleteForever />

@@ -390,7 +390,7 @@ export default function PersistentDrawerLeft(props) {
               exact
               path="/usuarios"
               render={() => {
-                return props.acceder ? <Usuarios /> : <Redirect to="/login" />;
+                return props.acceder ? <Usuarios usuario={usuario}/> : <Redirect to="/login" />;
               }}
             />
 

@@ -109,7 +109,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Aviso() {
+function Aviso({usuario}) {
   const [files, setFiles] = useState([]);
   const classes = useStyles();
   const [avisos, setAvisos] = useState([]);
@@ -483,6 +483,7 @@ function Aviso() {
                 <Typography variant="h4">Avisos Generales</Typography>
                 <div align="right">
                   <Button
+                  disabled={!usuario.permissions.find(permiso => permiso.name==='crear aviso')}
                     align="right"
                     variant="outlined"
                     color="primary"
@@ -520,6 +521,7 @@ function Aviso() {
                   </CardActionArea>
                   <CardActions>
                     <Button
+                    disabled={!usuario.permissions.find(permiso => permiso.name==='editar aviso')}
                       size="small"
                       variant="outlined"
                       color="primary"
@@ -532,6 +534,7 @@ function Aviso() {
                     </Button>
                     &nbsp;&nbsp;
                     <Button
+                    disabled={!usuario.permissions.find(permiso => permiso.name==='eliminar aviso')}
                       size="small"
                       variant="outlined"
                       color="primary"

@@ -12,7 +12,6 @@ function App() {
   const [conectado, setconectado] = useState(false);
   const acceder = (estado) => {
     setconectado(estado);
-    console.log(estado);
     setUsuario(estado);
   };
 
@@ -26,7 +25,6 @@ function App() {
         const { data: usuarioAPI } = await api.get("/user");
         setUsuario(usuarioAPI);
         setconectado(true);
-        console.log(usuario)
         setobteniendo(false);
       } catch (error) {
         console.log(error);

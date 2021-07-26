@@ -91,7 +91,8 @@ api.get("/roles").then((response) => {
 });
 
 //-----------------------------------FUNCION PRINCIPAL---------------------------//
-function Usuarios() {
+function Usuarios({ usuario }) {
+  //const usuariologueado = this.props.usuario;
   const { handleSubmit } = useForm();
   const onSubmit = (data) => {};
   //-----------------------------------Definicion de columnas para material-table
@@ -722,6 +723,11 @@ function Usuarios() {
   return (
     <div className={styles.main}>
       <Button
+        disabled={
+          !usuario.permissions.find(
+            (permiso) => permiso.name === "crear usuarios"
+          )
+        }
         variant="outlined"
         color="primary"
         onClick={() => {
@@ -786,6 +792,11 @@ function Usuarios() {
                   <TableCell align="right">
                     <Box pr={1} pl={1}>
                       <Button
+                        disabled={
+                          !usuario.permissions.find(
+                            (permiso) => permiso.name === "editar usuarios"
+                          )
+                        }
                         variant="outlined"
                         color="primary"
                         onClick={() => {
@@ -796,6 +807,11 @@ function Usuarios() {
                         <EditIcon />
                       </Button>{" "}
                       <Button
+                        disabled={
+                          !usuario.permissions.find(
+                            (permiso) => permiso.name === "eliminar usuarios"
+                          )
+                        }
                         variant="outlined"
                         color="secondary"
                         onClick={() => {

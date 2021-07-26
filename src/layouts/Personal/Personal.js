@@ -77,7 +77,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Personal() {
+function Personal({usuario}) {
   const { handleSubmit } = useForm();
   const onSubmit = (data) => console.log(data);
   //-----------------------------------Definicion de columnas para material-table
@@ -333,6 +333,7 @@ function Personal() {
     <div className={styles.main}>
       <br />
       <Button
+       disabled={!usuario.permissions.find(permiso => permiso.name==='crear personal')}
         variant="outlined"
         color="primary"
         onClick={() => {
@@ -352,6 +353,7 @@ function Personal() {
         data={personal}
         actions={[
           {
+            disabled: !usuario.permissions.find(permiso => permiso.name==='editar personal'),
             icon: (props) => (
               <Button variant="outlined" color="primary">
                 <EditIcon />
@@ -364,6 +366,7 @@ function Personal() {
             },
           },
           {
+            disabled: !usuario.permissions.find(permiso => permiso.name==='eliminar personal'),
             icon: (props) => (
               <Button variant="outlined" color="secondary">
                 <DeleteForever />

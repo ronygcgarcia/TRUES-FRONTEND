@@ -1,10 +1,12 @@
 import React from 'react';
 
 
-const Home = () => {
+const Home = ({usuario}) => {
+    console.log(usuario);
     return (
         <div>  
-           Aqui va algo.
+            {usuario.permissions.find(permiso => permiso.name==='ver personal') ? <p>Encontrado</p> : <p>No encontrado</p>}
+           
         </div>
     )
 }
