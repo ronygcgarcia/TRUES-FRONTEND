@@ -35,7 +35,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Login from "../../layouts/Login/Login";
 import Ubicacion from "../../layouts/Ubicacion/Ubicacion";
 import Unidad from "../../layouts/Unidad/Unidad";
-import createRole from "../../layouts/Roles/Roles";
+import Roles from "../../layouts/Roles/Roles";
 import Tramite from "../../layouts/Tramite/Tramite";
 import Requisito from "../../layouts/Requisito/Requisito";
 import Paso from "../../layouts/Paso/Paso";
@@ -115,7 +115,7 @@ export default function PersistentDrawerLeft(props) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const openD = Boolean(anchorEl);
-
+  const usuario = JSON.parse(props.usuario);
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -133,8 +133,8 @@ export default function PersistentDrawerLeft(props) {
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    props.acceder(false)
+    localStorage.removeItem("token");
+    props.acceder(false);
   };
 
   return (
@@ -224,102 +224,152 @@ export default function PersistentDrawerLeft(props) {
                 <ListItemText>Inicio</ListItemText>
               </ListItem>
             </Link>
-            <Link to="/personal">
-              <ListItem button>
-                <ListItemIcon>
-                  <SupervisedUserCircleIcon />
-                </ListItemIcon>
-                <ListItemText>Personal</ListItemText>
-              </ListItem>
-            </Link>
-            <Link to="/tramite">
-              <ListItem button>
-                <ListItemIcon>
-                  <AssignmentIcon />
-                </ListItemIcon>
-                <ListItemText>Tramites</ListItemText>
-              </ListItem>
-            </Link>
-            <Link to="/usuarios">
-              <ListItem button>
-                <ListItemIcon>
-                  <GroupIcon />
-                </ListItemIcon>
-                <ListItemText>Usuarios</ListItemText>
-              </ListItem>
-            </Link>
-            <Link to="/documentos">
-              <ListItem button>
-                <ListItemIcon>
-                  <DescriptionIcon />
-                </ListItemIcon>
-                <ListItemText>Documentos</ListItemText>
-              </ListItem>
-            </Link>
-            <Link to="/roles">
-              <ListItem button>
-                <ListItemIcon>
-                  <FaceIcon />
-                </ListItemIcon>
-                <ListItemText>Roles</ListItemText>
-              </ListItem>
-            </Link>
-            <Link to="/ubicacion">
-              <ListItem button>
-                <ListItemIcon>
-                  <RoomIcon />
-                </ListItemIcon>
-                <ListItemText>Ubicacion</ListItemText>
-              </ListItem>
-            </Link>
-            <Link to="/unidad">
-              <ListItem button>
-                <ListItemIcon>
-                  <HomeWorkIcon />
-                </ListItemIcon>
-                <ListItemText>Unidad Admin.</ListItemText>
-              </ListItem>
-            </Link>
-            <Link to="/requisito">
-              <ListItem button>
-                <ListItemIcon>
-                  <AssignmentTurnedInIcon />
-                </ListItemIcon>
-                <ListItemText>Requisitos</ListItemText>
-              </ListItem>
-            </Link>
-            <Link to="/paso">
-              <ListItem button>
-                <ListItemIcon>
-                  <FormatListNumberedIcon />
-                </ListItemIcon>
-                <ListItemText>Pasos</ListItemText>
-              </ListItem>
-            </Link>
-            <Link to="/usuariotramite">
-              <ListItem button>
-                <ListItemIcon>
-                  <FormatListNumberedIcon />
-                </ListItemIcon>
-                <ListItemText>Tramites de Usuarios</ListItemText>
-              </ListItem>
-            </Link>
-            <Link to="/historial">
-              <ListItem button>
-                <ListItemIcon>
-                  <FormatListNumberedIcon />
-                </ListItemIcon>
-                <ListItemText>Historial</ListItemText>
-              </ListItem>
-            </Link>
-            <Link to="/avisos">
-              <ListItem button>
-                <ListItemIcon>
-                  <ViewCarouselIcon />
-                </ListItemIcon>
-                <ListItemText>Aviso</ListItemText>
-              </ListItem>
-            </Link>
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver personal"
+            ) ? (
+              <Link to="/personal">
+                <ListItem button>
+                  <ListItemIcon>
+                    <SupervisedUserCircleIcon />
+                  </ListItemIcon>
+                  <ListItemText>Personal</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver tramite"
+            ) ? (
+              <Link to="/tramite">
+                <ListItem button>
+                  <ListItemIcon>
+                    <AssignmentIcon />
+                  </ListItemIcon>
+                  <ListItemText>Tramites</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver usuarios"
+            ) ? (
+              <Link to="/usuarios">
+                <ListItem button>
+                  <ListItemIcon>
+                    <GroupIcon />
+                  </ListItemIcon>
+                  <ListItemText>Usuarios</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver documento"
+            ) ? (
+              <Link to="/documentos">
+                <ListItem button>
+                  <ListItemIcon>
+                    <DescriptionIcon />
+                  </ListItemIcon>
+                  <ListItemText>Documentos</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver roles"
+            ) ? (
+              <Link to="/roles">
+                <ListItem button>
+                  <ListItemIcon>
+                    <FaceIcon />
+                  </ListItemIcon>
+                  <ListItemText>Roles</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver ubicacion"
+            ) ? (
+              <Link to="/ubicacion">
+                <ListItem button>
+                  <ListItemIcon>
+                    <RoomIcon />
+                  </ListItemIcon>
+                  <ListItemText>Ubicacion</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
+
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver unidad"
+            ) ? (
+              <Link to="/unidad">
+                <ListItem button>
+                  <ListItemIcon>
+                    <HomeWorkIcon />
+                  </ListItemIcon>
+                  <ListItemText>Unidad Admin.</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver requisito"
+            ) ? (
+              <Link to="/requisito">
+                <ListItem button>
+                  <ListItemIcon>
+                    <AssignmentTurnedInIcon />
+                  </ListItemIcon>
+                  <ListItemText>Requisitos</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
+
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver paso"
+            ) ? (
+              <Link to="/paso">
+                <ListItem button>
+                  <ListItemIcon>
+                    <FormatListNumberedIcon />
+                  </ListItemIcon>
+                  <ListItemText>Pasos</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver usuario tramite"
+            ) ? (
+              <Link to="/usuariotramite">
+                <ListItem button>
+                  <ListItemIcon>
+                    <FormatListNumberedIcon />
+                  </ListItemIcon>
+                  <ListItemText>Tramites de Usuarios</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver historial"
+            ) ? (
+              <Link to="/historial">
+                <ListItem button>
+                  <ListItemIcon>
+                    <FormatListNumberedIcon />
+                  </ListItemIcon>
+                  <ListItemText>Historial</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
+            {usuario.permissions.find(
+              (permiso) => permiso.name === "ver aviso"
+            ) ? (
+              <Link to="/avisos">
+                <ListItem button>
+                  <ListItemIcon>
+                    <ViewCarouselIcon />
+                  </ListItemIcon>
+                  <ListItemText>Aviso</ListItemText>
+                </ListItem>
+              </Link>
+            ) : null}
           </List>
           <Divider />
         </Drawer>
@@ -332,31 +382,87 @@ export default function PersistentDrawerLeft(props) {
           {props.children}
           <Switch>
             <Route
+              path="/"
+              exact
+              component={() => <Home usuario={usuario} />}
+            />
+            <Route
               exact
               path="/usuarios"
               render={() => {
+                return props.acceder ? <Usuarios /> : <Redirect to="/login" />;
+              }}
+            />
+
+            <Route
+              path="/roles"
+              exact
+              render={() => {
                 return props.acceder ? (
-                  <Usuarios />
+                  <Roles usuario={usuario} />
                 ) : (
                   <Redirect to="/login" />
                 );
               }}
             />
+            
+            <Route
+              path="/ubicacion"
+              exact
+              component={() => <Ubicacion usuario={usuario} />}
+            />
 
-            <Route path="/roles" exact component={createRole} />
-            <Route path="/login" exact component={Login} />
-            <Route path="/ubicacion" exact component={Ubicacion} />
-            <Route path="/unidad" exact component={Unidad} />
-            <Route path="/tramite" exact component={Tramite} />
-            <Route path="/requisito" exact component={Requisito} />
-            <Route path="/paso" exact component={Paso} />
-            <Route path="/historial" exact component={Historial} />
-
-            <Route path="/personal" exact component={Personal} />
-            <Route path="/usuariotramite" exact component={UsuarioTramite} />
-            <Route path="/documentos" exact component={Documento} />
-            <Route path="/avisos" exact component={Aviso} />
-            <Route path="/" exact component={Home} />
+            <Route
+              path="/unidad"
+              exact
+              component={() => <Unidad usuario={usuario} />}
+            />
+            <Route
+              path="/tramite"
+              exact
+              component={() => <Tramite usuario={usuario} />}
+            />
+            <Route
+              path="/requisito"
+              exact
+              component={() => <Requisito usuario={usuario} />}
+            />
+            <Route
+              path="/paso"
+              exact
+              component={() => <Paso usuario={usuario} />}
+            />
+            <Route
+              path="/historial"
+              exact
+              component={() => <Historial usuario={usuario} />}
+            />
+            <Route
+              exact
+              path="/personal"
+              render={() => {
+                return props.acceder ? (
+                  <Personal usuario={usuario} />
+                ) : (
+                  <Redirect to="/login" />
+                );
+              }}
+            />
+            <Route
+              path="/usuariotramite"
+              exact
+              component={() => <UsuarioTramite usuario={usuario} />}
+            />
+            <Route
+              path="/documentos"
+              exact
+              component={() => <Documento usuario={usuario} />}
+            />
+            <Route
+              path="/avisos"
+              exact
+              component={() => <Aviso usuario={usuario} />}
+            />
           </Switch>
         </main>
       </Router>
