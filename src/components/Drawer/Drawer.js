@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import { Redirect } from "react-router";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -46,6 +46,9 @@ import UsuarioTramite from "../../layouts/UsuarioTramite/UsuarioTramite";
 import Documento from "../../layouts/Documento/Documento";
 import Aviso from "../../layouts/Aviso/Aviso";
 import Home from "../../layouts/Home/Home";
+import api from "../../config/axios";
+import HistoryIcon from '@material-ui/icons/History';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 
 const drawerWidth = 240;
 
@@ -110,12 +113,15 @@ export default function PersistentDrawerLeft(props) {
   if (!props.acceder) {
     <Redirect path="/login" component={Login} />;
   }
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const openD = Boolean(anchorEl);
-  const usuario = JSON.parse(props.usuario);
+  const [usuario, setUsuario] = useState({
+    id: 0,
+    permissions: [],
+  });
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -136,6 +142,20 @@ export default function PersistentDrawerLeft(props) {
     localStorage.removeItem("token");
     props.acceder(false);
   };
+
+  useEffect(() => {
+    async function getUser() {
+      try {
+        const { data: usuarioAPI } = await api.get("/user");
+        setUsuario(usuarioAPI);
+        console.log(usuario);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getUser();
+    console.log(usuario);
+  }, []);
 
   return (
     <div className={classes.root}>
@@ -224,152 +244,157 @@ export default function PersistentDrawerLeft(props) {
                 <ListItemText>Inicio</ListItemText>
               </ListItem>
             </Link>
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver personal"
-            ) ? (
-              <Link to="/personal">
-                <ListItem button>
-                  <ListItemIcon>
-                    <SupervisedUserCircleIcon />
-                  </ListItemIcon>
-                  <ListItemText>Personal</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver tramite"
-            ) ? (
-              <Link to="/tramite">
-                <ListItem button>
-                  <ListItemIcon>
-                    <AssignmentIcon />
-                  </ListItemIcon>
-                  <ListItemText>Tramites</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver usuarios"
-            ) ? (
-              <Link to="/usuarios">
-                <ListItem button>
-                  <ListItemIcon>
-                    <GroupIcon />
-                  </ListItemIcon>
-                  <ListItemText>Usuarios</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver documento"
-            ) ? (
-              <Link to="/documentos">
-                <ListItem button>
-                  <ListItemIcon>
-                    <DescriptionIcon />
-                  </ListItemIcon>
-                  <ListItemText>Documentos</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver roles"
-            ) ? (
-              <Link to="/roles">
-                <ListItem button>
-                  <ListItemIcon>
-                    <FaceIcon />
-                  </ListItemIcon>
-                  <ListItemText>Roles</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver ubicacion"
-            ) ? (
-              <Link to="/ubicacion">
-                <ListItem button>
-                  <ListItemIcon>
-                    <RoomIcon />
-                  </ListItemIcon>
-                  <ListItemText>Ubicacion</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
+            {usuario.permissions.map(function (elemento) {
+              if (elemento.name === "ver personal") {
+                return (
+                  <Link to="/personal">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <SupervisedUserCircleIcon />
+                      </ListItemIcon>
+                      <ListItemText>Personal</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
 
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver unidad"
-            ) ? (
-              <Link to="/unidad">
-                <ListItem button>
-                  <ListItemIcon>
-                    <HomeWorkIcon />
-                  </ListItemIcon>
-                  <ListItemText>Unidad Admin.</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver requisito"
-            ) ? (
-              <Link to="/requisito">
-                <ListItem button>
-                  <ListItemIcon>
-                    <AssignmentTurnedInIcon />
-                  </ListItemIcon>
-                  <ListItemText>Requisitos</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
+              if (elemento.name === "ver tramite") {
+                return (
+                  <Link to="/tramite">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <AssignmentIcon />
+                      </ListItemIcon>
+                      <ListItemText>Tramites</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
 
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver paso"
-            ) ? (
-              <Link to="/paso">
-                <ListItem button>
-                  <ListItemIcon>
-                    <FormatListNumberedIcon />
-                  </ListItemIcon>
-                  <ListItemText>Pasos</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver usuario tramite"
-            ) ? (
-              <Link to="/usuariotramite">
-                <ListItem button>
-                  <ListItemIcon>
-                    <FormatListNumberedIcon />
-                  </ListItemIcon>
-                  <ListItemText>Tramites de Usuarios</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver historial"
-            ) ? (
-              <Link to="/historial">
-                <ListItem button>
-                  <ListItemIcon>
-                    <FormatListNumberedIcon />
-                  </ListItemIcon>
-                  <ListItemText>Historial</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
-            {usuario.permissions.find(
-              (permiso) => permiso.name === "ver aviso"
-            ) ? (
-              <Link to="/avisos">
-                <ListItem button>
-                  <ListItemIcon>
-                    <ViewCarouselIcon />
-                  </ListItemIcon>
-                  <ListItemText>Aviso</ListItemText>
-                </ListItem>
-              </Link>
-            ) : null}
+              if (elemento.name === "ver usuarios") {
+                return (
+                  <Link to="/usuarios">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <GroupIcon />
+                      </ListItemIcon>
+                      <ListItemText>Usuarios</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
+
+              if (elemento.name === "ver documento") {
+                return (
+                  <Link to="/documentos">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <DescriptionIcon />
+                      </ListItemIcon>
+                      <ListItemText>Documentos</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
+
+              if (elemento.name === "ver roles") {
+                return (
+                  <Link to="/roles">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <FaceIcon />
+                      </ListItemIcon>
+                      <ListItemText>Roles</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
+
+              if (elemento.name === "ver ubicacion") {
+                return (
+                  <Link to="/ubicacion">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <RoomIcon />
+                      </ListItemIcon>
+                      <ListItemText>Ubicacion</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
+              if (elemento.name === "ver unidad") {
+                return (
+                  <Link to="/unidad">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <HomeWorkIcon />
+                      </ListItemIcon>
+                      <ListItemText>Unidad Admin.</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
+              if (elemento.name === "ver requisito") {
+                return (
+                  <Link to="/requisito">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <AssignmentTurnedInIcon />
+                      </ListItemIcon>
+                      <ListItemText>Requisitos</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
+              if (elemento.name === "ver paso") {
+                return (
+                  <Link to="/paso">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <FormatListNumberedIcon />
+                      </ListItemIcon>
+                      <ListItemText>Pasos</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
+              if (elemento.name === "ver usuario tramite") {
+                return (
+                  <Link to="/usuariotramite">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <AssignmentIndIcon />
+                      </ListItemIcon>
+                      <ListItemText>Tramites de Usuarios</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
+              if (elemento.name === "ver historial") {
+                return (
+                  <Link to="/historial">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <HistoryIcon />
+                      </ListItemIcon>
+                      <ListItemText>Historial</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
+              if (elemento.name === "ver aviso") {
+                return (
+                  <Link to="/avisos">
+                    <ListItem button>
+                      <ListItemIcon>
+                        <ViewCarouselIcon />
+                      </ListItemIcon>
+                      <ListItemText>Aviso</ListItemText>
+                    </ListItem>
+                  </Link>
+                );
+              }
+            })}
           </List>
           <Divider />
         </Drawer>
@@ -390,7 +415,11 @@ export default function PersistentDrawerLeft(props) {
               exact
               path="/usuarios"
               render={() => {
-                return props.acceder ? <Usuarios usuario={usuario}/> : <Redirect to="/login" />;
+                return props.acceder ? (
+                  <Usuarios usuario={usuario} />
+                ) : (
+                  <Redirect to="/login" />
+                );
               }}
             />
 
@@ -405,7 +434,6 @@ export default function PersistentDrawerLeft(props) {
                 );
               }}
             />
-            
             <Route
               path="/ubicacion"
               exact

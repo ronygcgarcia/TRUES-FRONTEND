@@ -37,7 +37,7 @@ function App() {
   ) : obteniendo ? (
     <CircularProgress />
   ) : (
-    <PersistentDrawerLeft acceder={acceder} usuario={JSON.stringify(usuario)} />
+    <PersistentDrawerLeft acceder={acceder} />
   );
 }
 
