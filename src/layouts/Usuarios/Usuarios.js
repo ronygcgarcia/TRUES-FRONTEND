@@ -777,6 +777,11 @@ function Usuarios({ usuario }) {
                   <TableCell align="center">
                     {element.role.map((rol, index) => (
                       <Chip
+                      disabled={
+                        !usuario.permissions.find(
+                          (permiso) => permiso.name === "eliminar rol"
+                        )
+                      }
                         color="primary"
                         icon={<FaceIcon />}
                         key={rol.id}

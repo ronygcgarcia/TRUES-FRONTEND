@@ -47,8 +47,8 @@ import Documento from "../../layouts/Documento/Documento";
 import Aviso from "../../layouts/Aviso/Aviso";
 import Home from "../../layouts/Home/Home";
 import api from "../../config/axios";
-import HistoryIcon from '@material-ui/icons/History';
-import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import HistoryIcon from "@material-ui/icons/History";
+import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 
 const drawerWidth = 240;
 
@@ -142,6 +142,21 @@ export default function PersistentDrawerLeft(props) {
     localStorage.removeItem("token");
     props.acceder(false);
   };
+
+  const [permisoVer, setPermisoVer] = useState({
+    verPersonal: false,
+    verTramites: false,
+    verUsuarios: false,
+    verDocumentos: false,
+    verRoles: false,
+    verUbicacion: false,
+    verUnidad: false,
+    verRequisitos: false,
+    verPasos: false,
+    verTramiteUsuario: false,
+    verHistorial: false,
+    verAvisos: false,
+  });
 
   useEffect(() => {
     async function getUser() {
@@ -244,6 +259,7 @@ export default function PersistentDrawerLeft(props) {
                 <ListItemText>Inicio</ListItemText>
               </ListItem>
             </Link>
+
             {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver personal") {
                 return (
@@ -257,7 +273,8 @@ export default function PersistentDrawerLeft(props) {
                   </Link>
                 );
               }
-
+            })}
+            {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver tramite") {
                 return (
                   <Link to="/tramite">
@@ -270,7 +287,8 @@ export default function PersistentDrawerLeft(props) {
                   </Link>
                 );
               }
-
+            })}
+            {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver usuarios") {
                 return (
                   <Link to="/usuarios">
@@ -283,7 +301,8 @@ export default function PersistentDrawerLeft(props) {
                   </Link>
                 );
               }
-
+            })}
+            {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver documento") {
                 return (
                   <Link to="/documentos">
@@ -296,7 +315,8 @@ export default function PersistentDrawerLeft(props) {
                   </Link>
                 );
               }
-
+            })}
+            {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver roles") {
                 return (
                   <Link to="/roles">
@@ -309,7 +329,8 @@ export default function PersistentDrawerLeft(props) {
                   </Link>
                 );
               }
-
+            })}
+            {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver ubicacion") {
                 return (
                   <Link to="/ubicacion">
@@ -322,6 +343,8 @@ export default function PersistentDrawerLeft(props) {
                   </Link>
                 );
               }
+            })}
+            {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver unidad") {
                 return (
                   <Link to="/unidad">
@@ -334,6 +357,8 @@ export default function PersistentDrawerLeft(props) {
                   </Link>
                 );
               }
+            })}
+            {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver requisito") {
                 return (
                   <Link to="/requisito">
@@ -346,6 +371,8 @@ export default function PersistentDrawerLeft(props) {
                   </Link>
                 );
               }
+            })}
+            {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver paso") {
                 return (
                   <Link to="/paso">
@@ -358,6 +385,8 @@ export default function PersistentDrawerLeft(props) {
                   </Link>
                 );
               }
+            })}
+            {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver usuario tramite") {
                 return (
                   <Link to="/usuariotramite">
@@ -370,6 +399,8 @@ export default function PersistentDrawerLeft(props) {
                   </Link>
                 );
               }
+            })}
+            {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver historial") {
                 return (
                   <Link to="/historial">
@@ -382,6 +413,8 @@ export default function PersistentDrawerLeft(props) {
                   </Link>
                 );
               }
+            })}
+            {usuario.permissions.map(function (elemento) {
               if (elemento.name === "ver aviso") {
                 return (
                   <Link to="/avisos">
