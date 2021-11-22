@@ -28,7 +28,7 @@ const Login = (props) => {
           const respuesta =  api.get("/user").then((response) => {
             console.log(response.data);
           });
-          props.acceder(respuesta)
+          props.history.push('/home');
         })
         .catch((error) => {
           console.log(error);

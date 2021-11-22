@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import clsx from "clsx";
-import { Redirect } from "react-router";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -32,7 +31,6 @@ import AssignmentTurnedInIcon from "@material-ui/icons/AssignmentTurnedIn";
 import FormatListNumberedIcon from "@material-ui/icons/FormatListNumbered";
 import ViewCarouselIcon from "@material-ui/icons/ViewCarousel";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Login from "../../layouts/Login/Login";
 import Ubicacion from "../../layouts/Ubicacion/Ubicacion";
 import Unidad from "../../layouts/Unidad/Unidad";
 import Roles from "../../layouts/Roles/Roles";
@@ -110,9 +108,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function PersistentDrawerLeft(props) {
-  if (!props.acceder) {
-    <Redirect path="/login" component={Login} />;
-  }
+
   const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
   const theme = useTheme();
@@ -140,7 +136,7 @@ export default function PersistentDrawerLeft(props) {
 
   const logout = () => {
     localStorage.removeItem("token");
-    props.acceder(false);
+    props.history.push('/');
   };
 
   const [permisoVer, setPermisoVer] = useState({
@@ -163,13 +159,11 @@ export default function PersistentDrawerLeft(props) {
       try {
         const { data: usuarioAPI } = await api.get("/user");
         setUsuario(usuarioAPI);
-        console.log(usuario);
       } catch (error) {
         console.log(error);
       }
     }
     getUser();
-    console.log(usuario);
   }, []);
 
   return (
@@ -251,7 +245,7 @@ export default function PersistentDrawerLeft(props) {
           <Divider />
 
           <List>
-            <Link to="/">
+            <Link to="/home">
               <ListItem button>
                 <ListItemIcon>
                   <HomeIcon />
@@ -260,174 +254,150 @@ export default function PersistentDrawerLeft(props) {
               </ListItem>
             </Link>
 
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver personal") {
-                return (
-                  <Link to="/personal">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <SupervisedUserCircleIcon />
-                      </ListItemIcon>
-                      <ListItemText>Personal</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver tramite") {
-                return (
-                  <Link to="/tramite">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <AssignmentIcon />
-                      </ListItemIcon>
-                      <ListItemText>Tramites</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver usuarios") {
-                return (
-                  <Link to="/usuarios">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <GroupIcon />
-                      </ListItemIcon>
-                      <ListItemText>Usuarios</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver documento") {
-                return (
-                  <Link to="/documentos">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <DescriptionIcon />
-                      </ListItemIcon>
-                      <ListItemText>Documentos</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver roles") {
-                return (
-                  <Link to="/roles">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <FaceIcon />
-                      </ListItemIcon>
-                      <ListItemText>Roles</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver ubicacion") {
-                return (
-                  <Link to="/ubicacion">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <RoomIcon />
-                      </ListItemIcon>
-                      <ListItemText>Ubicacion</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver unidad") {
-                return (
-                  <Link to="/unidad">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <HomeWorkIcon />
-                      </ListItemIcon>
-                      <ListItemText>Unidad Admin.</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver requisito") {
-                return (
-                  <Link to="/requisito">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <AssignmentTurnedInIcon />
-                      </ListItemIcon>
-                      <ListItemText>Requisitos</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver paso") {
-                return (
-                  <Link to="/paso">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <FormatListNumberedIcon />
-                      </ListItemIcon>
-                      <ListItemText>Pasos</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver usuario tramite") {
-                return (
-                  <Link to="/usuariotramite">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <AssignmentIndIcon />
-                      </ListItemIcon>
-                      <ListItemText>Tramites de Usuarios</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver historial") {
-                return (
-                  <Link to="/historial">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <HistoryIcon />
-                      </ListItemIcon>
-                      <ListItemText>Historial</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
-            {usuario.permissions.map(function (elemento) {
-              if (elemento.name === "ver aviso") {
-                return (
-                  <Link to="/avisos">
-                    <ListItem button>
-                      <ListItemIcon>
-                        <ViewCarouselIcon />
-                      </ListItemIcon>
-                      <ListItemText>Aviso</ListItemText>
-                    </ListItem>
-                  </Link>
-                );
-              }
-            })}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver personal" ? (
+                <Link to="/personal">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <SupervisedUserCircleIcon />
+                    </ListItemIcon>
+                    <ListItemText>Personal</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver tramite" ? (
+                <Link to="/tramite">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <AssignmentIcon />
+                    </ListItemIcon>
+                    <ListItemText>Tramites</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver usuarios" ? (
+                <Link to="/usuarios">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <GroupIcon />
+                    </ListItemIcon>
+                    <ListItemText>Usuarios</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver documento" ? (
+                <Link to="/documentos">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <DescriptionIcon />
+                    </ListItemIcon>
+                    <ListItemText>Documentos</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver roles" ? (
+                <Link to="/roles">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <FaceIcon />
+                    </ListItemIcon>
+                    <ListItemText>Roles</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver ubicacion" ? (
+                <Link to="/ubicacion">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <RoomIcon />
+                    </ListItemIcon>
+                    <ListItemText>Ubicacion</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver unidad" ? (
+                <Link to="/unidad">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <HomeWorkIcon />
+                    </ListItemIcon>
+                    <ListItemText>Unidad Admin.</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver requisito" ? (
+                <Link to="/requisito">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <AssignmentTurnedInIcon />
+                    </ListItemIcon>
+                    <ListItemText>Requisitos</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver paso" ? (
+                <Link to="/paso">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <FormatListNumberedIcon />
+                    </ListItemIcon>
+                    <ListItemText>Pasos</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver usuario tramite" ? (
+                <Link to="/usuariotramite">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <AssignmentIndIcon />
+                    </ListItemIcon>
+                    <ListItemText>Tramites de Usuarios</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver historial" ? (
+                <Link to="/historial">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <HistoryIcon />
+                    </ListItemIcon>
+                    <ListItemText>Historial</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento) =>
+              elemento.name === "ver aviso" ? (
+                <Link to="/avisos">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <ViewCarouselIcon />
+                    </ListItemIcon>
+                    <ListItemText>Aviso</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
           </List>
           <Divider />
         </Drawer>
@@ -440,32 +410,20 @@ export default function PersistentDrawerLeft(props) {
           {props.children}
           <Switch>
             <Route
-              path="/"
+              path="/home"
               exact
               component={() => <Home usuario={usuario} />}
             />
             <Route
-              exact
               path="/usuarios"
-              render={() => {
-                return props.acceder ? (
-                  <Usuarios usuario={usuario} />
-                ) : (
-                  <Redirect to="/login" />
-                );
-              }}
+              exact
+              component={() => <Usuarios usuario={usuario} />}
             />
 
             <Route
               path="/roles"
               exact
-              render={() => {
-                return props.acceder ? (
-                  <Roles usuario={usuario} />
-                ) : (
-                  <Redirect to="/login" />
-                );
-              }}
+              component={() => <Roles usuario={usuario} />}
             />
             <Route
               path="/ubicacion"
@@ -499,15 +457,9 @@ export default function PersistentDrawerLeft(props) {
               component={() => <Historial usuario={usuario} />}
             />
             <Route
-              exact
               path="/personal"
-              render={() => {
-                return props.acceder ? (
-                  <Personal usuario={usuario} />
-                ) : (
-                  <Redirect to="/login" />
-                );
-              }}
+              exact
+              component={() => <Personal usuario={usuario} />}
             />
             <Route
               path="/usuariotramite"

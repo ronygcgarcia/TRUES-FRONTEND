@@ -1,43 +1,25 @@
 import "./App.css";
-import api from "./config/axios";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import PersistentDrawerLeft from "./components/Drawer/Drawer";
 import Login from "./layouts/Login/Login";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import { BrowserRouter, Switch } from "react-router-dom";
+import PrivateRoute from "./config/PrivateRoute";
+import PublicRoute from "./config/PublicRoute";
 
 function App() {
-  const [usuario, setUsuario] = useState([]);
-  const [obteniendo, setobteniendo] = useState(true);
-
-  const [conectado, setconectado] = useState(false);
-  const acceder = (estado) => {
-    setconectado(estado);
-    setUsuario(estado);
-  };
 
   useEffect(() => {
-    async function loadUser() {
-      if (!localStorage.getItem("token")) {
-        setobteniendo(false);
-        return;
-      }
-      try {
-        const { data: usuarioAPI } = await api.get("/user");
-        setUsuario(usuarioAPI);
-        setconectado(true);
-        setobteniendo(false);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    loadUser();
+    
   }, []);
-  return !conectado ? (
-    <Login acceder={acceder} />
-  ) : obteniendo ? (
-    <CircularProgress />
-  ) : (
-    <PersistentDrawerLeft acceder={acceder} />
+  return (
+    <div className="App">
+      <BrowserRouter>
+            <Switch>
+              <PublicRoute path="/" exact component={Login} />
+              <PrivateRoute path="/" component={PersistentDrawerLeft} />
+            </Switch>
+      </BrowserRouter>
+    </div>
   );
 }
 
