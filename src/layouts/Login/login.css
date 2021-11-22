@@ -70,6 +70,10 @@
     width: 60%;
 }
 
+p{
+    font-weight: bold;
+}
+
 @media only screen and (max-width: 792px) {
     .w {
         width: 100%;
