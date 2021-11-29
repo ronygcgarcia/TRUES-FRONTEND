@@ -40,7 +40,6 @@ const FormRole = (props) => {
 
     const validacionCampos = (e) => {
         const { name, value } = e.target;
-        console.log(e.target);
         switch (name) {
             case "nombre":
                 setValidacionNombre({
@@ -88,7 +87,7 @@ const FormRole = (props) => {
                 }
                 break;
             case "longitud":
-                let ExpRegLongitud = new RegExp(/^(\+|-)?(?:180(?:(?:\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,6})?))$/).test(value);
+                let ExpRegLongitud = new RegExp(/^(\+|-)?(?:180(?:(?:\.0{1,15})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,15})?))$/).test(value);
                 if (!ExpRegLongitud) {
                     setValidacionLongitud({
                         mensajeError: "La coordenada de longitud no es correcta",
@@ -96,7 +95,7 @@ const FormRole = (props) => {
                 }
                 break;
             case "latitud":
-                let ExpRegLatitud = new RegExp(/^(\+|-)?(?:90(?:(?:\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,6})?))$/).test(value);
+                let ExpRegLatitud = new RegExp(/^(\+|-)?(?:90(?:(?:\.0{1,15})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,15})?))$/).test(value);
 
                 if (!ExpRegLatitud) {
                     setValidacionLatitud({
@@ -119,6 +118,7 @@ const FormRole = (props) => {
             //console.log(ubicacion)
             api.post("/ubicacion", ubicacion).then((response) => {
                 props.setRows(props.rows.concat(response.data));
+                props.handleClose();
             }, (error) => {
                 console.log(error.response.data.message)
                 setRequestError(error.response.data.message)
