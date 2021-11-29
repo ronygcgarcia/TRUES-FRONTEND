@@ -123,7 +123,7 @@ const FormRole = (props) => {
         <div>
             <form onSubmit={handleSubmit} className={classes.root}>
                 {requestError != null ? <p className="alert danger-alert"><Alert severity="error">Ha ocurrido un error: {requestError}</Alert></p> : ''}
-                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este unidad?</p> : unidad.id?createOrEdit():<div style={{width:'100%',display:'flex',justifyContent:'center',padding:'10px'}} ><CircularProgress /></div>}
+                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este unidad?</p> : props.formType==='new' ? createOrEdit() : unidad.id ? createOrEdit() : <CircularProgress/>}
                 <FormControl style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '1rem' }}>
                     <Button variant="contained" color="secondary" onClick={props.handleClose}>
                         Cerrar

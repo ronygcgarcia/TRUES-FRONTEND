@@ -13,6 +13,7 @@ import { FormGroup } from '@material-ui/core';
 import api from '../../config/axios';
 import Alert from '@material-ui/lab/Alert';
 import FormHelperText from '@material-ui/core/FormHelperText';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -294,7 +295,7 @@ const FormRole = (props) => {
         <div>
             <form onSubmit={handleSubmit} className={classes.root}>
                 {requestError != null ? <p className="alert danger-alert"><Alert severity="error">Ha ocurrido un error: {requestError}</Alert></p> : ''}
-                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este paso?</p> : createOrEdit()}
+                {props.formType === 'delete' ? <p>¿Esta seguro de que desea eliminar este paso?</p> : props.formType==='new' ? createOrEdit() : paso.id ? createOrEdit() : <CircularProgress/>}
                 <FormControl style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', marginTop: '1rem' }}>
                     <Button variant="contained" color="secondary" onClick={props.handleClose}>
                         Cerrar
