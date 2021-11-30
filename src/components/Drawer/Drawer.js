@@ -412,69 +412,69 @@ export default function PersistentDrawerLeft(props) {
             <Route
               path="/home"
               exact
-              component={() => <Home usuario={usuario} />}
+              render={() => {return (<Home usuario={usuario}/>)}}
             />
             <Route
               path="/usuarios"
               exact
-              component={() => <Usuarios usuario={usuario} />}
+              render={() => {return (<Usuarios usuario={usuario}/>)}}
             />
 
             <Route
               path="/roles"
               exact
-              component={() => <Roles usuario={usuario} />}
+              render={() => {return (<Roles usuario={usuario}/>)}}
             />
             <Route
               path="/ubicacion"
               exact
-              component={() => <Ubicacion usuario={usuario} />}
+              render={() => {return (<Ubicacion usuario={usuario}/>)}}
             />
 
             <Route
               path="/unidad"
               exact
-              component={() => <Unidad usuario={usuario} />}
+              render={() => {return (<Unidad usuario={usuario}/>)}}
             />
             <Route
               path="/tramite"
               exact
-              component={() => <Tramite usuario={usuario} />}
+              render={() => {return (<Tramite usuario={usuario}/>)}}
             />
             <Route
               path="/requisito"
               exact
-              component={() => <Requisito usuario={usuario} />}
+              render={() => {return (<Requisito usuario={usuario}/>)}}
             />
             <Route
               path="/paso"
               exact
-              component={() => <Paso usuario={usuario} />}
+              render={() => {return (<Paso usuario={usuario}/>)}}
             />
             <Route
               path="/historial"
               exact
-              component={() => <Historial usuario={usuario} />}
+              render={() => {return (<Historial usuario={usuario}/>)}}
             />
             <Route
               path="/personal"
               exact
-              component={() => <Personal usuario={usuario} />}
+              render={() => {return (<Personal usuario={usuario}/>)}}
             />
             <Route
               path="/usuariotramite"
               exact
-              component={() => <UsuarioTramite usuario={usuario} />}
+              render={() => {return (<UsuarioTramite usuario={usuario}/>)}}
             />
             <Route
               path="/documentos"
               exact
-              component={() => <Documento usuario={usuario} />}
+              render={() => {return (<Documento usuario={usuario}/>)}}
             />
             <Route
               path="/avisos"
               exact
-              component={() => <Aviso usuario={usuario} />}
+              render={() => {return (<Aviso usuario={usuario}/>)}}
             />
           </Switch>
         </main>
