@@ -21,23 +21,23 @@ import api from "../../config/axios";
 import Typography from "@material-ui/core/Typography";
 
 const columns = [
-  { id: "nombre", label: "nombre", align: "center", minWidth: 170 },
+  { id: "nombre", label: "Nombre", align: "center", minWidth: 170 },
   {
     id: "descripcion",
-    label: "Nombre",
+    label: "Descripcion",
     minWidth: 170,
     align: "right",
     format: (value) => value.toLocaleString("en-US"),
   },
   {
-    id: "longitud",
-    label: "Longitud",
+    id: "latitud",
+    label: "Latitud",
     minWidth: 100,
     align: "center",
   },
   {
-    id: "latitud",
-    label: "Latitud",
+    id: "longitud",
+    label: "Longitud",
     minWidth: 100,
     align: "center",
   },
@@ -159,14 +159,20 @@ export default function StickyHeadTable({ usuario }) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((element, index) => (
+              {(rowsPerPage > 0
+                ? rows.slice(
+                    page * rowsPerPage,
+                    page * rowsPerPage + rowsPerPage
+                  )
+                : rows
+              ).map((element, index) => (
                 <TableRow>
                   <TableCell key={index} align="center">
                     {element.nombre}
                   </TableCell>
                   <TableCell align="center">{element.descripcion}</TableCell>
-                  <TableCell align="center">{element.longitud}</TableCell>
                   <TableCell align="center">{element.latitud}</TableCell>
+                  <TableCell align="center">{element.longitud}</TableCell>
                   <TableCell align="center">
                     <Box pr={1} pl={1}>
                       <Button

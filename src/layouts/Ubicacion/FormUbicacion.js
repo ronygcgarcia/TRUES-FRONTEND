@@ -7,11 +7,12 @@ import { FormGroup } from '@material-ui/core';
 import api from '../../config/axios';
 import Alert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import FormUbicacionMap from './FormUbicacionMap';
 const useStyles = makeStyles((theme) => ({
     root: {
         '& .MuiTextField-root': {
             margin: theme.spacing(1),
-            width: '100ch',
+            width: '100%',
         },
     },
     formControl: {
@@ -19,7 +20,14 @@ const useStyles = makeStyles((theme) => ({
         minWidth: 120,
         maxWidth: '100%',
     },
+    inputMaterial: {
+        width: "100%",
+      },
 }));
+const defaultPosition = {
+    lat: 13.716429679120854,
+    lng: -89.20351267752807,
+  };
 
 const FormRole = (props) => {
     const [ubicacion, setUbicacion] = React.useState({ id: 0, name: '', permissions: [] });
@@ -159,6 +167,12 @@ const FormRole = (props) => {
         //console.log("ESTADO ANTES DE ENVIAR",{...ubicacion,permissions:permisos});        
     }
 
+    const [posicion, setPosicion] = useState({
+        address: "Kala Pattar Ascent Trail, Khumjung 56000, Nepal",
+        position: defaultPosition,
+        defaultPosition: defaultPosition,
+      });
+
     useEffect(() => {
         if (props.ubicacionId && props.ubicacionId !== 0) {
             api.get('/ubicacion/' + props.ubicacionId).then((response) => {
@@ -172,7 +186,7 @@ const FormRole = (props) => {
     }, [props.ubicacionId]);
 
     function createOrEdit() {
-        return (<FormGroup style={{ justifyContent: 'center' }}>
+        return (<FormGroup style={{ justifyContent: 'center',width:'100%' }}>
             <TextField
                 name="nombre"
                 required
@@ -186,6 +200,7 @@ const FormRole = (props) => {
                 }}
                 error={Boolean(validacionNombre?.mensajeError)}
                 helperText={validacionNombre?.mensajeError}
+                className={classes.inputMaterial}
             />
             <TextField
                 name="descripcion"
@@ -214,6 +229,7 @@ const FormRole = (props) => {
                 }}
                 error={Boolean(validacionLongitud?.mensajeError)}
                 helperText={validacionLongitud?.mensajeError}
+				disabled
             />
             <TextField
                 name="latitud"
@@ -228,7 +244,12 @@ const FormRole = (props) => {
                 }}
                 error={Boolean(validacionLatitud?.mensajeError)}
                 helperText={validacionLatitud?.mensajeError}
+				disabled
             />
+            <FormUbicacionMap 
+			ubicacion={ubicacion}
+            setUbicacion={setUbicacion}
+            ></FormUbicacionMap>
         </FormGroup>);
     }
 
