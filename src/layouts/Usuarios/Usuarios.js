@@ -779,7 +779,7 @@ function Usuarios({ usuario }) {
                       <Chip
                       disabled={
                         !usuario.permissions.find(
-                          (permiso) => permiso.name === "eliminar rol"
+                          (permiso) => permiso.name === "eliminar roles"
                         )
                       }
                         color="primary"
