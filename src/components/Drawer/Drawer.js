@@ -139,21 +139,6 @@ export default function PersistentDrawerLeft(props) {
     props.history.push('/');
   };
 
-  const [permisoVer, setPermisoVer] = useState({
-    verPersonal: false,
-    verTramites: false,
-    verUsuarios: false,
-    verDocumentos: false,
-    verRoles: false,
-    verUbicacion: false,
-    verUnidad: false,
-    verRequisitos: false,
-    verPasos: false,
-    verTramiteUsuario: false,
-    verHistorial: false,
-    verAvisos: false,
-  });
-
   useEffect(() => {
     async function getUser() {
       try {

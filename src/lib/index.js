@@ -1,5 +1,3 @@
-'use strict';
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -102,7 +100,6 @@ var LocationPicker = function (_Component) {
     value: function handleMarkerDragEnd(mouseEvent) {
       var _this3 = this;
 
-      var onChange = this.props.onChange;
       // Get latitude and longitude
 
       var lat = mouseEvent.latLng.lat();

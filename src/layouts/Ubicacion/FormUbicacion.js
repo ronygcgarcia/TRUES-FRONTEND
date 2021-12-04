@@ -24,10 +24,6 @@ const useStyles = makeStyles((theme) => ({
         width: "100%",
       },
 }));
-const defaultPosition = {
-    lat: 13.716429679120854,
-    lng: -89.20351267752807,
-  };
 
 const FormRole = (props) => {
     const [ubicacion, setUbicacion] = React.useState({ id: 0, name: '', permissions: [] });
@@ -166,12 +162,6 @@ const FormRole = (props) => {
         }
         //console.log("ESTADO ANTES DE ENVIAR",{...ubicacion,permissions:permisos});        
     }
-
-    const [posicion, setPosicion] = useState({
-        address: "Kala Pattar Ascent Trail, Khumjung 56000, Nepal",
-        position: defaultPosition,
-        defaultPosition: defaultPosition,
-      });
 
     useEffect(() => {
         if (props.ubicacionId && props.ubicacionId !== 0) {

@@ -1,5 +1,4 @@
-import React, { Component, useEffect, useState } from "react";
-import { ReactDOM } from "react";
+import React from "react";
 import LocationPicker from "../../lib";
 import { usePosition } from "use-position";
 
@@ -9,11 +8,6 @@ const defaultPosition = {
 };
 
 function FormUbicacionMap({ ubicacion,setUbicacion }) {
-  const [posicion, setPosicion] = useState({
-    address: "Kala Pattar Ascent Trail, Khumjung 56000, Nepal",
-    position: defaultPosition,
-    defaultPosition: defaultPosition,
-  });
 
   const watch = true;
   const { latitude, longitude } = usePosition(watch);
