@@ -239,9 +239,9 @@ export default function PersistentDrawerLeft(props) {
               </ListItem>
             </Link>
 
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver personal" ? (
-                <Link to="/personal">
+                <Link key={index} to="/personal">
                   <ListItem button>
                     <ListItemIcon>
                       <SupervisedUserCircleIcon />
@@ -251,9 +251,9 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver tramite" ? (
-                <Link to="/tramite">
+                <Link key={index} to="/tramite">
                   <ListItem button>
                     <ListItemIcon>
                       <AssignmentIcon />
@@ -263,9 +263,9 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver usuarios" ? (
-                <Link to="/usuarios">
+                <Link key={index} to="/usuarios">
                   <ListItem button>
                     <ListItemIcon>
                       <GroupIcon />
@@ -275,9 +275,9 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver documento" ? (
-                <Link to="/documentos">
+                <Link key={index} to="/documentos">
                   <ListItem button>
                     <ListItemIcon>
                       <DescriptionIcon />
@@ -287,9 +287,9 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver roles" ? (
-                <Link to="/roles">
+                <Link key={index} to="/roles">
                   <ListItem button>
                     <ListItemIcon>
                       <FaceIcon />
@@ -299,9 +299,9 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver ubicacion" ? (
-                <Link to="/ubicacion">
+                <Link key={index} to="/ubicacion">
                   <ListItem button>
                     <ListItemIcon>
                       <RoomIcon />
@@ -311,9 +311,9 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver unidad" ? (
-                <Link to="/unidad">
+                <Link key={index} to="/unidad">
                   <ListItem button>
                     <ListItemIcon>
                       <HomeWorkIcon />
@@ -323,9 +323,9 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver requisito" ? (
-                <Link to="/requisito">
+                <Link key={index} to="/requisito">
                   <ListItem button>
                     <ListItemIcon>
                       <AssignmentTurnedInIcon />
@@ -335,9 +335,9 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver paso" ? (
-                <Link to="/paso">
+                <Link key={index} to="/paso">
                   <ListItem button>
                     <ListItemIcon>
                       <FormatListNumberedIcon />
@@ -347,9 +347,9 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver usuario tramite" ? (
-                <Link to="/usuariotramite">
+                <Link key={index} to="/usuariotramite">
                   <ListItem button>
                     <ListItemIcon>
                       <AssignmentIndIcon />
@@ -359,9 +359,9 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver historial" ? (
-                <Link to="/historial">
+                <Link key={index} to="/historial">
                   <ListItem button>
                     <ListItemIcon>
                       <HistoryIcon />
@@ -371,9 +371,9 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento) =>
+            {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver aviso" ? (
-                <Link to="/avisos">
+                <Link key={index} to="/avisos">
                   <ListItem button>
                     <ListItemIcon>
                       <ViewCarouselIcon />
