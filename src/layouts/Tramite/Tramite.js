@@ -147,8 +147,8 @@ export default function StickyHeadTable({ usuario }) {
             </TableHead>
             <TableBody>
               {rows.map((element, index) => (
-                <TableRow>
-                  <TableCell key={index} align="center">
+                <TableRow key={index}>
+                  <TableCell  align="center">
                     {element.nombre}
                   </TableCell>
                   <TableCell align="center">

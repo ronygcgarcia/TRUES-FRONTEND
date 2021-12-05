@@ -49,9 +49,9 @@ const Home = ({ usuario }) => {
     <div className={classes.root}>
       <main className={classes.content}>
         <Grid container spacing={3}>
-          {usuario.permissions.map((elemento) =>
+          {usuario.permissions.map((elemento, index) =>
             elemento.name === "ver documento" ? (
-              <Grid item xs={12} md={6} lg={6}>
+              <Grid key={index} item xs={12} md={6} lg={6}>
                 <Card className={classes.card}>
                   <Link to="/documentos">
                     <CardMedia
@@ -77,9 +77,9 @@ const Home = ({ usuario }) => {
               </Grid>
             ) : null
           )}
-          {usuario.permissions.map((elemento) =>
+          {usuario.permissions.map((elemento, index) =>
             elemento.name === "ver tramite" ? (
-              <Grid item xs={12} md={6} lg={6}>
+              <Grid key={index} item xs={12} md={6} lg={6}>
                 <Card className={classes.card}>
                   <Link to="/tramite">
                     <CardMedia
@@ -105,9 +105,9 @@ const Home = ({ usuario }) => {
               </Grid>
             ) : null
           )}
-          {usuario.permissions.map((elemento) =>
+          {usuario.permissions.map((elemento, index) =>
             elemento.name === "ver requisito" ? (
-              <Grid item xs={12} md={6} lg={6}>
+              <Grid key={index} item xs={12} md={6} lg={6}>
                 <Card className={classes.root}>
                   <Link to="/requisito">
                     <CardMedia
@@ -133,9 +133,9 @@ const Home = ({ usuario }) => {
               </Grid>
             ) : null
           )}
-          {usuario.permissions.map((elemento) =>
+          {usuario.permissions.map((elemento, index) =>
             elemento.name === "ver ubicacion" ? (
-              <Grid item xs={12} md={6} lg={6}>
+              <Grid key={index} item xs={12} md={6} lg={6}>
                 <Card className={classes.root}>
                   <Link to="/ubicacion">
                     <CardMedia
