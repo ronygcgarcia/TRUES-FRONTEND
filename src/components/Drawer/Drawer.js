@@ -449,7 +449,7 @@ export default function PersistentDrawerLeft(props) {
             <Route
               path="/usuariotramite"
               exact
-              render={() => {return (<UsuarioTramite usuario={usuario}/>)}}
+              render={() => {return (<UsuarioTramite usuarioLog={usuario}/>)}}
             />
             <Route
               path="/documentos"
