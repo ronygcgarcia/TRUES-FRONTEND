@@ -73,7 +73,6 @@ const FormRole = (props) => {
 
     const validacionCampos = (e) => {
         const { name, value } = e.target;
-        console.log(e.target);
         switch (name) {
             case "nombre":
                 setValidacionNombre({

@@ -33,9 +33,7 @@ const FormRole = (props) => {
             mensajeError:
           "",
         });
-        console.log("Nombre: "+nombre);
         let regName = new RegExp(/^[a-zA-ZñÑáéíóúÁÉÍÓÚ0-9-\s]{3,100}$/).test(nombre);
-        console.log("RegName"+regName);
         if (!regName) {
             setValidacionNombre({
                 mensajeError:
