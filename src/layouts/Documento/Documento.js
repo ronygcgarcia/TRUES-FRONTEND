@@ -201,7 +201,7 @@ function Documento({ usuario }) {
   };
 
   const onDrop = useCallback((acceptedFiles) => {
-    let url = "https://trues-backend.herokuapp.com/api/documento";
+    let url = process.env.REACT_APP_BACKEND_URL+"/documento";
     acceptedFiles.forEach(async (acceptedFile) => {
       const formData = new FormData();
       formData.append("documento", acceptedFile);

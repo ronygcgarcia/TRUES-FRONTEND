@@ -205,7 +205,7 @@ function Aviso({usuario}) {
   };
 
   const guardarAviso = () => {
-    let url = "https://trues-backend.herokuapp.com/api/aviso";
+    let url = process.env.REACT_APP_BACKEND_URL+"/aviso";
     if (descripcion.descripcion !== "" && imagen !== undefined) {
       imagen.forEach(async (acceptedFile) => {
         const formData = new FormData();
@@ -243,7 +243,7 @@ function Aviso({usuario}) {
   };
 
   const editarAviso = () => {
-    let url = "https://trues-backend.herokuapp.com/api/aviso/";
+    let url = process.env.REACT_APP_BACKEND_URL+"/aviso/";
     if (avisoSelected.descripcion !== "") {
       imagen.forEach(async (acceptedFile) => {
         const formData = new FormData();
