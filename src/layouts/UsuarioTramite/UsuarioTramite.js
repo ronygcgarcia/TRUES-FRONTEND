@@ -161,9 +161,7 @@ function UsuarioTramite({ usuarioLog }) {
 
   const buscarUsuario = async () => {
     if (usuario.uid !== "") {
-      console.log(usuario.uid);
       try {
-        console.log(usuario.uid);
         await api.get("/tramites/" + usuario.uid).then((response) => {
           setTramites(response.data.user.tramites);
           setUsuario(response.data.user);
@@ -197,7 +195,11 @@ function UsuarioTramite({ usuarioLog }) {
         user_id: usuario.id,
         tramite_id: tramiteAsignar,
       });
-      buscarUsuario();
+      api.get("/tramites/" + usuario.uid).then((response) => {
+        setTramites(response.data.user.tramites);
+        setRequestError(true);
+        setPasos([]);
+      });      
       handleModal();
     } catch (error) {
       console.log("Error al agregarle el tramite al usuario: " + error);
