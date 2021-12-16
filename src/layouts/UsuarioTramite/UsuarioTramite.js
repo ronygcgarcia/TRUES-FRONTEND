@@ -100,6 +100,7 @@ function UsuarioTramite({ usuarioLog }) {
   const [tramiteAsignar, setTramiteAsignar] = React.useState(
     "Seleccione un tramite para asignar"
   );
+  const [tramiteSelected, setTramiteSelected] = useState();
   const [pasos, setPasos] = useState([]);
   const [checked, setChecked] = React.useState([]);
 
@@ -131,8 +132,17 @@ function UsuarioTramite({ usuarioLog }) {
     } else {
       newChecked.splice(currentIndex, 1);
     }
-    console.log(value);
     setChecked(newChecked);
+    changePasoState(value);
+  };
+
+  const changePasoState = async (value) => {
+    try {
+      const resp = await api.post("/user-paso/" + value);
+      showPasos(tramiteSelected);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const getTramites = async () => {
@@ -197,13 +207,15 @@ function UsuarioTramite({ usuarioLog }) {
   const showPasos = async (id) => {
     const pasosAr = [];
     try {
-      const respuesta = await api.get("/tramites/" + usuario.id + "/" + id);
+      const respuesta = await api.get("/user-paso/" + usuario.id + "/" + id);
       respuesta.data.forEach((element) => {
         pasosAr.push(element);
       });
       setPasos(pasosAr);
+      setTramiteSelected(id);
     } catch (error) {
       console.log("error al obtener los pasos: " + error);
+      setTramiteSelected(0);
     }
   };
 
@@ -381,9 +393,9 @@ function UsuarioTramite({ usuarioLog }) {
                       <ListItemSecondaryAction>
                         <Switch
                           edge="end"
-                          onChange={handleToggle(paso[0].tramite_paso_id)}
+                          onChange={handleToggle(paso[0].id)}
                           checked={
-                            checked.indexOf(paso[0].tramite_paso_id) !== -1
+                            (paso[0].estado) === 1
                           }
                           inputProps={{
                             "aria-labelledby": "switch-list-label-wifi",
