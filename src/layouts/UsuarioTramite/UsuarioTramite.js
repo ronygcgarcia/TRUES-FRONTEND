@@ -18,8 +18,8 @@ import Switch from "@material-ui/core/Switch";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import HighlightOffIcon from "@material-ui/icons/HighlightOff";
-import DeleteIcon from '@material-ui/icons/Delete';
-import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
@@ -78,12 +78,10 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
-    
   },
   formButtons: {
     margin: theme.spacing(1),
     minWidth: 120,
-    
   },
 }));
 
@@ -199,7 +197,7 @@ function UsuarioTramite({ usuarioLog }) {
         setTramites(response.data.user.tramites);
         setRequestError(true);
         setPasos([]);
-      });      
+      });
       handleModal();
     } catch (error) {
       console.log("Error al agregarle el tramite al usuario: " + error);
@@ -229,12 +227,10 @@ function UsuarioTramite({ usuarioLog }) {
     <div>
       <form className={classes.modal} onSubmit={handleSubmit}>
         <FormGroup>
-        <Typography variant="h4">Asignar Tramite a Usuario</Typography>
-        &nbsp;
+          <Typography variant="h4">Asignar Tramite a Usuario</Typography>
+          &nbsp;
           <FormControl className={classes.formControl}>
-            <InputLabel >
-              Tramites Disponibles
-            </InputLabel>
+            <InputLabel>Tramites Disponibles</InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -255,10 +251,10 @@ function UsuarioTramite({ usuarioLog }) {
               variant="contained"
               color="primary"
               onClick={() => agregarTramite()}
-              >
+            >
               Agregar
             </Button>
-              &nbsp;&nbsp;
+            &nbsp;&nbsp;
             <Button variant="contained" color="secondary" onClick={handleModal}>
               Cerrar
             </Button>
@@ -358,13 +354,12 @@ function UsuarioTramite({ usuarioLog }) {
                         )}
                       </ListItemIcon>
                       <ListItemText primary={tramite.nombre} />
-                      <ListItemSecondaryAction>
-                        <IconButton
-                        edge="end"
-                        aria-label="delete">
+                      {/* <ListItemSecondaryAction>
+                        <IconButton edge="end" aria-label="delete"
+                        onClick={() => eliminarTramite()}>
                           <DeleteIcon />
                         </IconButton>
-                      </ListItemSecondaryAction>
+                      </ListItemSecondaryAction> */}
                     </ListItem>
                   );
                 })}
@@ -396,9 +391,7 @@ function UsuarioTramite({ usuarioLog }) {
                         <Switch
                           edge="end"
                           onChange={handleToggle(paso[0].id)}
-                          checked={
-                            (paso[0].estado) === 1
-                          }
+                          checked={paso[0].estado === 1}
                           inputProps={{
                             "aria-labelledby": "switch-list-label-wifi",
                           }}
