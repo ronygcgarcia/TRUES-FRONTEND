@@ -8,6 +8,7 @@ import api from '../../config/axios';
 import Alert from '@material-ui/lab/Alert';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import FormUbicacionMap from './FormUbicacionMap';
+import MapView from './MapView';
 const useStyles = makeStyles((theme) => ({
     root: {
         '& .MuiTextField-root': {
@@ -236,10 +237,14 @@ const FormRole = (props) => {
                 helperText={validacionLatitud?.mensajeError}
 				disabled
             />
-            <FormUbicacionMap 
+            {/* <FormUbicacionMap 
 			ubicacion={ubicacion}
             setUbicacion={setUbicacion}
-            ></FormUbicacionMap>
+            ></FormUbicacionMap> */}
+            <MapView
+            ubicacion={ubicacion}
+            setUbicacion={setUbicacion}
+            />
         </FormGroup>);
     }
 
