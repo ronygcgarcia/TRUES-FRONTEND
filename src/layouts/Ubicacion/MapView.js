@@ -1,20 +1,53 @@
-import React, { useState, useMemo, useCallback, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
-import { usePosition } from "use-position";
+import React, {
+  useState,
+  useMemo,
+  useRef,
+  useEffect,
+} from "react";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 
 const defaultPosition = {
-  lat: 13.72029,
-  lng: -89.20146,
+  lat: 13.7205,
+  lng: -89.20144,
 };
 
 const MapView = ({ ubicacion, setUbicacion }) => {
+  const [position, setPosition] = useState(defaultPosition);
+  const markerRef = useRef(null);
+  const eventHandlers = useMemo(
+    () => ({
+      dragend() {
+        const marker = markerRef.current;
 
-  const watch = true;
-  const { latitude, longitude } = usePosition(watch);
+        if (marker != null) {
+          setPosition(marker.getLatLng());
+        }
+        setUbicacion({
+          ...ubicacion,
+          latitud: marker.getLatLng().lat,
+          longitud: marker.getLatLng().lng,
+        });
+        console.log(ubicacion);
+      },
+    }),
+    []
+  );
+
+  useEffect(() => {
+    if (ubicacion.id === 0) {
+      setUbicacion({
+        ...ubicacion,
+        latitud: 13.7205,
+        longitud: -89.20144,
+      });
+    }
+  }, []);
 
   return (
     <MapContainer
-      center={defaultPosition}
+      center={
+        ubicacion.id ? [ubicacion.latitud, ubicacion.longitud] : defaultPosition
+      }
       zoom={18}
       scrollWheelZoom={false}
     >
@@ -22,45 +55,18 @@ const MapView = ({ ubicacion, setUbicacion }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <DraggableMarker/>
+      <Marker
+        draggable={true}
+        eventHandlers={eventHandlers}
+        position={
+          ubicacion.id
+            ? [ubicacion.latitud, ubicacion.longitud]
+            : defaultPosition
+        }
+        ref={markerRef}
+      ></Marker>
     </MapContainer>
   );
 };
-
-function DraggableMarker() {
-  const [draggable, setDraggable] = useState(false)
-  const [position, setPosition] = useState(defaultPosition)
-  const markerRef = useRef(null)
-  const eventHandlers = useMemo(
-    () => ({
-      dragend() {
-        const marker = markerRef.current
-        if (marker != null) {
-          setPosition(marker.getLatLng())
-        }
-      },
-    }),
-    [],
-  )
-  const toggleDraggable = useCallback(() => {
-    setDraggable((d) => !d)
-  }, [])
-
-  return (
-    <Marker
-      draggable={draggable}
-      eventHandlers={eventHandlers}
-      position={position}
-      ref={markerRef}>
-      <Popup minWidth={90}>
-        <span onClick={toggleDraggable}>
-          {draggable
-            ? 'Marker is draggable'
-            : 'Click here to make marker draggable'}
-        </span>
-      </Popup>
-    </Marker>
-  )
-}
 
 export default MapView;
