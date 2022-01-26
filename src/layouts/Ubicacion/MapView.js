@@ -27,7 +27,6 @@ const MapView = ({ ubicacion, setUbicacion }) => {
           latitud: marker.getLatLng().lat,
           longitud: marker.getLatLng().lng,
         });
-        console.log(ubicacion);
       },
     }),
     []
