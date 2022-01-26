@@ -96,6 +96,11 @@ export default function StickyHeadTable({ usuario }) {
 
   const handleClose = () => {
     setOpen(false);
+    setUbicacion({id: 0,
+      nombre: "",
+      descripcion: "",
+      longitud: "",
+      latitud: "",})
   };
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
