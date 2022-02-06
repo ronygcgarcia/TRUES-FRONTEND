@@ -23,10 +23,12 @@ import IconButton from "@material-ui/core/IconButton";
 import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
+import PublishIcon from "@material-ui/icons/Publish";
 
 import clsx from "clsx";
 import FormControl from "@material-ui/core/FormControl";
 import api from "../../config/axios";
+import ModalSubirArchivo from "./ModalSubirArchivo";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
   },
   fixedHeight: {
-    height: 240,
+    height: 65,
   },
   fixedTite: {
     height: 100,
@@ -87,6 +89,7 @@ const useStyles = makeStyles((theme) => ({
 
 function UsuarioTramite({ usuarioLog }) {
   const classes = useStyles();
+  const ref = React.createRef();
   const fixedHeightPaper = clsx(classes.paper);
   const [requestError, setRequestError] = useState();
   const [usuario, setUsuario] = useState({
@@ -95,6 +98,7 @@ function UsuarioTramite({ usuarioLog }) {
   const [tramites, setTramites] = useState([]);
   const [tramitesGet, setTramitesGet] = useState([]);
   const [estadoModal, setEstadoModal] = useState(false);
+  const [estadoModalUpload, setEstadoModalUpload] = useState(false);
   const [tramiteAsignar, setTramiteAsignar] = React.useState(
     "Seleccione un tramite para asignar"
   );
@@ -104,6 +108,10 @@ function UsuarioTramite({ usuarioLog }) {
 
   const handleModal = () => {
     setEstadoModal(!estadoModal);
+  };
+
+  const handleModalUpload = () => {
+    setEstadoModalUpload(!estadoModalUpload);
   };
 
   const handleChange = (e) => {
@@ -223,6 +231,14 @@ function UsuarioTramite({ usuarioLog }) {
     getTramites();
   }, []);
 
+  const dialogoSubirArchivo = (
+    <div>
+      <ModalSubirArchivo
+        handleModalUpload={handleModalUpload}
+      ></ModalSubirArchivo>
+    </div>
+  );
+
   const modalAsignacion = (
     <div>
       <form className={classes.modal} onSubmit={handleSubmit}>
@@ -267,14 +283,28 @@ function UsuarioTramite({ usuarioLog }) {
   return (
     <div className={classes.root}>
       <main className={classes.content}>
-        <Grid container spacing={3}>
-          <Grid item xs={12}>
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={12} md={10} lg={10}>
             <Paper className={classes.paper}>
               <Typography variant="h6">
                 Gestror de Tramite por Estudiante
               </Typography>
             </Paper>
           </Grid>
+          <Grid item xs={12} sm={12} md={2} lg={2}>
+            <Button
+              className={classes.fixedHeight}
+              onClick={() => {
+                handleModalUpload();
+              }}
+              variant="outlined"
+              color="primary"
+            >
+              <PublishIcon />
+              Subir Archivo
+            </Button>
+          </Grid>
+
           <Grid item xs={12} md={6} lg={6}>
             <form onSubmit={handleSubmit}>
               <FormGroup>
@@ -406,6 +436,9 @@ function UsuarioTramite({ usuarioLog }) {
         </Grid>
         <Modal open={estadoModal} onClose={handleModal}>
           {modalAsignacion}
+        </Modal>
+        <Modal ref={ref} open={estadoModalUpload} onClose={handleModalUpload}>
+          {dialogoSubirArchivo}
         </Modal>
       </main>
     </div>
