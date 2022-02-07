@@ -1,17 +1,10 @@
 import React, { useEffect, useState, forwardRef, useCallback } from "react";
 import api from "../../config/axios";
 import Alert from "@material-ui/lab/Alert";
-import estiloDrop from "./Dropzone.css";
-
-//---------------------------------------------------------------Material UI
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Modal, TablePagination } from "@material-ui/core";
 import { Add, DeleteForever } from "@material-ui/icons";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 import ArchiveIcon from "@material-ui/icons/Archive";
-
-//------------------------------------------------------------Material Table
 import MaterialTable, { MTableBodyRow } from "material-table";
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
@@ -29,11 +22,8 @@ import SaveAlt from "@material-ui/icons/SaveAlt";
 import Search from "@material-ui/icons/Search";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import EditIcon from "@material-ui/icons/Edit";
-import axios from "axios";
+import ModalSubirDocumento from "./ModalSubirDocumento";
 
-import { useDropzone } from "react-dropzone";
-
-//------------------------------------------------Iconos que usa material-table
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
   Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -58,7 +48,6 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
 };
 
-//----------------------------------------------------Estilos para los Modales
 const useStyles = makeStyles((theme) => ({
   modal: {
     position: "absolute",
@@ -76,17 +65,6 @@ const useStyles = makeStyles((theme) => ({
   },
   inputMaterial: {
     width: "100%",
-  },
-  dropzone: {
-    position: "absolute",
-    width: "60%",
-    backgroundColor: theme.palette.background.paper,
-    borderRadius: "8px",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 2, 2),
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
   },
   main: {
     textAlign: "right",
@@ -109,7 +87,6 @@ function Documento({ usuario }) {
   const [documentos, setDocumentos] = useState([]);
   const styles = useStyles();
   const [requestError, setRequestError] = useState(null);
-  const getAccessToken = () => localStorage.getItem("token");
 
   //Estados para los modales para las acciones de los usuarios
   const [modalInsertar, setModalInsertar] = useState(false);
@@ -123,10 +100,6 @@ function Documento({ usuario }) {
   });
   //Acciones para mostrar los Modales
   const abrirCerrarModalInsertar = () => {
-    setSwitchState((prevState) => ({
-      ...prevState,
-      switchmultiple: false,
-    }));
     setDocumentSelected({
       nombre: "",
       url: "",
@@ -135,10 +108,6 @@ function Documento({ usuario }) {
   };
 
   const abrirCerrarModalEditar = () => {
-    setSwitchState((prevState) => ({
-      ...prevState,
-      switchmultiple: false,
-    }));
     setModalEditar(!modalEditar);
   };
 
@@ -152,7 +121,6 @@ function Documento({ usuario }) {
     switch (caso) {
       case "Editar":
         abrirCerrarModalEditar();
-        console.log(documento);
         break;
       case "Eliminar":
         abrirCerrarModalEliminar();
@@ -168,7 +136,6 @@ function Documento({ usuario }) {
     getDocumentos();
   }, []);
 
-  //-----------------------------------------------------
   const getDocumentos = async () => {
     try {
       const resp = await api.get("/documento");
@@ -189,133 +156,6 @@ function Documento({ usuario }) {
       setRequestError(error.response.data.message);
     }
   };
-  //----------------------------------------------------------
-  const [switchState, setSwitchState] = useState({
-    switchmultiple: false,
-  });
-
-  const handleSwitch = (event) => {
-    setSwitchState({
-      switchmultiple: event.target.checked,
-    });
-  };
-
-  const onDrop = useCallback((acceptedFiles) => {
-    let url = process.env.REACT_APP_BACKEND_URL+"/documento";
-    acceptedFiles.forEach(async (acceptedFile) => {
-      const formData = new FormData();
-      formData.append("documento", acceptedFile);
-      try {
-        axios({
-          method: "post",
-          url: url,
-          data: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${getAccessToken()}`,
-          },
-        })
-          .then(function (response) {
-            getDocumentos();
-            setModalInsertar(false);
-            setModalEditar(false);
-          })
-          .catch(function (response) {});
-      } catch (error) {}
-    });
-  }, []);
-
-  const {
-    getRootProps,
-    getInputProps,
-
-    isDragAccept,
-    isDragReject,
-  } = useDropzone({
-    onDrop,
-    accept:
-      "application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.oasis.opendocument.text",
-    multiple: switchState.switchmultiple,
-  });
-
-  const bodyInsertar = (
-    <div className={styles.dropzone}>
-      <div {...getRootProps()} className="dropzone">
-        <input
-          {...getInputProps()}
-          className={`${estiloDrop.dropzone} ${
-            isDragReject ? estiloDrop.active : null
-          }`}
-        />
-        <p>CLICK para buscar el archivo o ARRASTRELO a esta area y se subirá</p>
-      </div>
-      {isDragReject ? (
-        <div>
-          <Alert severity="warning">
-            Este tipo de archivo no está permitido o está arrastrando más de los
-            permitidos
-          </Alert>
-        </div>
-      ) : null}
-      {isDragAccept ? (
-        <div>
-          <Alert>Puede soltar el archivo ahora</Alert>
-        </div>
-      ) : null}
-      <br />
-      <FormControlLabel
-        control={
-          <Switch
-            onChange={handleSwitch}
-            name="switchmultiple"
-            color="primary"
-          />
-        }
-        label="Activar para subir varios archivos"
-      />
-      &nbsp;&nbsp;&nbsp;&nbsp;
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => abrirCerrarModalInsertar()}
-      >
-        Cancelar
-      </Button>
-    </div>
-  );
-
-  const bodyEditar = (
-    <div className={styles.dropzone}>
-      <div {...getRootProps()} className="dropzone">
-        <input {...getInputProps()} className={`${estiloDrop.dropzone}`} />
-        <p>
-          Haga CLICK para buscar el archivo o simplemente ARRASTRELO a esta area
-          y se actualizará
-        </p>
-      </div>
-      {isDragReject ? (
-        <div>
-          <Alert severity="warning">
-            Este tipo de archivo no está permitido o está arrastrando más de los
-            permitidos
-          </Alert>
-        </div>
-      ) : null}
-      {isDragAccept ? (
-        <div>
-          <Alert>Puede soltar el archivo ahora</Alert>
-        </div>
-      ) : null}
-      <br />
-      <Button
-        variant="contained"
-        color="secondary"
-        onClick={() => abrirCerrarModalEditar()}
-      >
-        Cancelar
-      </Button>
-    </div>
-  );
 
   const bodyEliminar = (
     <div className={styles.modal}>
@@ -349,7 +189,6 @@ function Documento({ usuario }) {
     </div>
   );
 
-  ///////////////////////////////RETURN////////////////////////////////
   return (
     <div className={styles.main}>
       <br />
@@ -469,10 +308,24 @@ function Documento({ usuario }) {
       />
 
       <Modal open={modalInsertar} onClose={abrirCerrarModalInsertar}>
-        {bodyInsertar}
+        <div>
+          <ModalSubirDocumento
+            handleModal={abrirCerrarModalInsertar}
+            getDocumentos={getDocumentos}
+            actionType="insertar"
+          />
+        </div>
       </Modal>
       <Modal open={modalEditar} onClose={abrirCerrarModalEditar}>
-        {bodyEditar}
+        <div>
+          <ModalSubirDocumento
+            handleModal={abrirCerrarModalEditar}
+            getDocumentos={getDocumentos}
+            actionType="actualizar"
+            documento_id={documentSelected.id}
+            documento_type={documentSelected.type}
+          />
+        </div>
       </Modal>
 
       <Modal open={modalEliminar} onClose={abrirCerrarModalEliminar}>
