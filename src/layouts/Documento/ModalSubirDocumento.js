@@ -64,17 +64,16 @@ const ModalSubirDocumento = ({
       } catch (error) {}
     });
   };
-/**
- * ***********************************************************
- */
+
   const update = () => {
-    let url = process.env.REACT_APP_BACKEND_URL + "/documento/" + documento_id + "?_method=PUT";
+    let url = process.env.REACT_APP_BACKEND_URL + "/documento/" + documento_id;
     archivos.forEach(async (acceptedFile) => {
       const formData = new FormData();
       formData.append("documento", acceptedFile);
+      formData.append("_method", "PUT");
       try {
         axios({
-          method: "put",
+          method: "post",
           url: url,
           data: formData,
           headers: {
@@ -84,7 +83,6 @@ const ModalSubirDocumento = ({
           },
         })
           .then(function (response) {
-            console.log(response);
             handleModal();
             getDocumentos();
           })
@@ -94,9 +92,6 @@ const ModalSubirDocumento = ({
       } catch (error) {}
     });
   };
-  /**
- * ********************************************************
- */
 
   const onDrop = useCallback((acceptedFiles) => {
     setArchivos(acceptedFiles);
