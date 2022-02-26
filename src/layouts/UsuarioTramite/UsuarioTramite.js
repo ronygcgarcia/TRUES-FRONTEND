@@ -105,6 +105,7 @@ function UsuarioTramite({ usuarioLog }) {
   const [tramiteSelected, setTramiteSelected] = useState();
   const [pasos, setPasos] = useState([]);
   const [checked, setChecked] = React.useState([]);
+  const [problem, setProblem] = useState(false);
 
   const handleModal = () => {
     setEstadoModal(!estadoModal);
@@ -173,6 +174,7 @@ function UsuarioTramite({ usuarioLog }) {
           setUsuario(response.data.user);
           setRequestError(true);
           setPasos([]);
+          setProblem(false);
         });
       } catch (error) {
         switch (error.response.data.message) {
@@ -181,11 +183,13 @@ function UsuarioTramite({ usuarioLog }) {
             setTramites([{ nombre: "Este usuario no posee tramites" }]);
             setUsuario(error.response.data.user);
             setPasos([]);
+            setProblem(false);
             break;
           case "No existe este carnet":
             setRequestError(false);
             setTramites([{ nombre: "No existe este carnet" }]);
             setPasos([]);
+            setProblem(true);
             break;
 
           default:
@@ -205,10 +209,21 @@ function UsuarioTramite({ usuarioLog }) {
         setTramites(response.data.user.tramites);
         setRequestError(true);
         setPasos([]);
+        buscarUsuario();
       });
       handleModal();
     } catch (error) {
       console.log("Error al agregarle el tramite al usuario: " + error);
+    }
+  };
+
+  const eliminarTramite = async (usertramite_id) => {
+    try {
+      api.delete("/user-tramite/" + usertramite_id).then((response) => {
+        buscarUsuario();
+      });
+    } catch (error) {
+      setProblem(true);
     }
   };
 
@@ -326,6 +341,7 @@ function UsuarioTramite({ usuarioLog }) {
                     value={usuario.uuid}
                     variant="outlined"
                     required
+                    error={problem}
                   />
                   <br />
                   <FormControl>
@@ -369,6 +385,11 @@ function UsuarioTramite({ usuarioLog }) {
                 {tramites.map((tramite, index) => {
                   return (
                     <ListItem
+                      disabled={
+                        tramites[0].nombre === "Este usuario no posee tramites"
+                          ? true
+                          : false
+                      }
                       button
                       key={index}
                       divider
@@ -384,12 +405,21 @@ function UsuarioTramite({ usuarioLog }) {
                         )}
                       </ListItemIcon>
                       <ListItemText primary={tramite.nombre} />
-                      {/* <ListItemSecondaryAction>
-                        <IconButton edge="end" aria-label="delete"
-                        onClick={() => eliminarTramite()}>
+                      <ListItemSecondaryAction>
+                        <IconButton
+                          disabled={
+                            tramites[0].nombre ===
+                            "Este usuario no posee tramites"
+                              ? true
+                              : false
+                          }
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => eliminarTramite(tramite.pivot.id)}
+                        >
                           <DeleteIcon />
                         </IconButton>
-                      </ListItemSecondaryAction> */}
+                      </ListItemSecondaryAction>
                     </ListItem>
                   );
                 })}
