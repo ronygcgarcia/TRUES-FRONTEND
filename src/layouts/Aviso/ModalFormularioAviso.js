@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Button, FormControl, TextField } from "@material-ui/core";
+import { Button, Card, CardActionArea, CardMedia, FormControl, TextField } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 import { makeStyles } from "@material-ui/core/styles";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
+import api from "../../config/axios";
 
 const useStyles = makeStyles((theme) => ({
   estiloDrop: {
@@ -49,6 +50,9 @@ const useStyles = makeStyles((theme) => ({
     width: "auto",
     height: "auto",
   },
+  media: {
+    height: 500,
+  }
 }));
 
 const ModalFormularioAviso = ({
@@ -57,6 +61,7 @@ const ModalFormularioAviso = ({
   actionType,
   aviso_id,
   aviso_descripcion,
+  aviso_url,
 }) => {
   const classes = useStyles();
   const [aviso, setAvisos] = useState([]);
@@ -94,32 +99,20 @@ const ModalFormularioAviso = ({
     });
   };
 
-  const update = () => {
-    let url = process.env.REACT_APP_BACKEND_URL + "/aviso/" + aviso_id;
-    aviso.forEach(async (acceptedFile) => {
-      const formData = new FormData();
-      formData.append("imagen", acceptedFile);
-      formData.append("descripcion", descripcion);
-      formData.append("_method", "PUT");
-      try {
-        axios({
-          method: "post",
-          url: url,
-          data: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${getAccessToken()}`,
-          },
+  const update = async () => {
+    try {
+      await api
+        .put("/aviso/" + aviso_id, {
+          descripcion: descripcion,
         })
-          .then(function (response) {
-            handleModal();
-            getAvisos();
-          })
-          .catch(function (response) {
-            console.log(response.response.data);
-          });
-      } catch (error) {}
-    });
+        .then((response) => {
+          handleModal();
+          getAvisos();
+          console.log(response.response.data);
+        });
+    } catch (error) {
+      //
+    }
   };
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -155,35 +148,50 @@ const ModalFormularioAviso = ({
   return (
     <div className={classes.dropzone}>
       <form className={classes.formulario} onSubmit={handleSubmit}>
-        <div {...getRootProps()} className="dropzone">
-          <input
-            {...getInputProps()}
-            className={`${classes.estiloDrop} ${
-              isDragReject ? classes.estiloDrop : null
-            }`}
-          />
-          {isDragActive ? (
-            <div></div>
-          ) : (
-            <p>
-              CLICK  o ARRASTRELO a esta area y se subirá
-            </p>
-          )}
+        {actionType === "insertar" ? (
+          <div {...getRootProps()} className="dropzone">
+            <input
+              {...getInputProps()}
+              className={`${classes.estiloDrop} ${
+                isDragReject ? classes.estiloDrop : null
+              }`}
+            />
+            {isDragActive ? (
+              <div></div>
+            ) : (
+              <p>CLICK o ARRASTRELO a esta area y se subirá</p>
+            )}
 
-          {isDragReject ? (
-            <div>
-              <Alert severity="warning">
-                Este tipo de archivo no está permitido o está arrastrando más de
-                los permitidos
-              </Alert>
-            </div>
-          ) : null}
-          {isDragAccept ? (
-            <div>
-              <Alert>Puede soltar el archivo ahora</Alert>
-            </div>
-          ) : null}
-        </div>
+            {isDragReject ? (
+              <div>
+                <Alert severity="warning">
+                  Este tipo de archivo no está permitido o está arrastrando más
+                  de los permitidos
+                </Alert>
+              </div>
+            ) : null}
+            {isDragAccept ? (
+              <div>
+                <Alert>Puede soltar el archivo ahora</Alert>
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <div>
+            <Card>
+              <CardActionArea>
+                <CardMedia
+                  className={classes.media}
+                  component="img"
+                  alt="imagen"
+                  height="140"
+                  image={aviso_url}
+                  title="Titulo imagen"
+                />
+              </CardActionArea>
+            </Card>
+          </div>
+        )}
         {aviso.map((file, index) => (
           <div key={index} className={classes.imageInfo}>
             <div className={classes.thumbInner}>

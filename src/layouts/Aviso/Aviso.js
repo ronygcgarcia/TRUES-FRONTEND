@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
   },
   media: {
     height: 500,
-    objectFit: "cover",
+    
   },
   modal: {
     position: "absolute",
@@ -52,6 +52,34 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const avisosArray = [
+  {
+    id: 1,
+    url: "http://www.fia.ues.edu.sv/academica/archivos/inicio/cuf.jpg",
+    descripcion: "Navega como siempre y nosotros nos encargamos del resto",
+  },
+  {
+    id: 2,
+    url: "http://www.fia.ues.edu.sv/img/cursos_ingles.png",
+    descripcion: "Navega como siempre y nosotros nos encargamos del resto",
+  },
+  {
+    id: 3,
+    url: "http://www.fia.ues.edu.sv/academica/archivos/inicio/Calendario_actividades-CII2021.png",
+    descripcion: "Navega como siempre y nosotros nos encargamos del resto",
+  },
+  {
+    id: 4,
+    url: "http://www.fia.ues.edu.sv/academica/archivos/inicio/primerolugares.jpg",
+    descripcion: "Navega como siempre y nosotros nos encargamos del resto",
+  },
+  {
+    id: 5,
+    url: "http://www.fia.ues.edu.sv/academica/archivos/inicio/inscripcion-CII2021.png",
+    descripcion: "Navega como siempre y nosotros nos encargamos del resto",
+  },
+];
+
 function Aviso({ usuario }) {
   const ref = React.createRef();
   const classes = useStyles();
@@ -62,12 +90,13 @@ function Aviso({ usuario }) {
   });
 
   const getAvisos = async () => {
-    try {
-      const resp = await api.get("/aviso");
-      setAvisos(resp.data);
-    } catch (err) {
-      console.error(err);
-    }
+    // try {
+    //   const resp = await api.get("/aviso");
+    //   setAvisos(resp.data);
+    // } catch (err) {
+    //   console.error(err);
+    // }
+    setAvisos(avisosArray);
   };
 
   useEffect(() => {
@@ -267,6 +296,7 @@ function Aviso({ usuario }) {
             actionType="actualizar"
             aviso_id={avisoSelected.id}
             aviso_descripcion={avisoSelected.descripcion}
+            aviso_url={avisoSelected.url}
           />
         </Modal>
 
