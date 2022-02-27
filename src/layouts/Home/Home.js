@@ -9,6 +9,7 @@ import documentIcon from "../../assets/1.png";
 import tramiteIcon from "../../assets/2.png";
 import requisitoIcon from "../../assets/3.png";
 import ubicacionIcon from "../../assets/4.png";
+import notificationIcon from "../../assets/notification.png"
 import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +52,7 @@ const Home = ({ usuario }) => {
         <Grid container spacing={3}>
           {usuario.permissions.map((elemento, index) =>
             elemento.name === "ver documento" ? (
-              <Grid key={index} item xs={12} md={6} lg={6}>
+              <Grid key={index} item xs={12} md={6} lg={4}>
                 <Card className={classes.card}>
                   <Link to="/documentos">
                     <CardMedia
@@ -79,7 +80,7 @@ const Home = ({ usuario }) => {
           )}
           {usuario.permissions.map((elemento, index) =>
             elemento.name === "ver tramite" ? (
-              <Grid key={index} item xs={12} md={6} lg={6}>
+              <Grid key={index} item xs={12} md={6} lg={4}>
                 <Card className={classes.card}>
                   <Link to="/tramite">
                     <CardMedia
@@ -107,7 +108,7 @@ const Home = ({ usuario }) => {
           )}
           {usuario.permissions.map((elemento, index) =>
             elemento.name === "ver requisito" ? (
-              <Grid key={index} item xs={12} md={6} lg={6}>
+              <Grid key={index} item xs={12} md={6} lg={4}>
                 <Card className={classes.root}>
                   <Link to="/requisito">
                     <CardMedia
@@ -135,7 +136,7 @@ const Home = ({ usuario }) => {
           )}
           {usuario.permissions.map((elemento, index) =>
             elemento.name === "ver ubicacion" ? (
-              <Grid key={index} item xs={12} md={6} lg={6}>
+              <Grid key={index} item xs={12} md={6} lg={4}>
                 <Card className={classes.root}>
                   <Link to="/ubicacion">
                     <CardMedia
@@ -154,6 +155,34 @@ const Home = ({ usuario }) => {
                       </Typography>
                       <Typography variant="body2" component="p">
                         Administracion de Ubicacion para Tramites
+                      </Typography>
+                    </CardContent>
+                  </Link>
+                </Card>
+              </Grid>
+            ) : null
+          )}
+          {usuario.permissions.map((elemento, index) =>
+            elemento.name === "crear notificacion" ? (
+              <Grid key={index} item xs={12} md={6} lg={4}>
+                <Card className={classes.root}>
+                  <Link to="/notificacion">
+                    <CardMedia
+                      className={classes.media}
+                      image={notificationIcon}
+                      title="Notificacion"
+                    />
+                    <CardContent>
+                      <Typography
+                        className={classes.title}
+                        color="textSecondary"
+                        gutterBottom
+                      ></Typography>
+                      <Typography variant="h5" component="h2">
+                        Enviar Notificacion
+                      </Typography>
+                      <Typography variant="body2" component="p">
+                        Enviar notificaciones a usuarios
                       </Typography>
                     </CardContent>
                   </Link>
