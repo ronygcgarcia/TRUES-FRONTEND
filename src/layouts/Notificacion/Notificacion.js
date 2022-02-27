@@ -1,39 +1,28 @@
 import {
-  Box,
   Button,
   Container,
   FormGroup,
   Grid,
-  Icon,
   IconButton,
   List,
-  ListItem,
-  ListItemIcon,
-  ListItemSecondaryAction,
   Paper,
-  Switch,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   TextField,
   Typography,
 } from "@material-ui/core";
-import AssignmentIcon from "@material-ui/icons/Assignment";
-import ErrorIcon from "@material-ui/icons/Error";
 import ListItemText from "@material-ui/core/ListItemText";
 import AddBoxIcon from "@material-ui/icons/AddBox";
-import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 import FormControl from "@material-ui/core/FormControl";
 import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import api from "../../config/axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Delete, Send } from "@material-ui/icons";
 import Alert from '@material-ui/lab/Alert';
-import { AlertTitle } from "@material-ui/lab";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -130,7 +119,6 @@ const useStyles = makeStyles((theme) => ({
 
 function Notificacion() {
   const classes = useStyles();
-  const ref = React.createRef();
   const fixedHeightPaper = clsx(classes.paper);
   const [requestError, setRequestError] = useState(true);
   const [ids, setIds] = useState([]);
@@ -157,7 +145,6 @@ function Notificacion() {
       ...prevState,
       [name]: value,
     }));
-    console.log(notificacion);
   };
 
   const handleChange = (e) => {
@@ -173,7 +160,6 @@ function Notificacion() {
         await api.get("/tramites/" + usuarioSearch.uid).then((response) => {
           setUsuario(response.data.user);
           setRequestError(false);
-          console.log(response.data);
         });
       } catch (error) {
         switch (error.response.data.message) {
@@ -182,7 +168,6 @@ function Notificacion() {
             setRequestError(false);
             break;
           case "No existe este carnet":
-            console.log("Este usuario no existe");
             setRequestError(true);
             setUsuario([]);
             break;
@@ -196,7 +181,6 @@ function Notificacion() {
   };
 
   const agregarDestinatario = () => {
-    console.log("Destinatarios", destinatarios);
     if (ids.length !== 0) {
       const existe = ids.findIndex((element) => element === usuario.id);
       if (existe === -1) {
@@ -217,7 +201,6 @@ function Notificacion() {
     const newListaIds = ids.filter((elemento) => elemento !== destinatario_id);
     setDestinatarios(newDestinatarios);
     setIds(newListaIds);
-    console.log(newDestinatarios);
   };
 
   const sleep = (milliseconds) => {
@@ -228,7 +211,6 @@ function Notificacion() {
   const mostrarResultado = async () => {
     await sleep(2000)
     setEnviado(false);
-    console.log(enviado);
   }
   
 
@@ -252,7 +234,7 @@ function Notificacion() {
           mostrarResultado();
         });
     } catch (error) {
-      console.log(error);
+      
     }
   };
 

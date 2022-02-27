@@ -44,18 +44,18 @@ const FormRole = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        //console.log("ESTADO ANTES DE PERMISOS",unidad);        
+           
         if (props.formType === 'new') {
-            console.log(unidad)
+            
             api.post("/unidad", unidad).then((response) => {
                 props.setRows(props.rows.concat(response.data));
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
+                
                 setRequestError(error.response.data.message)
             })
         } else if (props.formType === 'edit') {
-            //console.log(unidad)
+            
             api.put("/unidad/" + props.unidadId, unidad).then((response) => {
                 var newRows = props.rows
                 newRows.forEach(function (row) {
@@ -67,19 +67,19 @@ const FormRole = (props) => {
                 props.setRows(newRows)
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
+              
                 setRequestError(error.response.data.message)
             })
         } else {
             api.delete("/unidad/" + props.unidadId).then((response) => {
-                //console.log(response)
+                
                 api.get('/unidad').then((response) => {
                     props.setRows([])
                     props.setRows(response.data)
                 })
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
+                
                 setRequestError(error.response.data.message)
             })
         }        
@@ -89,7 +89,7 @@ const FormRole = (props) => {
         if (props.unidadId && props.unidadId !== 0) {
             api.get('/unidad/' + props.unidadId).then((response) => {
                 // los objetos permiso, se cambian a strings para que el select funcione
-                //console.log(response)
+               
                 setUnidad({
                     id: props.unidadId, nombre: response.data.nombre
                 });

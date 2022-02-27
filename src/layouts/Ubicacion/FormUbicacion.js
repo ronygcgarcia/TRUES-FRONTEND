@@ -117,18 +117,18 @@ const FormRole = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        //console.log("ESTADO ANTES DE PERMISOS",ubicacion);        
+           
         if (props.formType === 'new') {
-            //console.log(ubicacion)
+           
             api.post("/ubicacion", ubicacion).then((response) => {
                 props.setRows(props.rows.concat(response.data));
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
+               
                 setRequestError(error.response.data.message)
             })
         } else if (props.formType === 'edit') {
-            //console.log(ubicacion)
+           
             api.put("/ubicacion/" + props.ubicacionId, ubicacion).then((response) => {
                 var newRows = props.rows
                 newRows.forEach(function (row) {
@@ -143,31 +143,31 @@ const FormRole = (props) => {
                 props.setRows(newRows)
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
+                
                 setRequestError(error.response.data.message)
             })
         } else {
             api.delete("/ubicacion/" + props.ubicacionId).then((response) => {
-                //console.log(response)
+                
                 api.get('/ubicacion').then((response) => {
                     props.setRows([])
                     props.setRows(response.data)
                 })
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
+                
                 setRequestError(error.response.data.message)
                 props.handleClose();
             })
         }
-        //console.log("ESTADO ANTES DE ENVIAR",{...ubicacion,permissions:permisos});        
+             
     }
 
     useEffect(() => {
         if (props.ubicacionId && props.ubicacionId !== 0) {
             api.get('/ubicacion/' + props.ubicacionId).then((response) => {
                 // los objetos permiso, se cambian a strings para que el select funcione
-                //console.log(response)
+               
                 setUbicacion({
                     id: props.ubicacionId, nombre: response.data.nombre, descripcion: response.data.descripcion, longitud: response.data.longitud, latitud: response.data.latitud
                 });

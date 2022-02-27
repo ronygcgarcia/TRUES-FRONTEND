@@ -145,10 +145,10 @@ function UsuarioTramite({ usuarioLog }) {
 
   const changePasoState = async (value) => {
     try {
-      const resp = await api.post("/user-paso/" + value);
+      await api.post("/user-paso/" + value);
       showPasos(tramiteSelected);
     } catch (err) {
-      console.error(err);
+      
     }
   };
 
@@ -162,7 +162,7 @@ function UsuarioTramite({ usuarioLog }) {
       });
       setTramitesGet(tramitesAr);
     } catch (error) {
-      console.error(error);
+      
     }
   };
 
@@ -213,7 +213,7 @@ function UsuarioTramite({ usuarioLog }) {
       });
       handleModal();
     } catch (error) {
-      console.log("Error al agregarle el tramite al usuario: " + error);
+      
     }
   };
 
@@ -237,7 +237,7 @@ function UsuarioTramite({ usuarioLog }) {
       setPasos(pasosAr);
       setTramiteSelected(id);
     } catch (error) {
-      console.log("error al obtener los pasos: " + error);
+      
       setTramiteSelected(0);
     }
   };

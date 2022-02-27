@@ -45,7 +45,7 @@ const MapView = ({ ubicacion, setUbicacion }) => {
   return (
     <MapContainer
       center={
-        ubicacion.id ? [ubicacion.latitud, ubicacion.longitud] : defaultPosition
+        ubicacion.id ? [ubicacion.latitud, ubicacion.longitud] : position
       }
       zoom={18}
       scrollWheelZoom={false}

@@ -310,7 +310,7 @@ function Usuarios({ usuario }) {
       const resp = await api.get("/users");
       setUsers(resp.data);
     } catch (err) {
-      console.error(err);
+      
     }
   };
 

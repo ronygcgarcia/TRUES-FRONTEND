@@ -93,7 +93,7 @@ const ModalFormularioAviso = ({
             getAvisos();
           })
           .catch(function (response) {
-            console.log(response);
+            
           });
       } catch (error) {}
     });
@@ -108,7 +108,7 @@ const ModalFormularioAviso = ({
         .then((response) => {
           handleModal();
           getAvisos();
-          console.log(response.response.data);
+          
         });
     } catch (error) {
       //

@@ -59,7 +59,7 @@ const ModalSubirDocumento = ({
             getDocumentos();
           })
           .catch(function (response) {
-            console.log(response);
+            
           });
       } catch (error) {}
     });
@@ -87,7 +87,7 @@ const ModalSubirDocumento = ({
             getDocumentos();
           })
           .catch(function (response) {
-            console.log(response.response.data);
+            
           });
       } catch (error) {}
     });

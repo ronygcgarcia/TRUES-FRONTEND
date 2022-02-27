@@ -125,7 +125,7 @@ const FormRole = (props) => {
                 return pasos.find(p => p.nombre === el).id;
             })
         };
-        //console.log("ESTADO ANTES DE PERMISOS",tramite);        
+              
         if (props.formType === 'new') {
             api.post("/tramite", { nombre: tramite.nombre }).then((response) => {
                 props.setRows(props.rows.concat(response.data));
@@ -133,12 +133,12 @@ const FormRole = (props) => {
                 props.handleClose();
             }, (error) => {
                 setRequestError(error.response.data.message + ' ' + error.response.data.errors.map((el) => {
-                    console.log(el);
+                    
                     return el;
                 }))
             })
         } else if (props.formType === 'edit') {
-            //console.log(tramite)
+            
             api.put("/tramite/" + props.tramiteId, tramite).then((response) => {
                 var newRows = props.rows
                 newRows.forEach(function (row) {
@@ -151,24 +151,24 @@ const FormRole = (props) => {
                 editTramite(response.data.id, hasMany)
                 props.handleClose()
             }, (error) => {
-                console.log(error.response.data.errors)
+                
                 setRequestError(error.response.data.message + ' ' + error.response.data.errors.map((el) => {
-                    console.log(el);
+                    
                     return el;
                 }))
             })
         } else {
             api.delete("/tramite/" + props.tramiteId).then((response) => {
-                //console.log(response)
+               
                 api.get('/tramite').then((response) => {
                     props.setRows([])
                     props.setRows(response.data)
                     props.handleClose();
                 })
             }, (error) => {
-                console.log(error.response.data.message)
+                
                 setRequestError(error.response.data.message + ' ' + error.response.data.errors.map((el) => {
-                    console.log(el);
+                  
                     return el;
                 }))
             })
@@ -179,7 +179,7 @@ const FormRole = (props) => {
         if (props.tramiteId && props.tramiteId !== 0) {
             api.get('/tramite/' + props.tramiteId).then((response) => {
                 // los objetos permiso, se cambian a strings para que el select funcione   
-                //console.log(tramite)
+                
                 setTramite({
                     id: props.tramiteId, nombre: response.data.nombre,
                     documento_id: response.data.documentos.map((ele) => {

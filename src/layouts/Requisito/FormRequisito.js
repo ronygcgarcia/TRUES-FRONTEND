@@ -79,22 +79,17 @@ const FormRole = (props) => {
     }
 
     const handleSubmit = (e) => {
-        e.preventDefault();
-        //console.log("ESTADO ANTES DE PERMISOS",requisito);        
+        e.preventDefault();    
         if (props.formType === 'new') {
-            console.log(requisito)
             api.post("/requisito", requisito).then((response) => {
                 props.setRows(props.rows.concat(response.data));
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
                 setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
-                    console.log(el);
                     return el;
                 }))
             })
         } else if (props.formType === 'edit') {
-            //console.log(requisito)
             api.put("/requisito/" + props.unidadId, requisito).then((response) => {
                 var newRows = props.rows
                 newRows.forEach(function (row) {
@@ -107,24 +102,22 @@ const FormRole = (props) => {
                 props.setRows(newRows)
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
                 setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
-                    console.log(el);
                     return el;
                 }))
             })
         } else {
             api.delete("/requisito/" + props.unidadId).then((response) => {
-                //console.log(response)
+                
                 api.get('/requisito').then((response) => {
                     props.setRows([])
                     props.setRows(response.data)
                 })
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
+                
                 setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
-                    console.log(el);
+                    
                     return el;
                 }))
             })
@@ -135,7 +128,7 @@ const FormRole = (props) => {
         if (props.unidadId && props.unidadId !== 0) {
             api.get('/requisito/' + props.unidadId).then((response) => {
                 // los objetos permiso, se cambian a strings para que el select funcione
-                //console.log(response)
+                
                 setRequisito({
                     id: props.unidadId, nombre: response.data.nombre, descripcion:response.data.descripcion
                 });

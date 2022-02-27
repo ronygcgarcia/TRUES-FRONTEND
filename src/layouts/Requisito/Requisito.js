@@ -92,7 +92,7 @@ export default function StickyHeadTable({ usuario }) {
       setRows(resp.data);
     } catch (err) {
       // Handle Error Here
-      console.error(err);
+      
     }
   };
 
@@ -100,7 +100,6 @@ export default function StickyHeadTable({ usuario }) {
     getUnidad();
   }, []);
 
-  //console.log(rows)
   return (
     <div>
       <Box pt={1} pb={1}>

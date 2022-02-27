@@ -24,38 +24,29 @@ const ModalSubirArchivo = ({handleModalUpload}) => {
   const classes = useStyles();
   const [archivo, setArchivo] = useState([]);
   const getAccessToken = () => localStorage.getItem("token");
-  const [switchState, setSwitchState] = useState({
-    switchmultiple: false,
-  });
-  const handleSwitch = (event) => {
-    setSwitchState({
-      switchmultiple: event.target.checked,
-    });
-  };
-
   const upload = () => {
-    let url = process.env.REACT_APP_BACKEND_URL+"/documento";
-    console.log(archivo);
-    // archivo.forEach(async (acceptedFile) => {
-    //   const formData = new FormData();
-    //   formData.append("documento", acceptedFile);
-    //   try {
-    //     axios({
-    //       method: "post",
-    //       url: url,
-    //       data: formData,
-    //       headers: {
-    //         "Content-Type": "multipart/form-data",
-    //         Authorization: `Bearer ${getAccessToken()}`,
-    //       },
-    //     })
-    //       .then(function (response) {
-    //         console.log(response);
-    //         handleModalUpload();
-    //       })
-    //       .catch(function (response) {console.log(response);});
-    //   } catch (error) {}
-    // });
+    let url = process.env.REACT_APP_BACKEND_URL+"/subir-doc";
+    
+    archivo.forEach(async (acceptedFile) => {
+      const formData = new FormData();
+      formData.append("documento", acceptedFile);
+      try {
+        axios({
+          method: "post",
+          url: url,
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${getAccessToken()}`,
+          },
+        })
+          .then(function (response) {
+            
+            handleModalUpload();
+          })
+          .catch(function (response) {});
+      } catch (error) {}
+    });
   };
 
   const onDrop = useCallback((acceptedFiles) => {
@@ -72,7 +63,6 @@ const ModalSubirArchivo = ({handleModalUpload}) => {
     onDrop,
     accept:
       "text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel, application/vnd.oasis.opendocument.spreadsheet",
-    multiple: switchState.switchmultiple,
   });
 
   return (

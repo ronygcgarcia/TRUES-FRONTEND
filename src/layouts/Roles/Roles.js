@@ -102,7 +102,7 @@ export default function StickyHeadTable({ usuario }) {
     getRoles();
   }, []);
 
-  //console.log(rows)
+  
   return (
     <div>
       <Box pt={1} pb={1}>

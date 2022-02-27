@@ -131,21 +131,19 @@ const FormRole = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        //console.log("ESTADO ANTES DE PERMISOS", paso);
         paso.complejidad=paso.complejidad/100
         if (props.formType === 'new') {
-            //console.log(paso)
             api.post("/pasos", paso).then((response) => {
                 props.setRows(props.rows.concat(response.data));
                 props.handleClose();
             }, (error) => {
                 setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
-                    console.log(el);
+                    
                     return el;
                 }))
             })
         } else if (props.formType === 'edit') {
-            //console.log(paso)
+            
             api.put("/pasos/" + props.pasoId, paso).then((response) => {
                 var newRows = props.rows
                 newRows.forEach(function (row) {
@@ -159,32 +157,31 @@ const FormRole = (props) => {
                 })
                 props.setRows([])
                 props.setRows(newRows)
-                //console.log(props.rows)
+                
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
+                
                 setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
-                    console.log(el);
+                    
                     return el;
                 }))
             })
         } else {
             api.delete("/pasos/" + props.pasoId).then((response) => {
-                //console.log(response)
+                
                 api.get('/pasos').then((response) => {
                     props.setRows([])
                     props.setRows(response.data)
                 })
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
+                
                 setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
-                    console.log(el);
+                    
                     return el;
                 }))
             })
         }
-        //console.log("ESTADO ANTES DE ENVIAR", { ...paso });
     }
 
 
@@ -192,7 +189,6 @@ const FormRole = (props) => {
         if (props.pasoId && props.pasoId !== 0) {
             api.get('/pasos/' + props.pasoId).then((response) => {
                 // los objetos permiso, se cambian a strings para que el select funcione
-                //console.log(response)
                 setPaso({
                     id: props.pasoId, nombre: response.data.nombre, indicaciones: response.data.indicaciones, complejidad: response.data.complejidad*100,
                     ubicacion_id: response.data.ubicacion_id.id, personal_id: response.data.personal_id.id

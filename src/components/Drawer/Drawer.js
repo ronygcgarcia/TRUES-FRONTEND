@@ -149,7 +149,7 @@ export default function PersistentDrawerLeft(props) {
         const { data: usuarioAPI } = await api.get("/user");
         setUsuario(usuarioAPI);
       } catch (error) {
-        console.log(error);
+        
       }
     }
     getUser();

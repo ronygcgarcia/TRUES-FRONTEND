@@ -148,7 +148,7 @@ function Personal({usuario}) {
       const resp = await api.get("/personal");
       setPersonal(resp.data);
     } catch (err) {
-      console.error(err);
+      
     }
   };
 

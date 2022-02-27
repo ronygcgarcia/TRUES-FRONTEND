@@ -101,7 +101,7 @@ export default function StickyHeadTable({ usuario }) {
     getTramite();
   }, []);
 
-  //console.log(rows)
+
   return (
     <div>
       <Box pt={1} pb={1}>

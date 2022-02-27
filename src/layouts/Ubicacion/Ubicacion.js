@@ -125,7 +125,7 @@ export default function StickyHeadTable({ usuario }) {
     getUbicacion();
   }, []);
 
-  //console.log(rows)
+
   return (
     <div>
       <Box pt={1} pb={1}>

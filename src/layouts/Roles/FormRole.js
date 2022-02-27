@@ -70,24 +70,19 @@ const FormRole = (props) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        //console.log("ESTADO ANTES DE PERMISOS",rol);
         const permisos = rol.permissions.map((el) => {
             return permissions.find(p => p.name === el).id;
         });
         if (props.formType === 'new') {
-            //console.log(rol)
             api.post("/roles", { ...rol, permissions: permisos }).then((response) => {
                 props.setRows(props.rows.concat(response.data));
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
                 setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
-                    console.log(el);
                     return el;
                 }))
             })
         } else if (props.formType === 'edit') {
-            //console.log(rol)
             api.put("/roles/" + props.rolId, { ...rol, permissions: permisos }).then((response) => {
                 var newRows = props.rows
                 newRows.forEach(function (row) {
@@ -97,38 +92,34 @@ const FormRole = (props) => {
                 })
                 props.setRows([])
                 props.setRows(newRows)
-                //console.log(props.rows)
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
                 setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
-                    console.log(el);
+
                     return el;
                 }))
             })
         } else {
             api.delete("/roles/" + props.rolId).then((response) => {
-                //console.log(response)
+                
                 api.get('/roles').then((response) => {
                     props.setRows([])
                     props.setRows(response.data)
                 })
                 props.handleClose();
             }, (error) => {
-                console.log(error.response.data.message)
+                
                 setRequestError(error.response.data.message+' '+error.response.data.errors.map((el) => {
-                    console.log(el);
+                  
                     return el;
                 }))
             })
         }
-        //console.log("ESTADO ANTES DE ENVIAR",{...rol,permissions:permisos});
+        
         props.handleClose();
     }
 
     const handleChange = (event) => {
-        //setPermission(event.target.value);
-        //console.log(event.target.value);
         setRol({ ...rol, permissions: event.target.value })
     };
 
@@ -136,7 +127,7 @@ const FormRole = (props) => {
         if (props.rolId && props.rolId !== 0) {
             api.get('/roles/' + props.rolId).then((response) => {
                 // los objetos permiso, se cambian a strings para que el select funcione
-                //console.log(response)
+
                 setRol({
                     id: props.rolId, name: response.data.name, permissions: response.data.permissions.map((ele) => {
                         return ele.name
