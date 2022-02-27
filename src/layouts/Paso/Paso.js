@@ -182,8 +182,8 @@ export default function StickyHeadTable({ usuario }) {
                   <TableCell align="right">
                     {element.complejidad * 100 + "%"}
                   </TableCell>
-                  <TableCell align="right">{element.ubicacion_id}</TableCell>
-                  <TableCell align="right">{element.personal_id}</TableCell>
+                  <TableCell align="right">{element.ubicacion.nombre}</TableCell>
+                  <TableCell align="right">{element.personal.nombre}</TableCell>
                   <TableCell align="center">
                     <Box pr={1} pl={1}>
                       <Button
