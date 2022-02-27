@@ -75,6 +75,9 @@ const useStyles = makeStyles((theme) => ({
   inputMaterial: {
     width: "100%",
   },
+  table: {
+    fontSize: "large",
+  }
 }));
 
 function Personal({usuario}) {
@@ -83,7 +86,7 @@ function Personal({usuario}) {
   //-----------------------------------Definicion de columnas para material-table
   const columnas = [
     {
-      title: "Nombre",
+      title: "NOMBRE",
       field: "nombre",
     },
   ];
@@ -346,6 +349,7 @@ function Personal({usuario}) {
       </Button>
       <br />
       <br />
+      <div className={styles.table}>
       <MaterialTable
         icons={tableIcons}
         title="Personal del sistema"
@@ -391,6 +395,7 @@ function Personal({usuario}) {
           },
         }}
       />
+      </div>
 
       <Modal open={modalInsertar} onClose={abrirCerrarModalInsertar}>
         {bodyInsertar}

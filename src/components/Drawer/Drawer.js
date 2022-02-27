@@ -47,12 +47,16 @@ import Home from "../../layouts/Home/Home";
 import api from "../../config/axios";
 import HistoryIcon from "@material-ui/icons/History";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
+import Notificacion from "../../layouts/Notificacion/Notificacion";
+import AddAlertIcon from '@material-ui/icons/AddAlert';
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
+    marginLeft: "7%",
+    marginRight: "7%"
   },
   appBar: {
     transition: theme.transitions.create(["margin", "width"], {
@@ -186,7 +190,9 @@ export default function PersistentDrawerLeft(props) {
               onClick={handleMenu}
               color="inherit"
             >
+
               <AccountCircle />
+              <h2>{usuario.name}</h2>
             </IconButton>
             <Menu
               id="menu-appbar"
@@ -383,6 +389,19 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
+            {/** Agregar el permiso para crear notificaciones */}
+            {/* {usuario.permissions.map((elemento, index) =>
+              elemento.name === "mandar notificaciones" ? ( */}
+                <Link to="/notificacion">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <AddAlertIcon />
+                    </ListItemIcon>
+                    <ListItemText>Notificacion</ListItemText>
+                  </ListItem>
+                </Link>
+              {/* ) : null
+            )} */}
           </List>
           <Divider />
         </Drawer>
@@ -460,6 +479,11 @@ export default function PersistentDrawerLeft(props) {
               path="/avisos"
               exact
               render={() => {return (<Aviso usuario={usuario}/>)}}
+            />
+            <Route
+              path="/notificacion"
+              exact
+              render={() => {return (<Notificacion usuario={usuario}/>)}}
             />
           </Switch>
         </main>

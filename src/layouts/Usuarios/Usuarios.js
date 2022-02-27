@@ -220,12 +220,12 @@ function Usuarios({ usuario }) {
         }
         break;
       case "uid":
-        let regUID = new RegExp(/^[a-zA-Z0-9]\S{7,50}$/).test(value);
+        let regUID = new RegExp(/^[a-zA-Z0-9]\S{6,50}$/).test(value);
 
         if (!regUID) {
           setValUID({
             valUID:
-              "El usuario debe tener al menos 8 letras y/o numeros sin espacios",
+              "El usuario debe tener al menos 7 letras y/o numeros sin espacios",
           });
         }
         break;
