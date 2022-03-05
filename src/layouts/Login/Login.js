@@ -25,9 +25,8 @@ const Login = (props) => {
         .post("/login", credenciales)
         .then((response) => {
           localStorage.setItem("token", response.data.jwt);
-          const respuesta =  api.get("/user").then((response) => {
-          });
           props.history.push('/home');
+          window.location.href = window.location.href;
         })
         .catch((error) => {
           console.log(error);
