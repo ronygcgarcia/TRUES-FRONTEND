@@ -21,7 +21,7 @@ import api from "../../config/axios";
 import Typography from "@material-ui/core/Typography";
 
 const columns = [
-  { id: "id", label: "id", minWidth: 170 },
+  { id: "id", label: "id", minWidth: 40 },
   {
     id: "users",
     label: "Nombre",
