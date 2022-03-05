@@ -49,6 +49,7 @@ import HistoryIcon from "@material-ui/icons/History";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import Notificacion from "../../layouts/Notificacion/Notificacion";
 import AddAlertIcon from '@material-ui/icons/AddAlert';
+import { red } from "@material-ui/core/colors";
 
 const drawerWidth = 240;
 
@@ -109,6 +110,10 @@ const useStyles = makeStyles((theme) => ({
     }),
     marginLeft: 0,
   },
+  colorIcon: {
+    fontSize: 35,
+    style: {color: "red"}
+  }
 }));
 
 export default function PersistentDrawerLeft(props) {
@@ -238,21 +243,70 @@ export default function PersistentDrawerLeft(props) {
           <List>
             <Link to="/home">
               <ListItem button>
-                <ListItemIcon>
-                  <HomeIcon />
+                <ListItemIcon >
+                  <HomeIcon className={classes.colorIcon} style={{color: red[900]}}/>
                 </ListItemIcon>
                 <ListItemText>Inicio</ListItemText>
               </ListItem>
             </Link>
-
             {usuario.permissions.map((elemento, index) =>
-              elemento.name === "ver personal" ? (
-                <Link key={index} to="/personal">
+              elemento.name === "ver usuario tramite" ? (
+                <Link key={index} to="/usuariotramite">
+                  <ListItem button>
+                    <ListItemIcon className={classes.colorIcon} style={{color: red[900]}}>
+                      <AssignmentIndIcon />
+                    </ListItemIcon>
+                    <ListItemText>Tramites de Usuarios</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento, index) =>
+              elemento.name === "ver aviso" ? (
+                <Link key={index} to="/avisos">
                   <ListItem button>
                     <ListItemIcon>
-                      <SupervisedUserCircleIcon />
+                      <ViewCarouselIcon className={classes.colorIcon} style={{color: red[900]}}/>
                     </ListItemIcon>
-                    <ListItemText>Personal</ListItemText>
+                    <ListItemText>Aviso</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento, index) =>
+              elemento.name === "crear notificacion" ? (
+                <Link key={index} to="/notificacion">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <AddAlertIcon className={classes.colorIcon} style={{color: red[900]}}/>
+                    </ListItemIcon>
+                    <ListItemText>Notificacion</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )} 
+            <Divider />
+            {usuario.permissions.map((elemento, index) =>
+              elemento.name === "ver usuarios" ? (
+                <Link key={index} to="/usuarios">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <GroupIcon className={classes.colorIcon} style={{color: red[900]}} />
+                    </ListItemIcon>
+                    <ListItemText>Usuarios</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+
+            {usuario.permissions.map((elemento, index) =>
+              elemento.name === "ver roles" ? (
+                <Link key={index} to="/roles">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <FaceIcon className={classes.colorIcon} style={{color: red[900]}} />
+                    </ListItemIcon>
+                    <ListItemText>Roles</ListItemText>
                   </ListItem>
                 </Link>
               ) : null
@@ -262,21 +316,9 @@ export default function PersistentDrawerLeft(props) {
                 <Link key={index} to="/tramite">
                   <ListItem button>
                     <ListItemIcon>
-                      <AssignmentIcon />
+                      <AssignmentIcon className={classes.colorIcon} style={{color: red[900]}}/>
                     </ListItemIcon>
                     <ListItemText>Tramites</ListItemText>
-                  </ListItem>
-                </Link>
-              ) : null
-            )}
-            {usuario.permissions.map((elemento, index) =>
-              elemento.name === "ver usuarios" ? (
-                <Link key={index} to="/usuarios">
-                  <ListItem button>
-                    <ListItemIcon>
-                      <GroupIcon />
-                    </ListItemIcon>
-                    <ListItemText>Usuarios</ListItemText>
                   </ListItem>
                 </Link>
               ) : null
@@ -286,45 +328,9 @@ export default function PersistentDrawerLeft(props) {
                 <Link key={index} to="/documentos">
                   <ListItem button>
                     <ListItemIcon>
-                      <DescriptionIcon />
+                      <DescriptionIcon className={classes.colorIcon} style={{color: red[900]}}/>
                     </ListItemIcon>
                     <ListItemText>Documentos</ListItemText>
-                  </ListItem>
-                </Link>
-              ) : null
-            )}
-            {usuario.permissions.map((elemento, index) =>
-              elemento.name === "ver roles" ? (
-                <Link key={index} to="/roles">
-                  <ListItem button>
-                    <ListItemIcon>
-                      <FaceIcon />
-                    </ListItemIcon>
-                    <ListItemText>Roles</ListItemText>
-                  </ListItem>
-                </Link>
-              ) : null
-            )}
-            {usuario.permissions.map((elemento, index) =>
-              elemento.name === "ver ubicacion" ? (
-                <Link key={index} to="/ubicacion">
-                  <ListItem button>
-                    <ListItemIcon>
-                      <RoomIcon />
-                    </ListItemIcon>
-                    <ListItemText>Ubicacion</ListItemText>
-                  </ListItem>
-                </Link>
-              ) : null
-            )}
-            {usuario.permissions.map((elemento, index) =>
-              elemento.name === "ver unidad" ? (
-                <Link key={index} to="/unidad">
-                  <ListItem button>
-                    <ListItemIcon>
-                      <HomeWorkIcon />
-                    </ListItemIcon>
-                    <ListItemText>Unidad Admin.</ListItemText>
                   </ListItem>
                 </Link>
               ) : null
@@ -334,7 +340,7 @@ export default function PersistentDrawerLeft(props) {
                 <Link key={index} to="/requisito">
                   <ListItem button>
                     <ListItemIcon>
-                      <AssignmentTurnedInIcon />
+                      <AssignmentTurnedInIcon className={classes.colorIcon} style={{color: red[900]}}/>
                     </ListItemIcon>
                     <ListItemText>Requisitos</ListItemText>
                   </ListItem>
@@ -346,7 +352,7 @@ export default function PersistentDrawerLeft(props) {
                 <Link key={index} to="/paso">
                   <ListItem button>
                     <ListItemIcon>
-                      <FormatListNumberedIcon />
+                      <FormatListNumberedIcon className={classes.colorIcon} style={{color: red[900]}}/>
                     </ListItemIcon>
                     <ListItemText>Pasos</ListItemText>
                   </ListItem>
@@ -354,13 +360,37 @@ export default function PersistentDrawerLeft(props) {
               ) : null
             )}
             {usuario.permissions.map((elemento, index) =>
-              elemento.name === "ver usuario tramite" ? (
-                <Link key={index} to="/usuariotramite">
+              elemento.name === "ver ubicacion" ? (
+                <Link key={index} to="/ubicacion">
                   <ListItem button>
                     <ListItemIcon>
-                      <AssignmentIndIcon />
+                      <RoomIcon className={classes.colorIcon} style={{color: red[900]}}/>
                     </ListItemIcon>
-                    <ListItemText>Tramites de Usuarios</ListItemText>
+                    <ListItemText>Ubicacion</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento, index) =>
+              elemento.name === "ver personal" ? (
+                <Link key={index} to="/personal">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <SupervisedUserCircleIcon className={classes.colorIcon} style={{color: red[900]}} />
+                    </ListItemIcon>
+                    <ListItemText>Personal</ListItemText>
+                  </ListItem>
+                </Link>
+              ) : null
+            )}
+            {usuario.permissions.map((elemento, index) =>
+              elemento.name === "ver unidad" ? (
+                <Link key={index} to="/unidad">
+                  <ListItem button>
+                    <ListItemIcon>
+                      <HomeWorkIcon className={classes.colorIcon} style={{color: red[900]}}/>
+                    </ListItemIcon>
+                    <ListItemText>Unidad Admin.</ListItemText>
                   </ListItem>
                 </Link>
               ) : null
@@ -370,38 +400,13 @@ export default function PersistentDrawerLeft(props) {
                 <Link key={index} to="/historial">
                   <ListItem button>
                     <ListItemIcon>
-                      <HistoryIcon />
+                      <HistoryIcon className={classes.colorIcon} style={{color: red[900]}}/>
                     </ListItemIcon>
                     <ListItemText>Historial</ListItemText>
                   </ListItem>
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento, index) =>
-              elemento.name === "ver aviso" ? (
-                <Link key={index} to="/avisos">
-                  <ListItem button>
-                    <ListItemIcon>
-                      <ViewCarouselIcon />
-                    </ListItemIcon>
-                    <ListItemText>Aviso</ListItemText>
-                  </ListItem>
-                </Link>
-              ) : null
-            )}
-            {/** Agregar el permiso para crear notificaciones */}
-            {usuario.permissions.map((elemento, index) =>
-              elemento.name === "crear notificacion" ? (
-                <Link key={index} to="/notificacion">
-                  <ListItem button>
-                    <ListItemIcon>
-                      <AddAlertIcon />
-                    </ListItemIcon>
-                    <ListItemText>Notificacion</ListItemText>
-                  </ListItem>
-                </Link>
-              ) : null
-            )} 
           </List>
           <Divider />
         </Drawer>

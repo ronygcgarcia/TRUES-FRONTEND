@@ -26,7 +26,7 @@ const columns = [
     id: "descripcion",
     label: "Descripcion",
     minWidth: 170,
-    align: "right",
+    align: "center",
     format: (value) => value.toLocaleString("en-US"),
   },
   {
