@@ -52,6 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+//Avisos ejemplo
 const avisosArray = [
   {
     id: 1,
@@ -90,13 +91,13 @@ function Aviso({ usuario }) {
   });
 
   const getAvisos = async () => {
-    // try {
-    //   const resp = await api.get("/aviso");
-    //   setAvisos(resp.data);
-    // } catch (err) {
-    //   console.error(err);
-    // }
-    setAvisos(avisosArray);
+    try {
+      const resp = await api.get("/aviso");
+      setAvisos(resp.data);
+    } catch (err) {
+      console.error(err);
+    }
+    // setAvisos(avisosArray);
   };
 
   useEffect(() => {
