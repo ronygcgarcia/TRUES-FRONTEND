@@ -390,9 +390,9 @@ export default function PersistentDrawerLeft(props) {
               ) : null
             )}
             {/** Agregar el permiso para crear notificaciones */}
-            {/* {usuario.permissions.map((elemento, index) =>
-              elemento.name === "mandar notificaciones" ? ( */}
-                <Link to="/notificacion">
+            {usuario.permissions.map((elemento, index) =>
+              elemento.name === "crear notificacion" ? (
+                <Link key={index} to="/notificacion">
                   <ListItem button>
                     <ListItemIcon>
                       <AddAlertIcon />
@@ -400,8 +400,8 @@ export default function PersistentDrawerLeft(props) {
                     <ListItemText>Notificacion</ListItemText>
                   </ListItem>
                 </Link>
-              {/* ) : null
-            )} */}
+              ) : null
+            )} 
           </List>
           <Divider />
         </Drawer>
