@@ -74,7 +74,25 @@ const ModalSubirArchivo = ({handleModalUpload}) => {
             isDragReject ? estiloDrop.active : null
           }`}
         />
-        <p>CLICK para buscar el archivo o ARRASTRELO a esta area y se subirá</p>
+        <p>CLICK para buscar el archivo de USUARIOS</p>
+      </div>
+      <div {...getRootProps()} className="dropzone">
+        <input
+          {...getInputProps()}
+          className={`${estiloDrop.dropzone} ${
+            isDragReject ? estiloDrop.active : null
+          }`}
+        />
+        <p>CLICK para buscar el archivo de PASOS</p>
+      </div>
+      <div {...getRootProps()} className="dropzone">
+        <input
+          {...getInputProps()}
+          className={`${estiloDrop.dropzone} ${
+            isDragReject ? estiloDrop.active : null
+          }`}
+        />
+        <p>CLICK para buscar el archivo de TRAMITES DE USUARIO</p>
       </div>
       {isDragReject ? (
         <div>
