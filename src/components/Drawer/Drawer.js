@@ -383,7 +383,7 @@ export default function PersistentDrawerLeft(props) {
                 </Link>
               ) : null
             )}
-            {usuario.permissions.map((elemento, index) =>
+            {/* {usuario.permissions.map((elemento, index) =>
               elemento.name === "ver unidad" ? (
                 <Link key={index} to="/unidad">
                   <ListItem button>
@@ -406,7 +406,7 @@ export default function PersistentDrawerLeft(props) {
                   </ListItem>
                 </Link>
               ) : null
-            )}
+            )} */}
           </List>
           <Divider />
         </Drawer>
